@@ -107,17 +107,17 @@ $(document).ready( function(){
         $('#name').empty();
 
         var chart = d3.timeline()
-                      .beginning(start_time_timeline)
-                      .ending(end_time_timeline)
-                      .hover(function (d, i, datum) {
-                          var div = $('#hoverRes');
-                          var colors = chart.colors();
-                          div.find('.coloredDiv').css('background-color', colors(i));
-                          div.find('#name').text(datum.label);
-                      })
-                      .margin({left:140, right:10, top:0, bottom:50})
-                      .tickFormat({format: d3.time.format.utc('%H:%M'), tickTime: d3.time.minutes, tickInterval: 30, tickSize: 6})
-                      .stack();
+            .beginning(start_time_timeline)
+            .ending(end_time_timeline)
+            .hover(function (d, i, datum) {
+                var div = $('#hoverRes');
+                var colors = chart.colors();
+                div.find('.coloredDiv').css('background-color', colors(i));
+                div.find('#name').text(datum.label);
+            })
+            .margin({left:140, right:10, top:0, bottom:50})
+            .tickFormat({format: d3.time.format.utc('%H:%M'), tickTime: d3.time.minutes, tickInterval: 30, tickSize: 6})
+            .stack();
 
         var svg_width = 1140;
         if (screen.width < 1200) { svg_width = 940; }

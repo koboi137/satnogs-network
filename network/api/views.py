@@ -14,7 +14,6 @@ class DataView(viewsets.ModelViewSet, mixins.UpdateModelMixin):
     queryset = Data.objects.all()
     serializer_class = serializers.DataSerializer
     filter_class = filters.DataViewFilter
-    filter_fields = ('ground_station', 'start', 'end')
     permission_classes = [
         StationOwnerCanEditPermission
     ]
