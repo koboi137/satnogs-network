@@ -252,3 +252,6 @@ DB_API_ENDPOINT = getenv('DB_API_ENDPOINT', 'https://db.satnogs.org/api/')
 
 # ListView pagination
 ITEMS_PER_PAGE = 25
+
+# User settings
+AVATAR_GRAVATAR_DEFAULT = getenv('AVATAR_GRAVATAR_DEFAULT', 'mm')
