@@ -93,7 +93,10 @@ $(document).ready(function() {
             wavesurfer.playPause();
         });
 
-        wavesurfer.load(data_payload_url);
+        $('a[href="#tab-audio-' + wid + '"]').on('shown.bs.tab', function () {
+            wavesurfer.load(data_payload_url);
+            $('a[href="#tab-audio-' + wid + '"]').off('shown.bs.tab');
+        });
 
         wavesurfer.on('ready', function() {
             hideProgress();

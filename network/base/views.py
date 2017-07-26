@@ -433,17 +433,11 @@ def observation_view(request, id):
                 request.user.is_staff:
                     is_vetting_user = True
 
-    # Determine if there is no valid payload file in the observation dataset
-    if request.user.has_perm('base.delete_observation'):
-        data_payload_exists = False
-        for data in dataset:
-            if data.payload_exists:
-                data_payload_exists = True
     # This context flag will determine if a delete button appears for the observation.
     is_deletable = False
     if observation.author == request.user and observation.is_deletable_before_start:
         is_deletable = True
-    if request.user.has_perm('base.delete_observation') and not data_payload_exists and \
+    if request.user.has_perm('base.delete_observation') and \
             observation.is_deletable_after_end:
         is_deletable = True
 
@@ -481,13 +475,9 @@ def observation_delete(request, id):
     me = request.user
     observation = get_object_or_404(Observation, id=id)
     # Having non-existent data is also grounds for deletion if user is staff
-    data_payload_exists = False
-    for data in observation.data_set.all():
-        if data.payload_exists:
-            data_payload_exists = True
     if (observation.author == me and observation.is_deletable_before_start) or \
             (request.user.has_perm('base.delete_observation') and
-             not data_payload_exists and observation.is_deletable_after_end):
+             observation.is_deletable_after_end):
         observation.delete()
         messages.success(request, 'Observation deleted successfully.')
     else:

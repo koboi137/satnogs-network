@@ -21,7 +21,9 @@
     <div class="col-md-6 text-right">
       <h2>
         {% if is_deletable %}
-          <a href="{% url 'base:observation_delete' id=observation.id %}" id="obs-delete" class="btn btn-danger">Delete Observation</a>
+          <a href="{% url 'base:observation_delete' id=observation.id %}" id="obs-delete" class="btn btn-danger">
+            <span class="glyphicon glyphicon-trash" aria-hidden="true" title="Delete Observation"></span>
+          </a>
         {% endif %}
       </h2>
     </div>
