@@ -252,6 +252,8 @@ def observation_new(request):
                                 rise_azimuth=format(math.degrees(azr), '.0f'),
                                 max_altitude=format(math.degrees(altt), '.0f'),
                                 set_azimuth=format(math.degrees(azs), '.0f'))
+            time_start_new = ephem.Date(ts).datetime() + timedelta(minutes=1)
+            observer.date = time_start_new.strftime("%Y-%m-%d %H:%M:%S.%f")
 
         return redirect(reverse('base:observation_view', kwargs={'id': obs.id}))
 
