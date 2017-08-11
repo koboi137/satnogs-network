@@ -71,7 +71,7 @@
             <div class="col-sm-10">
               <select multiple class="form-control" name="antenna">
                 {% for antenna in antennas %}
-                  <option value="{{ antenna.id }}">
+                  <option value="{{ antenna.id }}" {% if antenna in station.antenna.all %}selected{% endif %}>
                     {{ antenna.band}} {{ antenna.get_antenna_type_display }} | {{ antenna.frequency|frq }} - {{ antenna.frequency_max|frq }}
                   </option>
                 {% endfor %}
