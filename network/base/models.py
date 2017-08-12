@@ -31,6 +31,7 @@ OBSERVATION_STATUSES = (
     ('data_not_verified', 'Has Data, Not Verified'),
     ('no_data', 'No Data'),
 )
+SATELLITE_STATUS = ['alive', 'dead', 're-entered']
 
 
 class Rig(models.Model):
@@ -133,6 +134,8 @@ class Satellite(models.Model):
     names = models.TextField(blank=True)
     image = models.CharField(max_length=100, blank=True, null=True)
     manual_tle = models.BooleanField(default=False)
+    status = models.CharField(choices=zip(SATELLITE_STATUS, SATELLITE_STATUS),
+                              max_length=10, default='alive')
 
     class Meta:
         ordering = ['norad_cat_id']
