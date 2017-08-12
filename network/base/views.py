@@ -257,7 +257,8 @@ def observation_new(request):
 
         return redirect(reverse('base:observation_view', kwargs={'id': obs.id}))
 
-    satellites = Satellite.objects.filter(transmitters__alive=True).distinct()
+    satellites = Satellite.objects.filter(transmitters__alive=True) \
+        .filter(status='alive').distinct()
     transmitters = Transmitter.objects.filter(alive=True)
 
     obs_filter = {}
@@ -295,8 +296,8 @@ def observation_new(request):
 def prediction_windows(request, sat_id, transmitter, start_date, end_date,
                        station_id=None):
     try:
-        sat = Satellite.objects.filter(transmitters__alive=True). \
-            distinct().get(norad_cat_id=sat_id)
+        sat = Satellite.objects.filter(transmitters__alive=True) \
+            .filter(status='alive').distinct().get(norad_cat_id=sat_id)
     except:
         data = {
             'error': 'You should select a Satellite first.'
@@ -528,7 +529,8 @@ def station_view(request, id):
     unsupported_frequencies = request.GET.get('unsupported_frequencies', '0')
 
     try:
-        satellites = Satellite.objects.filter(transmitters__alive=True).distinct()
+        satellites = Satellite.objects.filter(transmitters__alive=True) \
+            .filter(status='alive').distinct()
     except:
         pass  # we won't have any next passes to display
 
