@@ -27,11 +27,9 @@ class DataSerializer(serializers.ModelSerializer):
                             'station_lat', 'station_lng']
 
     def update(self, instance, validated_data):
-        demod_data = validated_data.pop('demoddata')
-        data = super(DataSerializer, self).update(instance, validated_data)
-        for demod in demod_data:
-            data.demoddata.create(payload_demod=demod['payload_demod'])
-        return data
+        validated_data.pop('demoddata')
+        super(DataSerializer, self).update(instance, validated_data)
+        return instance
 
     def get_transmitter(self, obj):
         try:
