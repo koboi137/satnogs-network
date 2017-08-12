@@ -1,8 +1,8 @@
-from django.utils.timezone import now
-from django.shortcuts import get_object_or_404
 from django.http import Http404
+from django.shortcuts import get_object_or_404
+from django.utils.timezone import now
 
-from rest_framework import viewsets, mixins
+from rest_framework import viewsets, mixins, status
 from rest_framework.response import Response
 
 from network.api.perms import StationOwnerCanEditPermission
@@ -17,6 +17,14 @@ class DataView(viewsets.ModelViewSet, mixins.UpdateModelMixin):
     permission_classes = [
         StationOwnerCanEditPermission
     ]
+
+    def update(self, request, *args, **kwargs):
+        if request.data.get('demoddata'):
+            instance = self.get_object()
+            instance.demoddata.create(payload_demod=request.data.get('demoddata'))
+
+        super(DataView, self).update(request, *args, **kwargs)
+        return Response(status=status.HTTP_200_OK)
 
 
 class JobView(viewsets.ReadOnlyModelViewSet):
