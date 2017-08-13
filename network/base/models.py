@@ -81,7 +81,7 @@ class Station(models.Model):
                                                 'target="_blank">SatNOGS Team</a>'))
     featured_date = models.DateField(null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True)
-    active = models.BooleanField(default=False)
+    active = models.BooleanField(default=True)
     last_seen = models.DateTimeField(null=True, blank=True)
     horizon = models.PositiveIntegerField(help_text='In degrees above 0', default=10)
     uuid = models.CharField(db_index=True, max_length=100, blank=True)
