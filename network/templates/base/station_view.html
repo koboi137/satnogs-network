@@ -147,6 +147,13 @@
     </div>
   </div>
 
+  {% if station.description %}
+    <div class="row">
+      <div class="col-md-12">
+        <span>{{ station.description }}</span>
+      </div>
+    </div>
+  {% endif %}
   <div class="row">
     <div class="col-md-12">
       <div id="map-station" data-mapboxid="{{ mapbox_id }}" data-mapboxtoken="{{ mapbox_token }}"></div>

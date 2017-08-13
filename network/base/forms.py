@@ -8,7 +8,7 @@ class StationForm(forms.ModelForm):
         model = Station
         fields = ['name', 'image', 'alt', 'rig', 'uuid',
                   'lat', 'lng', 'qthlocator',
-                  'horizon', 'antenna', 'active']
+                  'horizon', 'antenna', 'active', 'description']
         image = forms.ImageField(required=False)
 
 

@@ -86,6 +86,7 @@ class Station(models.Model):
     horizon = models.PositiveIntegerField(help_text='In degrees above 0', default=10)
     uuid = models.CharField(db_index=True, max_length=100, blank=True)
     rig = models.ForeignKey(Rig, blank=True, null=True, on_delete=models.SET_NULL)
+    description = models.TextField(max_length=500, blank=True)
 
     class Meta:
         ordering = ['-active', '-last_seen']
