@@ -16,6 +16,9 @@
           href="#collapseFilters" aria-expanded="false" aria-controls="collapseFilters">
     <span class="glyphicon glyphicon-th-list" aria-hidden="true"></span> Filters
   </button>
+  <a class="btn btn-default btn-sm" role="button" href="#legend" data-toggle="modal" data-target="#LegendModal">
+      <span class="glyphicon glyphicon-certificate" aria-hidden="true"></span> Legend
+  </a>
 
   <div class="collapse{% if norad %} in{% endif %}" id="collapseFilters">
     <div class="filter-section">
@@ -112,6 +115,7 @@
     </div>
   </div>
   {% include 'includes/satellite.html' %}
+  {% include 'includes/legend.html' %}
 {% endblock content %}
 
 {% block javascript %}
