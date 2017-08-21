@@ -8,6 +8,8 @@ It features multiple observers to multiple intrumentation functionality and mana
 
 See the [documentation](http://docs.satnogs.org/en/stable/network/).
 
+The main repository lives on [Gitlab](https://gitlab.com/librespacefoundation/satnogs/satnogs-network).
+
 ## Join
 
 [![irc](https://img.shields.io/badge/IRC-%23satnogs%20on%20freenode-blue.svg)](https://webchat.freenode.net/?channels=satnogs)
@@ -15,7 +17,7 @@ See the [documentation](http://docs.satnogs.org/en/stable/network/).
 
 ## Current Development
 
-[![kanban](https://img.shields.io/badge/kanban-board-lightgray.svg)](https://github.com/satnogs/satnogs-network/projects/2)
+[![kanban](https://img.shields.io/badge/kanban-board-lightgray.svg)](https://gitlab.com/librespacefoundation/satnogs/satnogs-network/boards/345495)
 [![travis](https://img.shields.io/travis/satnogs/satnogs-network/dev.svg?label=tests)](http://travis-ci.org/satnogs/satnogs-network/)
 [![coveralls](https://img.shields.io/coveralls/satnogs/satnogs-network/dev.svg)](https://coveralls.io/github/satnogs/satnogs-network)
 [![updates](https://pyup.io/repos/github/satnogs/satnogs-network/shield.svg)](https://pyup.io/repos/github/satnogs/satnogs-network/)

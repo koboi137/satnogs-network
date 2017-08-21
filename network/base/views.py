@@ -252,10 +252,13 @@ def observation_new(request):
                                 rise_azimuth=format(math.degrees(azr), '.0f'),
                                 max_altitude=format(math.degrees(altt), '.0f'),
                                 set_azimuth=format(math.degrees(azs), '.0f'))
+            time_start_new = ephem.Date(ts).datetime() + timedelta(minutes=1)
+            observer.date = time_start_new.strftime("%Y-%m-%d %H:%M:%S.%f")
 
         return redirect(reverse('base:observation_view', kwargs={'id': obs.id}))
 
-    satellites = Satellite.objects.filter(transmitters__alive=True).distinct()
+    satellites = Satellite.objects.filter(transmitters__alive=True) \
+        .filter(status='alive').distinct()
     transmitters = Transmitter.objects.filter(alive=True)
 
     obs_filter = {}
@@ -293,8 +296,8 @@ def observation_new(request):
 def prediction_windows(request, sat_id, transmitter, start_date, end_date,
                        station_id=None):
     try:
-        sat = Satellite.objects.filter(transmitters__alive=True). \
-            distinct().get(norad_cat_id=sat_id)
+        sat = Satellite.objects.filter(transmitters__alive=True) \
+            .filter(status='alive').distinct().get(norad_cat_id=sat_id)
     except:
         data = {
             'error': 'You should select a Satellite first.'
@@ -526,7 +529,8 @@ def station_view(request, id):
     unsupported_frequencies = request.GET.get('unsupported_frequencies', '0')
 
     try:
-        satellites = Satellite.objects.filter(transmitters__alive=True).distinct()
+        satellites = Satellite.objects.filter(transmitters__alive=True) \
+            .filter(status='alive').distinct()
     except:
         pass  # we won't have any next passes to display
 

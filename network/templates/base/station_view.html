@@ -147,6 +147,13 @@
     </div>
   </div>
 
+  {% if station.description %}
+    <div class="row">
+      <div class="col-md-12">
+        <span>{{ station.description }}</span>
+      </div>
+    </div>
+  {% endif %}
   <div class="row">
     <div class="col-md-12">
       <div id="map-station" data-mapboxid="{{ mapbox_id }}" data-mapboxtoken="{{ mapbox_token }}"></div>
@@ -165,6 +172,9 @@
       </li>
     </ul>
     <div class="tab-content">
+      <a class="btn btn-default btn-sm" role="button" href="#legend" data-toggle="modal" data-target="#LegendModal">
+          <span class="glyphicon glyphicon-certificate" aria-hidden="true"></span> Legend
+      </a>
       <div class="tab-pane active" id="observations">
         <table class="table table-hover">
           <thead>
@@ -377,6 +387,7 @@
     {% include 'includes/station_edit.html' %}
   {% endif %}
   {% include 'includes/satellite.html' %}
+  {% include 'includes/legend.html' %}
 {% endblock content %}
 
 {% block javascript %}

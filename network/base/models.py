@@ -31,6 +31,7 @@ OBSERVATION_STATUSES = (
     ('data_not_verified', 'Has Data, Not Verified'),
     ('no_data', 'No Data'),
 )
+SATELLITE_STATUS = ['alive', 'dead', 're-entered']
 
 
 class Rig(models.Model):
@@ -80,11 +81,12 @@ class Station(models.Model):
                                                 'target="_blank">SatNOGS Team</a>'))
     featured_date = models.DateField(null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True)
-    active = models.BooleanField(default=False)
+    active = models.BooleanField(default=True)
     last_seen = models.DateTimeField(null=True, blank=True)
     horizon = models.PositiveIntegerField(help_text='In degrees above 0', default=10)
     uuid = models.CharField(db_index=True, max_length=100, blank=True)
     rig = models.ForeignKey(Rig, blank=True, null=True, on_delete=models.SET_NULL)
+    description = models.TextField(max_length=500, blank=True)
 
     class Meta:
         ordering = ['-active', '-last_seen']
@@ -133,6 +135,8 @@ class Satellite(models.Model):
     names = models.TextField(blank=True)
     image = models.CharField(max_length=100, blank=True, null=True)
     manual_tle = models.BooleanField(default=False)
+    status = models.CharField(choices=zip(SATELLITE_STATUS, SATELLITE_STATUS),
+                              max_length=10, default='alive')
 
     class Meta:
         ordering = ['norad_cat_id']
