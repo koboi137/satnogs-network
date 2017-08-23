@@ -1,0 +1,11 @@
+image: fedora:latest
+
+test:
+  script:
+    - dnf -y install python-pip python-devel git gcc libjpeg-turbo-devel libxml2-devel libxslt-devel mysql-devel mysql npm redhat-rpm-config
+    - pip install --no-cache-dir --require-hashes --no-deps -r requirements/dev.txt
+    - npm install -g eslint stylelint
+    - flake8 .
+    - pytest
+    - eslint 'network/static/js/*.js'
+    - stylelint 'network/static/css/*.css'
