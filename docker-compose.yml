@@ -17,9 +17,6 @@ web:
     - db
     - redis
   environment:
-    - DJANGO_SETTINGS_MODULE=network.settings.docker
-    - DEFAULT_FROM_EMAIL=noreply@example.com
-    - ALLOWED_HOSTS=*
     - DATABASE_URL=mysql://network:network@db/network
   command:
     ./docker/run-docker.sh

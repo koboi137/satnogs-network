@@ -17,7 +17,7 @@ Requirements: You will need python, python-virtualenvwrapper, pip and git
 
    Set your environmental variables::
 
-     $ cp .env-dist .env
+     $ cp env-dist .env
 
    Activate your python virtual environment::
 
@@ -25,7 +25,7 @@ Requirements: You will need python, python-virtualenvwrapper, pip and git
 
    Install local development requirements::
 
-     $ (satnogs-network)$ pip install -r requirements/dev.txt
+     $ (satnogs-network)$ pip install --require-hashes --no-deps -r requirements/dev.txt
 
 
 #. **Database**
