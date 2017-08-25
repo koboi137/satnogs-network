@@ -20,7 +20,7 @@ The main repository lives on [Gitlab](https://gitlab.com/librespacefoundation/sa
 
 [![kanban](https://img.shields.io/badge/kanban-board-lightgray.svg)](https://gitlab.com/librespacefoundation/satnogs/satnogs-network/boards/345495)
 [![build](https://gitlab.com/librespacefoundation/satnogs/satnogs-network/badges/dev/build.svg)](https://gitlab.com/librespacefoundation/satnogs/satnogs-network/commits/dev)
-[![coverage](https://gitlab.com/librespacefoundation/satnogs/satnogs-network/badges/cleanup/coverage.svg)](https://gitlab.com/librespacefoundation/satnogs/satnogs-network/commits/cleanup)
+[![coverage](https://gitlab.com/librespacefoundation/satnogs/satnogs-network/badges/dev/coverage.svg)](https://gitlab.com/librespacefoundation/satnogs/satnogs-network/commits/dev)
 
 ## License
 
