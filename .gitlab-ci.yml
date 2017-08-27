@@ -26,7 +26,7 @@ stage:
     - echo "$SSH_SERVER_HOSTKEY" > ~/.ssh/known_hosts
     - git push ssh://$SERVER_USER@$SERVER_HOST$SERVER_PATH dev
 
-stage:
+production:
   stage: deploy
   environment: production
   only:
