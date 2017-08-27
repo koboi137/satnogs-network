@@ -1,5 +1,6 @@
 import os
 from datetime import datetime, timedelta
+from PIL import Image
 from shortuuidfield import ShortUUIDField
 
 from django.conf import settings
@@ -370,6 +371,15 @@ def data_remove_files(sender, instance, **kwargs):
 class DemodData(models.Model):
     data = models.ForeignKey(Data, related_name='demoddata')
     payload_demod = models.FileField(upload_to='data_payloads', blank=True, null=True)
+
+    def is_image(self):
+        with open(self.payload_demod.path) as fp:
+            try:
+                Image.open(fp)
+            except:
+                return False
+            else:
+                return True
 
     def display_payload(self):
         with open(self.payload_demod.path) as fp:

@@ -202,10 +202,14 @@
                 <div role="tabpanel" class="tab-pane tab-data" id="tab-data-{{ data.id }}">
                   {% if data.demoddata.all %}
                     {% for demoddata in data.demoddata.all %}
-                    <span class="label label-default">{{ demoddata.payload_demod }}</span>
-                    <div class="well well-sm data-well">
-                      {{ demoddata.display_payload }}
-                    </div>
+                      <span class="label label-default">{{ demoddata.payload_demod }}</span>
+                      <div class="well well-sm data-well">
+                        {% if demoddata.is_image %}
+                          <img src="{{ demoddata.payload_demod.url }}" alt="data-{{ data.pk }}">
+                        {% else %}
+                          {{ demoddata.display_payload }}
+                        {% endif %}
+                      </div>
                     {% endfor %}
                   {% else %}
                     <div class="notice">
