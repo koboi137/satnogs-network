@@ -25,3 +25,15 @@ stage:
     - chmod -R u=rwX,o=,g= ~/.ssh/
     - echo "$SSH_SERVER_HOSTKEY" > ~/.ssh/known_hosts
     - git push ssh://$SERVER_USER@$SERVER_HOST$SERVER_PATH dev
+
+stage:
+  stage: deploy
+  environment: production
+  only:
+   - master
+  script:
+    - mkdir -p ~/.ssh
+    - echo "$SSH_PRIVATE_KEY" >> ~/.ssh/id_rsa
+    - chmod -R u=rwX,o=,g= ~/.ssh/
+    - echo "$SSH_SERVER_HOSTKEY" > ~/.ssh/known_hosts
+    - git push ssh://$SERVER_USER@$SERVER_HOST$SERVER_PATH master
