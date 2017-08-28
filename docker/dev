@@ -10,8 +10,5 @@ COPY ./requirements/ /tmp/requirements/
 RUN pip install --no-cache-dir --require-hashes --no-deps -r /tmp/requirements/dev.txt
 
 WORKDIR /app
-COPY . /app
-
 EXPOSE 80
-
-CMD ["./docker/run-docker.sh"]
+CMD ["./bin/run-docker.sh"]

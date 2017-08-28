@@ -1,7 +1,6 @@
 /* global require */
 
 var gulp = require('gulp');
-var mainBowerFiles = require('gulp-main-bower-files');
 var eslint = require('gulp-eslint');
 var stylelint = require('gulp-stylelint');
 
@@ -28,14 +27,19 @@ gulp.task('css:lint', () => {
         }));
 });
 
-gulp.task('bower', function(){
-    return gulp.src('./bower.json')
-        .pipe(mainBowerFiles())
-        .pipe(gulp.dest('./network/static/lib'));
+gulp.task('assets', function(){
+    var p = require('./package.json');
+    var assets = p.assets;
+    return gulp.src(assets, {cwd : 'node_modules/**'})
+        .pipe(gulp.dest('network/static/lib'));
+});
+
+gulp.task('test', () => {
+    gulp.start('js:lint');
+    gulp.start('css:lint');
 });
 
 gulp.task('default', function() {
-    gulp.start('bower');
-    gulp.start('js:lint');
-    gulp.start('css:lint');
+    gulp.start('assets');
+    gulp.start('test');
 });

@@ -6,7 +6,7 @@
 {% block title %} - New Observation{% endblock %}
 
 {% block css %}
-  <link href="{% static 'lib/bootstrap3-datetimepicker/build/css/bootstrap-datetimepicker.min.css' %}" rel="stylesheet">
+  <link href="{% static 'lib/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css' %}" rel="stylesheet">
 {% endblock css %}
 
 {% block content %}
@@ -162,8 +162,8 @@
 {% block javascript %}
   <script src="{% static 'lib/d3/d3.min.js' %}"></script>
   <script src="{% static 'lib/d3-timeline/src/d3-timeline.js' %}"></script>
-  <script src="{% static 'lib/moment/moment.js' %}"></script>
-  <script src="{% static 'lib/bootstrap3-datetimepicker/build/js/bootstrap-datetimepicker.min.js' %}"></script>
+  <script src="{% static 'lib/moment/min/moment.min.js' %}"></script>
+  <script src="{% static 'lib/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js' %}"></script>
   <script src="{% static 'js/utc.js' %}"></script>
   <script src="{% static 'js/observation_new.js' %}"></script>
 {% endblock javascript %}

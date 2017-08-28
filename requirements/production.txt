@@ -18,8 +18,9 @@ opbeat==3.5.2 \
     --hash=sha256:085f42cd2efd8fb4a394ab635fd35d0c270897b6a7303f5d347d7442f0d2bfbd
 
 # Cache
-redis==2.10.5 \
-    --hash=sha256:97156b37d7cda4e7d8658be1148c983984e1a975090ba458cc7e244025191dbd
+redis==2.10.6 \
+    --hash=sha256:8a1900a9f2a0a44ecf6e8b5eb3e967a9909dfed219ad66df094f27f7d6f330fb \
+    --hash=sha256:a22ca993cea2962dbb588f9f30d0015ac4afcc45bee27d3978c0dbe9e97c6c0f
 django-redis-cache==1.7.1 \
     --hash=sha256:2b4e3510bbcaf3d331975717afd6f15a36fbaf7622504599d2727dc99f90c64d
 
@@ -79,12 +80,13 @@ Pillow==4.2.1 \
     --hash=sha256:fcb44ce29eaa1ea4c98d9b8e50544b521b794be1b746d6a457a26a07dfb01ef2 \
     --hash=sha256:7ff60c2ca880715fa9b36315932d9ff5838d05ebf2ea2b06c48a09c33be94684 \
     --hash=sha256:99162bcec9d7d133da161d03b3423490418babf72be5dccd752852f409d00804
-django_compressor==2.1.1 \
-    --hash=sha256:6483f6091d614b2f3ddaa0d5061849e7bd40528f4f1fdf0d74e48df09e7c6699
+django_compressor==2.2 \
+    --hash=sha256:7732676cfb9d58498dfb522b036f75f3f253f72ea1345ac036434fdc418c2e57 \
+    --hash=sha256:9616570e5b08e92fa9eadc7a1b1b49639cce07ef392fc27c74230ab08075b30f
 
 # Users
-django-allauth==0.32.0 \
-    --hash=sha256:e593338d87a57100a6fb64760e2ab8dd67fa6af8d016b4620166c832ecdec23a
+django-allauth==0.33.0 \
+    --hash=sha256:ae64a80b49707c3d4d6aff52424f8e75fd636cebfdce0e88ffdcbf306f9f0a3d
 django-avatar==4.0.0 \
     --hash=sha256:0e31205e186e15bba41ea5d3261fc4f011fbf926cce2699f2ae90931979b9596
 django-crispy-forms==1.6.1 \
@@ -95,11 +97,11 @@ https://github.com/comzeradd/orbit/archive/0.2.1.tar.gz \
     --hash=sha256:cb7c9d54c5bfba435d7b7cfa0563be64c859ae9169f1388eb5e2124774cf9a62
 
 # API
-djangorestframework==3.6.3 \
-    --hash=sha256:bb9d55997a71fb1c844cd84c15cbe2e87d2ec8493a685f96aa3db403760626b7 \
-    --hash=sha256:6aa6aafdfb7f6152a401873ecae93aff9eb54d7a74266065347cf4de68278ae4
-Markdown==2.6.8 \
-    --hash=sha256:0ac8a81e658167da95d063a9279c9c1b2699f37c7c4153256a458b3a43860e33
+djangorestframework==3.6.4 \
+    --hash=sha256:0f9bfbac702f3376dfb2db4971ad8af4e066bfa35393b1b85e085f7e8b91189a \
+    --hash=sha256:de8ac68b3cf6dd41b98e01dcc92dc0022a5958f096eafc181a17fa975d18ca42
+Markdown==2.6.9 \
+    --hash=sha256:73af797238b95768b3a9b6fe6270e250e5c09d988b8e5b223fd5efa4e06faf81
 django-filter==1.0.4 \
     --hash=sha256:6ef1611aeacfda8f13a075a992ff65687afbd5cc8fcb0f3f1563a9ad4fe2d1b0 \
     --hash=sha256:e44620d4e707beaff7396ac8df765dc015a07467df813b9c1663fe4017934b58
@@ -133,9 +135,9 @@ rcssmin==1.0.6 \
     --hash=sha256:ca87b695d3d7864157773a61263e5abb96006e9ff0e021eff90cbe0e1ba18270
 rjsmin==1.0.12 \
     --hash=sha256:dd9591aa73500b08b7db24367f8d32c6470021f39d5ab4e50c7c02e4401386f1
-requests==2.18.3 \
-    --hash=sha256:b62be4ec5999c24d10c98d248a136e7db20ca6616a2b65060cd9399417331e8a \
-    --hash=sha256:fb68a7baef4965c12d9cd67c0f5a46e6e28be3d8c7b6910c758fbcc99880b518
+requests==2.18.4 \
+    --hash=sha256:6a1b267aa90cac58ac3a765d067950e7dbbf75b1da07e895d1f594193a40a38b \
+    --hash=sha256:9c443e7324ba5b85070c4a818ade28bfabedf16ea10206da1132edaa6dda237e
 requests_cache==0.4.13 \
     --hash=sha256:e9270030becc739b0a7f7f834234c73a878b2d794122bf76f40055a22419eb67
 requests-oauthlib==0.8.0 \
@@ -201,6 +203,9 @@ pytz==2017.2 \
 chardet==3.0.4 \
     --hash=sha256:fc323ffcaeaed0e0a02bf4d117757b98aed530d9ed4531e3e15460124c106691 \
     --hash=sha256:84ab92ed1c4d4f16916e05906b6b75a6c0fb5db821cc65e70cbd64a3e2a5eaae
-idna==2.5 \
-    --hash=sha256:cc19709fd6d0cbfed39ea875d29ba6d4e22c0cebc510a76d6302a28385e8bb70 \
-    --hash=sha256:3cb5ce08046c4e3a560fc02f138d0ac63e00f8ce5901a56b32ec8b7994082aab
+idna==2.6 \
+    --hash=sha256:8c7309c718f94b3a625cb648ace320157ad16ff131ae0af362c9f21b80ef6ec4 \
+    --hash=sha256:2c6a5de3089009e3da7c5dde64a141dbc8551d5b7f6cf4ed7c2568d0cc520a8f
+Unipath==1.1 \
+    --hash=sha256:e6257e508d8abbfb6ddd8ec357e33589f1f48b1599127f23b017124d90b0fff7 \
+    --hash=sha256:09839adcc72e8a24d4f76d63656f30b5a1f721fc40c9bcd79d8c67bdd8b47dae

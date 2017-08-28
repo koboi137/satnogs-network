@@ -1,12 +1,14 @@
 import os
 from datetime import datetime, timedelta
+from PIL import Image
 from shortuuidfield import ShortUUIDField
 
-from django.core.validators import MaxValueValidator, MinValueValidator
-from django.db import models
-from django.utils.timezone import now
 from django.conf import settings
+from django.core.validators import MaxValueValidator, MinValueValidator
+from django.dispatch import receiver
+from django.db import models
 from django.utils.html import format_html
+from django.utils.timezone import now
 
 from network.users.models import User
 from network.base.helpers import get_apikey
@@ -356,10 +358,36 @@ class Data(models.Model):
         ordering = ['-start', '-end']
 
 
+@receiver(models.signals.post_delete, sender=Data)
+def data_remove_files(sender, instance, **kwargs):
+    if instance.payload:
+        if os.path.isfile(instance.payload.path):
+            os.remove(instance.payload.path)
+    if instance.waterfall:
+        if os.path.isfile(instance.waterfall.path):
+            os.remove(instance.waterfall.path)
+
+
 class DemodData(models.Model):
     data = models.ForeignKey(Data, related_name='demoddata')
     payload_demod = models.FileField(upload_to='data_payloads', blank=True, null=True)
 
+    def is_image(self):
+        with open(self.payload_demod.path) as fp:
+            try:
+                Image.open(fp)
+            except:
+                return False
+            else:
+                return True
+
     def display_payload(self):
         with open(self.payload_demod.path) as fp:
             return fp.read()
+
+
+@receiver(models.signals.post_delete, sender=DemodData)
+def demoddata_remove_files(sender, instance, **kwargs):
+    if instance.payload_demod:
+        if os.path.isfile(instance.payload_demod.path):
+            os.remove(instance.payload_demod.path)

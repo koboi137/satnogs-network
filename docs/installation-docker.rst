@@ -15,7 +15,7 @@ Docker Installation
 
    Set your environmental variables::
 
-     $ cp .env-dist .env
+     $ cp env-dist .env
 
    Start database container::
 

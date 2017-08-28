@@ -4,24 +4,23 @@ SatNOGS Network is a web application, implementing a global scheduling and monit
 
 It features multiple observers to multiple intrumentation functionality and manages observation jobs and results.
 
-## Install and Contribute
+## Contribute
 
-See the [documentation](http://docs.satnogs.org/en/stable/network/).
+Check out the [documentation](https://docs.satnogs.org/en/stable/satnogs-network/docs/) on how to setup a local development instance.
 
-The main repository lives on [Gitlab](https://gitlab.com/librespacefoundation/satnogs/satnogs-network).
+The main repository lives on [Gitlab](https://gitlab.com/librespacefoundation/satnogs/satnogs-network) and all Merge Request should happen there.
 
 ## Join
 
+[![irc](https://img.shields.io/badge/Matrix-%23satnogs:matrix.org-blue.svg)](https://riot.im/app/#/room/#satnogs:matrix.org)
 [![irc](https://img.shields.io/badge/IRC-%23satnogs%20on%20freenode-blue.svg)](https://webchat.freenode.net/?channels=satnogs)
-[![irc](https://img.shields.io/badge/forum-discourse-blue.svg)](https://community.satnogs.org/)
+[![irc](https://img.shields.io/badge/forum-discourse-blue.svg)](https://community.libre.space/c/satnogs)
 
 ## Current Development
 
 [![kanban](https://img.shields.io/badge/kanban-board-lightgray.svg)](https://gitlab.com/librespacefoundation/satnogs/satnogs-network/boards/345495)
-[![travis](https://img.shields.io/travis/satnogs/satnogs-network/dev.svg?label=tests)](http://travis-ci.org/satnogs/satnogs-network/)
-[![coveralls](https://img.shields.io/coveralls/satnogs/satnogs-network/dev.svg)](https://coveralls.io/github/satnogs/satnogs-network)
-[![updates](https://pyup.io/repos/github/satnogs/satnogs-network/shield.svg)](https://pyup.io/repos/github/satnogs/satnogs-network/)
-[![Python 3](https://pyup.io/repos/github/satnogs/satnogs-network/python-3-shield.svg)](https://pyup.io/repos/github/satnogs/satnogs-network/)
+[![build](https://gitlab.com/librespacefoundation/satnogs/satnogs-network/badges/dev/build.svg)](https://gitlab.com/librespacefoundation/satnogs/satnogs-network/commits/dev)
+[![coverage](https://gitlab.com/librespacefoundation/satnogs/satnogs-network/badges/dev/coverage.svg)](https://gitlab.com/librespacefoundation/satnogs/satnogs-network/commits/dev)
 
 ## License
 

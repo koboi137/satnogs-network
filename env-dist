@@ -1,5 +1,5 @@
-# dev, production, etc
-DJANGO_SETTINGS_MODULE=network.settings.dev
+ENVIRONMENT=dev
+DEBUG=True
 
 # Email
 DEFAULT_FROM_EMAIL=noreply@example.com
@@ -9,6 +9,7 @@ ADMINS_FROM_EMAIL=noreply@example.com
 # Security
 SECRET_KEY=changeme
 ALLOWED_HOSTS=*
+SITE_URL=http://localhost:8000
 
 # Database
 DATABASE_URL=sqlite:///db.sqlite3

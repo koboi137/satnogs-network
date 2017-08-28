@@ -22,5 +22,5 @@ nosetests.xml
 # Media & Static
 media
 /staticfiles/*
-bower_components
 node_modules
+yarn-error.log
