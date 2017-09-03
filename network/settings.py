@@ -137,7 +137,7 @@ STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
     'compressor.finders.CompressorFinder',
 )
-MEDIA_ROOT = Path('media').resolve()
+MEDIA_ROOT = getenv('MEDIA_ROOT', Path('media').resolve())
 MEDIA_URL = '/media/'
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
 STATION_DEFAULT_IMAGE = '/static/img/dish.png'
