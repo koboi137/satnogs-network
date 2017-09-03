@@ -87,8 +87,8 @@ django_compressor==2.2 \
 # Users
 django-allauth==0.33.0 \
     --hash=sha256:ae64a80b49707c3d4d6aff52424f8e75fd636cebfdce0e88ffdcbf306f9f0a3d
-django-avatar==4.0.0 \
-    --hash=sha256:0e31205e186e15bba41ea5d3261fc4f011fbf926cce2699f2ae90931979b9596
+django-avatar==4.0.1 \
+    --hash=sha256:af9e1cc99df105fce3fa686ea53ef82d33bb3a7ea571e76c66d630517a7df3be
 django-crispy-forms==1.6.1 \
     --hash=sha256:18e904c7bd55c45201739cb343272767ff820263a1fca40a7b388006ce94910c
 
