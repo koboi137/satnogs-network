@@ -37,65 +37,65 @@
   </div>
   <div class="row">
     <div class="col-md-4">
-      <div class="gs-front-line">
+      <div class="front-line">
         <span class="label label-default">Owner</span>
-        <span class="gs-front-data">
+        <span class="front-data">
           <a href="{% url 'users:view_user' username=station.owner.username %}">
             {{ station.owner.displayname }}
           </a>
         </span>
       </div>
       {% if station.qthlocator %}
-        <div class="gs-front-line">
+        <div class="front-line">
           <span class="label label-default">QTH Locator</span>
-          <span class="gs-front-data">
+          <span class="front-data">
             {{ station.qthlocator }}
           </span>
         </div>
       {% endif %}
       {% if station.location %}
-        <div class="gs-front-line">
+        <div class="front-line">
           <span class="label label-default">Location</span>
-          <span class="gs-front-data">
+          <span class="front-data">
             {{ station.location }}
           </span>
         </div>
       {% endif %}
-      <div class="gs-front-line">
+      <div class="front-line">
         <span class="label label-default">Coordinates</span>
-        <span class="gs-front-data">
+        <span class="front-data">
           {{ station.lat|floatformat:-3 }}°, {{ station.lng|floatformat:-3 }}°
         </span>
       </div>
-      <div class="gs-front-line">
+      <div class="front-line">
         <span class="label label-default">Altitude</span>
-        <span class="gs-front-data">
+        <span class="front-data">
           {{ station.alt }} m
         </span>
       </div>
-      <div class="gs-front-line">
+      <div class="front-line">
         <span class="label label-default">Min Horizon</span>
-        <span class="gs-front-data">
+        <span class="front-data">
           {{ station.horizon }}°
         </span>
       </div>
-      <div class="gs-front-line">
+      <div class="front-line">
         <span class="label label-default">Rig</span>
-        <span class="gs-front-data">
+        <span class="front-data">
           {{ station.rig|default:"-" }}
         </span>
       </div>
-      <div class="gs-front-line">
+      <div class="front-line">
         <span class="label label-default">Creation Date</span>
-        <span class="gs-front-data"
+        <span class="front-data"
               title="{{ station.created|date:"c" }}">
           {{ station.created|timesince }} ago
         </span>
       </div>
       {% if station.success_rate %}
-        <div class="gs-front-line">
+        <div class="front-line">
           <span class="label label-default">Success Rate</span>
-          <span class="gs-front-data">
+          <span class="front-data">
             <div class="progress" title="{{ station.success_rate }}%">
               <div class="gs progress-bar progress-bar-success" data-success-rate="{{ station.success_rate }}">
                 <span class="sr-only">{{ station.success_rate }}% Complete (success)</span>
@@ -107,13 +107,13 @@
           </span>
         </div>
       {% endif %}
-      <div class="gs-front-line">
+      <div class="front-line">
         {% if station.online %}
           <span class="label label-success">Online</span>
         {% else %}
           <span class="label label-danger">Offline</span>
         {% endif %}
-        <span class="gs-front-data"
+        <span class="front-data"
               title="{{ station.last_seen|date:"c" }}">
           {% if station.last_seen %}
             Last seen {{ station.last_seen|timesince }} ago
@@ -125,7 +125,7 @@
     </div>
     <div class="col-md-4">
       {% for antenna in station.antenna.all %}
-        <div class="gs-front-line">
+        <div class="front-line">
           <span class="label label-default">{{ antenna.get_antenna_type_display }} {{ antenna.band }} Antenna</span>
         </div>
         <div class="panel panel-default">
@@ -184,52 +184,42 @@
             <th>Encoding</th>
             <th>Timeframe</th>
             <th>Observer</th>
-            <th>Stations</th>
           </thead>
           <tbody>
-            {% regroup station.data_set.all by observation as observations %}
-            {% for observation in observations|slice:":30" %}
+            {% for observation in station.observations.all|slice:":30" %}
               <tr>
                 <td>
-                  <a href="{% url 'base:observation_view' id=observation.grouper.id %}">
-                    {% if observation.grouper.has_verified_data %}
+                  <a href="{% url 'base:observation_view' id=observation.id %}">
+                    {% if observation.is_verified %}
                       <span class="label label-success" title="There is known good data in this observation"
-                    {% elif observation.grouper.is_future %}
+                    {% elif observation.is_future %}
                       <span class="label label-info" title="This observation is in the future"
-                    {% elif observation.grouper.has_unvetted_data %}
+                    {% elif not observation.is_vetted %}
                       <span class="label label-warning" title="There is data that needs vetting in this observation"
                     {% else %}
                       <span class="label label-danger" title="No good data in this observation"
                     {% endif %}>
-                    {{ observation.grouper.id }}
+                    {{ observation.id }}
                     </span>
                   </a>
                 </td>
                 <td>
-                  <a href="#" data-toggle="modal" data-target="#SatelliteModal" data-id="{{ observation.grouper.satellite.norad_cat_id }}">
-                    {{ observation.grouper.satellite.name }}
+                  <a href="#" data-toggle="modal" data-target="#SatelliteModal" data-id="{{ observation.satellite.norad_cat_id }}">
+                    {{ observation.satellite.name }}
                   </a>
                 </td>
-                <td>{{ observation.grouper.transmitter.downlink_low|frq }}</td>
-                <td>{{ observation.grouper.transmitter.mode|default:"-" }}</td>
+                <td>{{ observation.transmitter.downlink_low|frq }}</td>
+                <td>{{ observation.transmitter.mode|default:"-" }}</td>
                 <td>
-                  <span class="datetime-date">{{ observation.grouper.start|date:"Y-m-d" }}</span>
-                  <span class="datetime-time">{{ observation.grouper.start|date:"H:i:s" }}</span><br>
-                  <span class="datetime-date">{{ observation.grouper.end|date:"Y-m-d" }}</span>
-                  <span class="datetime-time">{{ observation.grouper.end|date:"H:i:s" }}</span>
+                  <span class="datetime-date">{{ observation.start|date:"Y-m-d" }}</span>
+                  <span class="datetime-time">{{ observation.start|date:"H:i:s" }}</span><br>
+                  <span class="datetime-date">{{ observation.end|date:"Y-m-d" }}</span>
+                  <span class="datetime-time">{{ observation.end|date:"H:i:s" }}</span>
                 </td>
                 <td>
-                  <a href="{% url 'users:view_user' username=observation.grouper.author.username %}">
-                    {{ observation.grouper.author.displayname }}
+                  <a href="{% url 'users:view_user' username=observation.author.username %}">
+                    {{ observation.author.displayname }}
                   </a>
-                </td>
-                <td>
-                  {% regroup observation.grouper.data_set.all by ground_station as station_list %}
-                  {% for station in station_list %}
-                    <a href="{% url 'base:station_view' id=station.grouper.id %}">
-                      <span class="label label-primary" title="{{ station.grouper.name }}" data-toggle="tooltip">{{ station.grouper.id }}</span>
-                    </a>
-                  {% endfor %}
                 </td>
               </tr>
             {% endfor %}
@@ -303,10 +293,10 @@
               </td>
               <td>
                 {% if nextpass.valid and station.online and station.active %}
-                <a href="{% url 'base:observation_new' %}?norad={{ nextpass.norad_cat_id }}&ground_station={{ station.id }}&start_date={{ nextpass.tr|date:"Y/m/d H:i" }}&end_date={{ nextpass.ts|date:"Y/m/d H:i" }}"
-                class="btn btn-default">schedule</a>
+                  <a href="{% url 'base:observation_new' %}?norad={{ nextpass.norad_cat_id }}&ground_station={{ station.id }}&start_date={{ nextpass.tr|date:"Y/m/d H:i" }}&end_date={{ nextpass.ts|date:"Y/m/d H:i" }}"
+                     class="btn btn-default">schedule</a>
                 {% else %}
-                <a href="#" class="btn btn-default" disabled>schedule</a>
+                  <a class="btn btn-default" disabled>schedule</a>
                 {% endif %}
               </td>
             </tr>
@@ -396,4 +386,5 @@
   <script src="{% static 'js/station_view.js' %}"></script>
   <script src="{% static 'js/gridsquare.js' %}"></script>
   <script src="{% static 'js/satellite.js' %}"></script>
+  <script src="{% static 'js/polar.js' %}"></script>
 {% endblock javascript %}
