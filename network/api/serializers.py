@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from network.base.models import Data, Station, DemodData
+from network.base.models import Observation, Station, DemodData
 
 
 class DemodDataSerializer(serializers.ModelSerializer):
@@ -9,7 +9,7 @@ class DemodDataSerializer(serializers.ModelSerializer):
         fields = ('payload_demod', )
 
 
-class DataSerializer(serializers.ModelSerializer):
+class ObservationSerializer(serializers.ModelSerializer):
     transmitter = serializers.SerializerMethodField()
     norad_cat_id = serializers.SerializerMethodField()
     station_name = serializers.SerializerMethodField()
@@ -18,8 +18,8 @@ class DataSerializer(serializers.ModelSerializer):
     demoddata = DemodDataSerializer(many=True)
 
     class Meta:
-        model = Data
-        fields = ('id', 'start', 'end', 'observation', 'ground_station', 'transmitter',
+        model = Observation
+        fields = ('id', 'start', 'end', 'ground_station', 'transmitter',
                   'norad_cat_id', 'payload', 'waterfall', 'demoddata', 'station_name',
                   'station_lat', 'station_lng')
         read_only_fields = ['id', 'start', 'end', 'observation', 'ground_station',
@@ -28,17 +28,17 @@ class DataSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         validated_data.pop('demoddata')
-        super(DataSerializer, self).update(instance, validated_data)
+        super(ObservationSerializer, self).update(instance, validated_data)
         return instance
 
     def get_transmitter(self, obj):
         try:
-            return obj.observation.transmitter.uuid
+            return obj.transmitter.uuid
         except AttributeError:
             return ''
 
     def get_norad_cat_id(self, obj):
-        return obj.observation.satellite.norad_cat_id
+        return obj.satellite.norad_cat_id
 
     def get_station_name(self, obj):
         return obj.ground_station.name
@@ -59,28 +59,28 @@ class JobSerializer(serializers.ModelSerializer):
     transmitter = serializers.SerializerMethodField()
 
     class Meta:
-        model = Data
+        model = Observation
         fields = ('id', 'start', 'end', 'ground_station', 'tle0', 'tle1', 'tle2',
                   'frequency', 'mode', 'transmitter')
 
     def get_frequency(self, obj):
-        return obj.observation.transmitter.downlink_low
+        return obj.transmitter.downlink_low
 
     def get_transmitter(self, obj):
-        return obj.observation.transmitter.uuid
+        return obj.transmitter.uuid
 
     def get_tle0(self, obj):
-        return obj.observation.tle.tle0
+        return obj.tle.tle0
 
     def get_tle1(self, obj):
-        return obj.observation.tle.tle1
+        return obj.tle.tle1
 
     def get_tle2(self, obj):
-        return obj.observation.tle.tle2
+        return obj.tle.tle2
 
     def get_mode(self, obj):
         try:
-            return obj.observation.transmitter.mode.name
+            return obj.transmitter.mode.name
         except:
             return ''
 

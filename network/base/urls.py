@@ -11,7 +11,8 @@ base_urlpatterns = ([
 
     # Observations
     url(r'^observations/$', views.ObservationListView.as_view(), name='observations_list'),
-    url(r'^observations/(?P<id>[0-9]+)/$', views.observation_view, name='observation_view'),
+    url(r'^observations/(?P<id>[0-9]+)/$', views.observation_view,
+        name='observation_view'),
     url(r'^observations/(?P<id>[0-9]+)/delete/$', views.observation_delete,
         name='observation_delete'),
     url(r'^observations/new/$', views.observation_new, name='observation_new'),
@@ -21,10 +22,10 @@ base_urlpatterns = ([
     url(r'^prediction_windows/(?P<sat_id>[\w.@+-]+)/(?P<transmitter>[\w.@+-]+)/'
         '(?P<start_date>.+)/(?P<end_date>.+)/$',
         views.prediction_windows, name='prediction_windows'),
-    url(r'^data_verify/(?P<id>[0-9]+)/$', views.data_verify, name='data_verify'),
-    url(r'^data_mark_bad/(?P<id>[0-9]+)/$', views.data_mark_bad, name='data_mark_bad'),
-    url(r'^observations/data/(?P<id>[0-9]+)/$', views.observation_data_view,
-        name='observation_data_view'),
+    url(r'^observation_verify/(?P<id>[0-9]+)/$', views.observation_verify,
+        name='observation_verify'),
+    url(r'^observation_mark_bad/(?P<id>[0-9]+)/$', views.observation_mark_bad,
+        name='observation_mark_bad'),
 
     # Stations
     url(r'^stations/$', views.stations_list, name='stations_list'),

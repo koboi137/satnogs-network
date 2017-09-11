@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from network.base.models import (Antenna, Satellite, Station, Transmitter,
-                                 Observation, Data, Mode, Tle, Rig, DemodData)
+                                 Observation, Mode, Tle, Rig, DemodData)
 
 
 @admin.register(Rig)
@@ -71,18 +71,3 @@ class ObservationAdmin(admin.ModelAdmin):
 
 class DataDemodInline(admin.TabularInline):
     model = DemodData
-
-
-@admin.register(Data)
-class DataAdmin(admin.ModelAdmin):
-    list_display = ('id', 'start_date', 'end_date', 'observation', 'ground_station')
-    readonly_fields = ('observation', 'ground_station')
-    inlines = [
-        DataDemodInline,
-    ]
-
-    def start_date(self, obj):
-        return obj.start.strftime('%d.%m.%Y, %H:%M')
-
-    def end_date(self, obj):
-        return obj.end.strftime('%d.%m.%Y, %H:%M')

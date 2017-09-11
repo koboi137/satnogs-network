@@ -110,18 +110,18 @@
               <th>Frequency</th>
               <th>Encoding</th>
               <th>Timeframe</th>
-              <th>Stations</th>
+              <th>Station</th>
             </thead>
             <tbody>
               {% for observation in latest_observations.all %}
                 <tr>
                   <td>
                     <a href="{% url 'base:observation_view' id=observation.id %}">
-                      {% if observation.has_verified_data %}
+                      {% if observation.is_verified %}
                         <span class="label label-success" title="There is known good data in this observation"
                       {% elif observation.is_future %}
                         <span class="label label-info" title="This observation is in the future"
-                      {% elif observation.has_unvetted_data %}
+                      {% elif not observation.is_vetted %}
                         <span class="label label-warning" title="There is data that needs vetting in this observation"
                       {% else %}
                         <span class="label label-danger" title="No good data in this observation"
@@ -144,12 +144,9 @@
                     <span class="datetime-time">{{ observation.end|date:"H:i:s" }}</span>
                   </td>
                   <td>
-                    {% regroup observation.data_set.all by ground_station as station_list %}
-                    {% for station in station_list %}
-                      <a href="{% url 'base:station_view' id=station.grouper.id %}">
-                        <span class="label label-primary" title="{{ station.grouper.name }}" data-toggle="tooltip">{{ station.grouper.id }}</span>
-                      </a>
-                    {% endfor %}
+                    <a href="{% url 'base:station_view' id=observation.ground_station.id %}">
+                      {{ observation.ground_station.name }}
+                    </a>
                   </td>
                 </tr>
               {% endfor %}
@@ -190,12 +187,9 @@
                     <span class="datetime-time">{{ observation.end|date:"H:i:s" }}</span>
                   </td>
                   <td>
-                    {% regroup observation.data_set.all by ground_station as station_list %}
-                    {% for station in station_list %}
-                      <a href="{% url 'base:station_view' id=station.grouper.id %}">
-                        <span class="label label-primary" title="{{ station.grouper.name }}" data-toggle="tooltip">{{ station.grouper.id }}</span>
-                      </a>
-                    {% endfor %}
+                    <a href="{% url 'base:station_view' id=observation.ground_station.id %}">
+                      <span class="label label-primary">{{ observation.ground_station.name }}</span>
+                    </a>
                   </td>
                 </tr>
               {% endfor %}

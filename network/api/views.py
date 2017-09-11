@@ -7,13 +7,13 @@ from rest_framework.response import Response
 
 from network.api.perms import StationOwnerCanEditPermission
 from network.api import serializers, filters
-from network.base.models import Data, Station
+from network.base.models import Observation, Station
 
 
-class DataView(viewsets.ModelViewSet, mixins.UpdateModelMixin):
-    queryset = Data.objects.all()
-    serializer_class = serializers.DataSerializer
-    filter_class = filters.DataViewFilter
+class ObservationView(viewsets.ModelViewSet, mixins.UpdateModelMixin):
+    queryset = Observation.objects.all()
+    serializer_class = serializers.ObservationSerializer
+    filter_class = filters.ObservationViewFilter
     permission_classes = [
         StationOwnerCanEditPermission
     ]
@@ -23,14 +23,14 @@ class DataView(viewsets.ModelViewSet, mixins.UpdateModelMixin):
             instance = self.get_object()
             instance.demoddata.create(payload_demod=request.data.get('demoddata'))
 
-        super(DataView, self).update(request, *args, **kwargs)
+        super(ObservationView, self).update(request, *args, **kwargs)
         return Response(status=status.HTTP_200_OK)
 
 
 class JobView(viewsets.ReadOnlyModelViewSet):
-    queryset = Data.objects.filter(payload='')
+    queryset = Observation.objects.filter(payload='')
     serializer_class = serializers.JobSerializer
-    filter_class = filters.DataViewFilter
+    filter_class = filters.ObservationViewFilter
     filter_fields = ('ground_station')
 
     def get_queryset(self):
