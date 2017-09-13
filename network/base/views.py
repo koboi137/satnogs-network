@@ -5,7 +5,6 @@ from operator import itemgetter
 from datetime import datetime, timedelta
 from StringIO import StringIO
 
-from django.db.models import Count, Case, When, F
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -21,7 +20,7 @@ from django.views.generic import ListView
 from rest_framework import serializers, viewsets
 
 from network.base.models import (Station, Transmitter, Observation,
-                                 Data, Satellite, Antenna, Tle, Rig)
+                                 Satellite, Antenna, Tle, Rig)
 from network.base.forms import StationForm, SatelliteFilterForm
 from network.base.decorators import admin_required
 from network.base.helpers import calculate_polar_data, resolve_overlaps
@@ -148,40 +147,18 @@ class ObservationListView(ListView):
             unvetted = True
 
         if norad_cat_id == '':
-            observations = Observation.objects.all().order_by('-id')
+            observations = Observation.objects.all()
         else:
             observations = Observation.objects.filter(
-                satellite__norad_cat_id=norad_cat_id).order_by('-id')
+                satellite__norad_cat_id=norad_cat_id)
 
-        # Add the data subqueries as annotations
-        observations = observations.annotate(
-            data_count=Count('data', distinct=True),
-            nodata_count=Count(
-                Case(
-                    When(data__vetted_status='no_data', then=1)
-                ), distinct=True
-            ),
-            unknown_count=Count(
-                Case(
-                    When(data__vetted_status='unknown', then=1)
-                ), distinct=True
-            ),
-            vetted_count=Count(
-                Case(
-                    When(data__vetted_status='verified', then=1)
-                ), distinct=True
-            )
-        )
-
-        # Start with an empty queryset and add each filter as an or/union
-        resultset = Observation.objects.none()
-        if bad:
-            resultset |= observations.filter(nodata_count=F('data_count'))
-        if good:
-            resultset |= observations.filter(vetted_count__gt=0)
-        if unvetted:
-            resultset |= observations.filter(unknown_count__gt=0)
-        return resultset
+        if not bad:
+            observations = observations.exclude(vetted_status='no_data')
+        if not good:
+            observations = observations.exclude(vetted_status='verified')
+        if not unvetted:
+            observations = observations.exclude(vetted_status='unknown')
+        return observations
 
     def get_context_data(self, **kwargs):
         """
@@ -221,9 +198,6 @@ def observation_new(request):
         sat = Satellite.objects.get(norad_cat_id=sat_id)
         trans = Transmitter.objects.get(id=trans_id)
         tle = Tle.objects.get(id=sat.latest_tle.id)
-        obs = Observation(satellite=sat, transmitter=trans, tle=tle,
-                          author=me, start=start, end=end)
-        obs.save()
 
         sat_ephem = ephem.readtle(str(sat.latest_tle.tle0),
                                   str(sat.latest_tle.tle1),
@@ -247,15 +221,18 @@ def observation_new(request):
             observer.elevation = ground_station.alt
             tr, azr, tt, altt, ts, azs = observer.next_pass(sat_ephem)
 
-            Data.objects.create(start=make_aware(start, utc), end=make_aware(end, utc),
-                                ground_station=ground_station, observation=obs,
-                                rise_azimuth=format(math.degrees(azr), '.0f'),
-                                max_altitude=format(math.degrees(altt), '.0f'),
-                                set_azimuth=format(math.degrees(azs), '.0f'))
+            Observation.objects.create(satellite=sat, transmitter=trans, tle=tle, author=me,
+                                       start=make_aware(start, utc), end=make_aware(end, utc),
+                                       ground_station=ground_station,
+                                       rise_azimuth=format(math.degrees(azr), '.0f'),
+                                       max_altitude=format(math.degrees(altt), '.0f'),
+                                       set_azimuth=format(math.degrees(azs), '.0f'))
             time_start_new = ephem.Date(ts).datetime() + timedelta(minutes=1)
             observer.date = time_start_new.strftime("%Y-%m-%d %H:%M:%S.%f")
 
-        return redirect(reverse('base:observation_view', kwargs={'id': obs.id}))
+        messages.success(request, 'Your selected Observations were scheduled successfully.')
+
+        return redirect(reverse('base:observations_list'))
 
     satellites = Satellite.objects.filter(transmitters__alive=True) \
         .filter(status='alive').distinct()
@@ -377,7 +354,7 @@ def prediction_windows(request, sat_id, transmitter, start_date, end_date,
                     window_end = make_aware(ephem.Date(ts).datetime(), utc)
 
                     # Check if overlaps with existing scheduled observations
-                    gs_data = Data.objects.filter(ground_station=station)
+                    gs_data = Observation.objects.filter(ground_station=station)
                     window = resolve_overlaps(station, gs_data, window_start, window_end)
 
                     if window:
@@ -424,15 +401,13 @@ def prediction_windows(request, sat_id, transmitter, start_date, end_date,
 def observation_view(request, id):
     """View for single observation page."""
     observation = get_object_or_404(Observation, id=id)
-    dataset = Data.objects.filter(observation=observation)
 
     # not all users will be able to vet data within an observation, allow
     # staff, observation requestors, and station owners
     is_vetting_user = False
     if request.user.is_authenticated():
         if request.user == observation.author or \
-            dataset.filter(
-                ground_station__in=Station.objects.filter(owner=request.user)).count or \
+            Station.objects.filter(owner=request.user).filter(id=observation.id).count() or \
                 request.user.is_staff:
                     is_vetting_user = True
 
@@ -444,8 +419,8 @@ def observation_view(request, id):
             observation.is_deletable_after_end:
         is_deletable = True
 
-    if settings.ENVIRONMENT == 'production':
-        discuss_slug = 'https://community.satnogs.org/t/observation-{0}-{1}-{2}' \
+    if settings.ENVIRONMENT == 'dev':
+        discuss_slug = 'https://community.libre.space/t/observation-{0}-{1}-{2}' \
             .format(observation.id, slugify(observation.satellite.name),
                     observation.satellite.norad_cat_id)
         discuss_url = ('https://community.libre.space/new-topic?title=Observation {0}: {1}'
@@ -462,14 +437,13 @@ def observation_view(request, id):
             has_comments = False
 
         return render(request, 'base/observation_view.html',
-                      {'observation': observation, 'dataset': dataset,
-                       'has_comments': has_comments, 'discuss_url': discuss_url,
-                       'discuss_slug': discuss_slug, 'is_vetting_user': is_vetting_user,
-                       'is_deletable': is_deletable})
+                      {'observation': observation, 'has_comments': has_comments,
+                       'discuss_url': discuss_url, 'discuss_slug': discuss_slug,
+                       'is_vetting_user': is_vetting_user, 'is_deletable': is_deletable})
 
     return render(request, 'base/observation_view.html',
-                  {'observation': observation, 'dataset': dataset,
-                   'is_vetting_user': is_vetting_user, 'is_deletable': is_deletable})
+                  {'observation': observation, 'is_vetting_user': is_vetting_user,
+                   'is_deletable': is_deletable})
 
 
 @login_required
@@ -489,25 +463,25 @@ def observation_delete(request, id):
 
 
 @login_required
-def data_verify(request, id):
+def observation_verify(request, id):
     me = request.user
-    data = get_object_or_404(Data, id=id)
-    data.vetted_status = 'verified'
-    data.vetted_user = me
-    data.vetted_datetime = datetime.today()
-    data.save(update_fields=['vetted_status', 'vetted_user', 'vetted_datetime'])
-    return redirect(reverse('base:observation_view', kwargs={'id': data.observation}))
+    observation = get_object_or_404(Observation, id=id)
+    observation.vetted_status = 'verified'
+    observation.vetted_user = me
+    observation.vetted_datetime = datetime.today()
+    observation.save(update_fields=['vetted_status', 'vetted_user', 'vetted_datetime'])
+    return redirect(reverse('base:observation_view', kwargs={'id': observation.id}))
 
 
 @login_required
-def data_mark_bad(request, id):
+def observation_mark_bad(request, id):
     me = request.user
-    data = get_object_or_404(Data, id=id)
-    data.vetted_status = 'no_data'
-    data.vetted_user = me
-    data.vetted_datetime = datetime.today()
-    data.save(update_fields=['vetted_status', 'vetted_user', 'vetted_datetime'])
-    return redirect(reverse('base:observation_view', kwargs={'id': data.observation}))
+    observation = get_object_or_404(Observation, id=id)
+    observation.vetted_status = 'no_data'
+    observation.vetted_user = me
+    observation.vetted_datetime = datetime.today()
+    observation.save(update_fields=['vetted_status', 'vetted_user', 'vetted_datetime'])
+    return redirect(reverse('base:observation_view', kwargs={'id': observation.id}))
 
 
 def stations_list(request):
@@ -698,9 +672,3 @@ def satellite_view(request, id):
     }
 
     return JsonResponse(data, safe=False)
-
-
-def observation_data_view(request, id):
-    observation = get_object_or_404(Observation, data__id=id)
-    return redirect(reverse('base:observation_view',
-                    kwargs={'id': observation.id}) + '#{0}'.format(id))

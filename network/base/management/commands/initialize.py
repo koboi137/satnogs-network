@@ -2,8 +2,8 @@ from django.core.management.base import BaseCommand
 from django.core.management import call_command
 
 from network.base.models import Antenna
-from network.base.tests import (generate_payload, generate_payload_name, DemodDataFactory,
-                                DataFactory, StationFactory)
+from network.base.tests import (generate_payload, generate_payload_name,
+                                DemodDataFactory, StationFactory, ObservationFactory)
 
 
 class Command(BaseCommand):
@@ -22,7 +22,7 @@ class Command(BaseCommand):
         self.stdout.write("Creating fixtures...")
         StationFactory.create_batch(10,
                                     antennas=(Antenna.objects.all().values_list('id', flat=True)))
-        DataFactory.create_batch(20)
+        ObservationFactory.create_batch(20)
         for _ in range(40):
             DemodDataFactory.create(payload_demod__data=generate_payload(),
                                     payload_demod__filename=generate_payload_name())

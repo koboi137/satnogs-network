@@ -259,6 +259,13 @@ CSP_STYLE_SRC = (
 # Database
 DATABASE_URL = getenv('DATABASE_URL', 'sqlite:///db.sqlite3')
 DATABASES = {'default': db_url(DATABASE_URL)}
+DATABASES_EXTRAS = {
+    'OPTIONS': {
+        'init_command': 'SET sql_mode="STRICT_TRANS_TABLES"'
+    },
+}
+if DATABASES['default']['ENGINE'].split('.')[-1] == 'mysql':
+    DATABASES['default'].update(DATABASES_EXTRAS)
 
 # Mapbox API
 MAPBOX_GEOCODE_URL = 'https://api.tiles.mapbox.com/v4/geocode/mapbox.places/'
