@@ -230,7 +230,7 @@ def observation_new(request):
             time_start_new = ephem.Date(ts).datetime() + timedelta(minutes=1)
             observer.date = time_start_new.strftime("%Y-%m-%d %H:%M:%S.%f")
 
-        messages.success(request, 'Your selected Observations were scheduled successfully.')
+        messages.success(request, 'Observation(s) were scheduled successfully.')
 
         return redirect(reverse('base:observations_list'))
 

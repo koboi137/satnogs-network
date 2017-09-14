@@ -29,17 +29,19 @@
             Discuss
           </a>
         {% endif %}
-        {% if not observation.is_vetted and is_vetting_user %}
-          <a href="{% url 'base:observation_verify' id=observation.id %}">
-            <button id="verify-data" type="button" class="btn btn-default">
-              <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span> Verify
-            </button>
-          </a>
-          <a href="{% url 'base:observation_mark_bad' id=observation.id %}">
-            <button id="bad-data" type="button" class="btn btn-default">
-              <span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span> Bad
-            </button>
-          </a>
+        {% if observation.is_past %}
+          {% if not observation.is_vetted and is_vetting_user %}
+            <a href="{% url 'base:observation_verify' id=observation.id %}">
+              <button id="verify-data" type="button" class="btn btn-default">
+                <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span> Good
+              </button>
+            </a>
+            <a href="{% url 'base:observation_mark_bad' id=observation.id %}">
+              <button id="bad-data" type="button" class="btn btn-default">
+                <span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span> Bad
+              </button>
+            </a>
+          {% endif %}
         {% endif %}
         {% if is_deletable %}
           <a href="{% url 'base:observation_delete' id=observation.id %}" id="obs-delete" class="btn btn-danger">
