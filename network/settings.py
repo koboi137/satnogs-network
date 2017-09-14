@@ -161,6 +161,9 @@ AUTH_USER_MODEL = 'users.User'
 LOGIN_REDIRECT_URL = 'users:redirect_user'
 LOGIN_URL = 'account_login'
 AUTOSLUG_SLUGIFY_FUNCTION = 'slugify.slugify'
+if ENVIRONMENT == 'production':
+    # Disable registration
+    ACCOUNT_ADAPTER = 'network.users.adapter.NoSignupsAdapter'
 
 # Logging
 LOGGING = {
