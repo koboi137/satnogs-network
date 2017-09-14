@@ -4,7 +4,7 @@ import pytest
 from django.test import TestCase
 
 from network.base.tests import (
-    DataFactory,
+    ObservationFactory,
     SatelliteFactory,
     TransmitterFactory,
     StationFactory
@@ -16,7 +16,7 @@ class JobViewApiTest(TestCase):
     """
     Tests the Job View API
     """
-    data = None
+    observation = None
     satellites = []
     transmitters = []
     stations = []
@@ -28,7 +28,7 @@ class JobViewApiTest(TestCase):
             self.transmitters.append(TransmitterFactory())
         for x in xrange(1, 10):
             self.stations.append(StationFactory())
-        self.data = DataFactory()
+        self.observation = ObservationFactory()
 
     def test_job_view_api(self):
         response = self.client.get('/api/jobs/')

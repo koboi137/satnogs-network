@@ -111,6 +111,7 @@
             <th>Frequency</th>
             <th>Encoding</th>
             <th>Timeframe</th>
+            <th>Station</th>
           </thead>
           <tbody>
             {% for observation in observations.all %}
@@ -118,14 +119,14 @@
                 <td>
                   <a href="{% url 'base:observation_view' id=observation.id %}">
                     <span class="label
-                               {% if observation.has_verified_data %}
-                                label-success" title="There is known good data in this observation"
+                               {% if observation.is_verified %}
+                                 label-success" title="There is known good data in this observation"
                                {% elif observation.is_future %}
-                                label-info" title="This observation is in the future"
-                               {% elif observation.has_unvetted_data %}
-                                label-warning" title="There is data that needs vetting in this observation"
+                                 label-info" title="This observation is in the future"
+                               {% elif not observation.is_vetted %}
+                                 label-warning" title="There is data that needs vetting in this observation"
                                {% else %}
-                                label-danger" title="No good data in this observation"
+                                 label-danger" title="No good data in this observation"
                                {% endif %}>
                       {{ observation.id }}
                     </span>
@@ -143,6 +144,11 @@
                   <span class="datetime-time">{{ observation.start|date:"H:i:s" }}</span><br>
                   <span class="datetime-date">{{ observation.end|date:"Y-m-d" }}</span>
                   <span class="datetime-time">{{ observation.end|date:"H:i:s" }}</span>
+                </td>
+                <td>
+                  <a href="{% url 'base:station_view' id=observation.ground_station.id %}">
+                    {{ observation.ground_station.name }}
+                  </a>
                 </td>
               </tr>
             {% endfor %}

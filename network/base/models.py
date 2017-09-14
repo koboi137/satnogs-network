@@ -7,6 +7,7 @@ from django.conf import settings
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.dispatch import receiver
 from django.db import models
+from django.urls import reverse
 from django.utils.html import format_html
 from django.utils.timezone import now
 
@@ -37,6 +38,7 @@ SATELLITE_STATUS = ['alive', 'dead', 're-entered']
 
 
 class Rig(models.Model):
+    """Model for Rig types."""
     name = models.CharField(choices=zip(RIG_TYPES, RIG_TYPES), max_length=10)
     rictld_number = models.PositiveIntegerField(blank=True, null=True)
 
@@ -67,7 +69,8 @@ class Antenna(models.Model):
 
 class Station(models.Model):
     """Model for SatNOGS ground stations."""
-    owner = models.ForeignKey(User)
+    owner = models.ForeignKey(User, related_name="ground_stations",
+                              on_delete=models.SET_NULL, null=True, blank=True)
     name = models.CharField(max_length=45)
     image = models.ImageField(upload_to='ground_stations', blank=True)
     alt = models.PositiveIntegerField(help_text='In meters above ground')
@@ -87,7 +90,8 @@ class Station(models.Model):
     last_seen = models.DateTimeField(null=True, blank=True)
     horizon = models.PositiveIntegerField(help_text='In degrees above 0', default=10)
     uuid = models.CharField(db_index=True, max_length=100, blank=True)
-    rig = models.ForeignKey(Rig, blank=True, null=True, on_delete=models.SET_NULL)
+    rig = models.ForeignKey(Rig, related_name='ground_stations',
+                            on_delete=models.SET_NULL, null=True, blank=True)
     description = models.TextField(max_length=500, blank=True)
 
     class Meta:
@@ -115,8 +119,8 @@ class Station(models.Model):
 
     @property
     def success_rate(self):
-        observations = self.data_set.all().count()
-        success = self.data_set.exclude(payload='').count()
+        observations = self.observations.all().count()
+        success = self.observations.exclude(payload='').count()
         if observations:
             return int(100 * (float(success) / float(observations)))
         else:
@@ -178,21 +182,21 @@ class Satellite(models.Model):
 
     @property
     def data_count(self):
-        return Data.objects.filter(observation__satellite=self).count()
+        return Observation.objects.filter(satellite=self).count()
 
     @property
     def verified_count(self):
-        data = Data.objects.filter(observation__satellite=self)
+        data = Observation.objects.filter(satellite=self)
         return data.filter(vetted_status='verified').count()
 
     @property
     def empty_count(self):
-        data = Data.objects.filter(observation__satellite=self)
+        data = Observation.objects.filter(satellite=self)
         return data.filter(vetted_status='no_data').count()
 
     @property
     def unknown_count(self):
-        data = Data.objects.filter(observation__satellite=self)
+        data = Observation.objects.filter(satellite=self)
         return data.filter(vetted_status='unknown').count()
 
     @property
@@ -225,7 +229,8 @@ class Tle(models.Model):
     tle1 = models.CharField(max_length=200, blank=True)
     tle2 = models.CharField(max_length=200, blank=True)
     updated = models.DateTimeField(auto_now=True, blank=True)
-    satellite = models.ForeignKey(Satellite, related_name='tles', null=True)
+    satellite = models.ForeignKey(Satellite, related_name='tles',
+                                  on_delete=models.CASCADE, null=True, blank=True)
 
     class Meta:
         ordering = ['tle0']
@@ -247,7 +252,8 @@ class Transmitter(models.Model):
                              null=True, on_delete=models.SET_NULL)
     invert = models.BooleanField(default=False)
     baud = models.FloatField(validators=[MinValueValidator(0)], null=True, blank=True)
-    satellite = models.ForeignKey(Satellite, related_name='transmitters', null=True)
+    satellite = models.ForeignKey(Satellite, related_name='transmitters',
+                                  on_delete=models.CASCADE, null=True, blank=True)
 
     def __unicode__(self):
         return self.description
@@ -255,15 +261,28 @@ class Transmitter(models.Model):
 
 class Observation(models.Model):
     """Model for SatNOGS observations."""
-    satellite = models.ForeignKey(Satellite)
-    transmitter = models.ForeignKey(Transmitter, null=True, related_name='observations')
-    tle = models.ForeignKey(Tle, null=True)
-    author = models.ForeignKey(User)
+    satellite = models.ForeignKey(Satellite, related_name='observations',
+                                  on_delete=models.SET_NULL, null=True, blank=True)
+    transmitter = models.ForeignKey(Transmitter, related_name='observations',
+                                    on_delete=models.SET_NULL, null=True, blank=True)
+    tle = models.ForeignKey(Tle, related_name='observations',
+                            on_delete=models.SET_NULL, null=True, blank=True)
+    author = models.ForeignKey(User, related_name='observations',
+                               on_delete=models.SET_NULL, null=True, blank=True)
     start = models.DateTimeField()
     end = models.DateTimeField()
-
-    class Meta:
-        ordering = ['-start', '-end']
+    ground_station = models.ForeignKey(Station, related_name='observations',
+                                       on_delete=models.SET_NULL, null=True, blank=True)
+    payload = models.FileField(upload_to='data_payloads', blank=True, null=True)
+    waterfall = models.ImageField(upload_to='data_waterfalls', blank=True, null=True)
+    vetted_datetime = models.DateTimeField(null=True, blank=True)
+    vetted_user = models.ForeignKey(User, related_name='observations_vetted',
+                                    on_delete=models.SET_NULL, null=True, blank=True)
+    vetted_status = models.CharField(choices=OBSERVATION_STATUSES,
+                                     max_length=20, default='unknown')
+    rise_azimuth = models.FloatField(blank=True, null=True)
+    max_altitude = models.FloatField(blank=True, null=True)
+    set_azimuth = models.FloatField(blank=True, null=True)
 
     @property
     def is_past(self):
@@ -282,51 +301,6 @@ class Observation(models.Model):
     def is_deletable_after_end(self):
         deletion = self.end + timedelta(minutes=int(settings.OBSERVATION_MIN_DELETION_RANGE))
         return deletion < now()
-
-    # observation has at least 1 payload submitted, no verification taken into account
-    @property
-    def has_submitted_data(self):
-        return self.data_set.exclude(payload='').count()
-
-    # observaton has at least 1 payload that has been verified good
-    @property
-    def has_verified_data(self):
-        return self.data_set.filter(vetted_status='verified').count()
-
-    # observation is vetted to be all bad data
-    @property
-    def has_no_data(self):
-        return self.data_set.filter(
-            vetted_status='no_data').count() == self.data_set.count()
-
-    # observation has at least 1 payload left unvetted
-    @property
-    def has_unvetted_data(self):
-        return self.data_set.filter(vetted_status='unknown').count()
-
-    def __unicode__(self):
-        return '{0}'.format(self.id)
-
-
-class Data(models.Model):
-    """Model for observation data."""
-    start = models.DateTimeField()
-    end = models.DateTimeField()
-    observation = models.ForeignKey(Observation)
-    ground_station = models.ForeignKey(Station)
-    payload = models.FileField(upload_to='data_payloads', blank=True, null=True)
-    waterfall = models.ImageField(upload_to='data_waterfalls', blank=True, null=True)
-    vetted_datetime = models.DateTimeField(null=True, blank=True)
-    vetted_user = models.ForeignKey(User, related_name="vetted_user_set", null=True, blank=True)
-    vetted_status = models.CharField(choices=OBSERVATION_STATUSES,
-                                     max_length=20, default='unknown')
-    rise_azimuth = models.FloatField(blank=True, null=True)
-    max_altitude = models.FloatField(blank=True, null=True)
-    set_azimuth = models.FloatField(blank=True, null=True)
-
-    @property
-    def is_past(self):
-        return self.end < now()
 
     # this payload has been vetted good/bad by someone
     @property
@@ -357,9 +331,15 @@ class Data(models.Model):
     class Meta:
         ordering = ['-start', '-end']
 
+    def __unicode__(self):
+        return str(self.id)
 
-@receiver(models.signals.post_delete, sender=Data)
-def data_remove_files(sender, instance, **kwargs):
+    def get_absolute_url(self):
+        return reverse('base:observation_view', kwargs={'id': self.id})
+
+
+@receiver(models.signals.post_delete, sender=Observation)
+def observation_remove_files(sender, instance, **kwargs):
     if instance.payload:
         if os.path.isfile(instance.payload.path):
             os.remove(instance.payload.path)
@@ -369,7 +349,8 @@ def data_remove_files(sender, instance, **kwargs):
 
 
 class DemodData(models.Model):
-    data = models.ForeignKey(Data, related_name='demoddata')
+    observation = models.ForeignKey(Observation, related_name='demoddata',
+                                    on_delete=models.CASCADE, blank=True, null=True)
     payload_demod = models.FileField(upload_to='data_payloads', blank=True, null=True)
 
     def is_image(self):

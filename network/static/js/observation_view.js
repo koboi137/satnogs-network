@@ -1,51 +1,18 @@
-/* global d3 WaveSurfer URI */
+/* global WaveSurfer URI */
 
 $(document).ready(function() {
     'use strict';
 
-    var observation_start = 1000 * $('#observation-info').data('start');
-    var observation_end = 1000 * $('#observation-info').data('end');
-
-    var observation_data = [];
-
-    var formatTime = function(timeSeconds) {
-        var minute = Math.floor(timeSeconds / 60); // get minute(integer) from timeSeconds
-        var tmp = Math.round(timeSeconds - (minute * 60)); // get second(integer) from timeSeconds
-        var second = (tmp < 10 ? '0' : '') + tmp; // make two-figured integer if less than 10
-
-        return String(minute + ':' + second); // combine minute and second in string
-    };
-
-    $('.observation-data').each(function(){
-        var $this = $(this);
-        var data_groundstation = $this.data('groundstation');
-        var data_time_start = 1000 * $this.data('start');
-        var data_time_end = 1000 * $this.data('end');
-        observation_data.push({label : data_groundstation, times : [{starting_time: data_time_start, ending_time: data_time_end}]});
-    });
-
-    var chart = d3.timeline()
-        .stack()
-        .beginning(observation_start)
-        .ending(observation_end)
-        .hover(function (d, i, datum) {
-            var div = $('#hoverRes');
-            var colors = chart.colors();
-            div.find('.coloredDiv').css('background-color', colors(i));
-            div.find('#name').text(datum.label);
-        })
-        .margin({left:140, right:10, top:0, bottom:50})
-        .tickFormat({format: d3.time.format.utc('%H:%M'), tickTime: d3.time.minutes, tickInterval: 30, tickSize: 6});
-
-    var svg_width = 1140;
-    if (screen.width < 1200) { svg_width = 940; }
-    if (screen.width < 992) { svg_width = 720; }
-    if (screen.width < 768) { svg_width = screen.width - 30; }
-    d3.select('#timeline').append('svg').attr('width', svg_width)
-        .datum(observation_data).call(chart);
+    // Format time for the player
+    function formatTime(timeSeconds) {
+        var minute = Math.floor(timeSeconds / 60);
+        var tmp = Math.round(timeSeconds - (minute * 60));
+        var second = (tmp < 10 ? '0' : '') + tmp;
+        return String(minute + ':' + second);
+    }
 
     // Set width for not selected tabs
-    var panelWidth = $('.panel-body').first().width();
+    var panelWidth = $('.tab-content').first().width();
     $('.tab-pane').css('width', panelWidth);
 
     // Waveform loading
@@ -93,9 +60,9 @@ $(document).ready(function() {
             wavesurfer.playPause();
         });
 
-        $('a[href="#tab-audio-' + wid + '"]').on('shown.bs.tab', function () {
+        $('a[href="#tab-audio"]').on('shown.bs.tab', function () {
             wavesurfer.load(data_payload_url);
-            $('a[href="#tab-audio-' + wid + '"]').off('shown.bs.tab');
+            $('a[href="#tab-audio"]').off('shown.bs.tab');
         });
 
         wavesurfer.on('ready', function() {
@@ -103,11 +70,12 @@ $(document).ready(function() {
             var spectrogram = Object.create(WaveSurfer.Spectrogram);
             spectrogram.init({
                 wavesurfer: wavesurfer,
-                container: '#wave-spectrogram-' + wid,
+                container: '#wave-spectrogram',
                 fftSamples: 256,
                 windowFunc: 'hann'
             });
 
+            //$playbackTime.text(formatTime(wavesurfer.getCurrentTime()));
             $playbackTime.text(formatTime(wavesurfer.getCurrentTime()));
 
             wavesurfer.on('audioprocess', function(evt) {

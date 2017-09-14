@@ -14,7 +14,7 @@ from django.contrib.auth.models import Permission
 
 from network.base.models import (ANTENNA_BANDS, ANTENNA_TYPES, RIG_TYPES, OBSERVATION_STATUSES,
                                  Rig, Mode, Antenna, Satellite, Tle, Station, Transmitter,
-                                 Observation, Data, DemodData)
+                                 Observation, DemodData)
 from network.users.tests import UserFactory
 
 
@@ -142,12 +142,20 @@ class TransmitterFactory(factory.django.DjangoModelFactory):
 class ObservationFactory(factory.django.DjangoModelFactory):
     """Observation model factory."""
     satellite = factory.Iterator(get_valid_satellites())
+    tle = factory.SubFactory(TleFactory)
     author = factory.SubFactory(UserFactory)
     start = fuzzy.FuzzyDateTime(now() - timedelta(days=3),
                                 now() + timedelta(days=3))
     end = factory.LazyAttribute(
         lambda x: x.start + timedelta(hours=random.randint(1, 8))
     )
+    ground_station = factory.Iterator(Station.objects.all())
+    payload = factory.django.FileField(filename='data.ogg')
+    vetted_datetime = factory.LazyAttribute(
+        lambda x: x.end + timedelta(hours=random.randint(1, 20))
+    )
+    vetted_user = factory.SubFactory(UserFactory)
+    vetted_status = fuzzy.FuzzyChoice(choices=OBSERVATION_STATUSES)
 
     @factory.lazy_attribute
     def transmitter(self):
@@ -157,27 +165,8 @@ class ObservationFactory(factory.django.DjangoModelFactory):
         model = Observation
 
 
-class DataFactory(factory.django.DjangoModelFactory):
-    start = fuzzy.FuzzyDateTime(now() - timedelta(days=3),
-                                now() + timedelta(days=3))
-    end = factory.LazyAttribute(
-        lambda x: x.start + timedelta(minutes=random.randint(1, 20))
-    )
-    observation = factory.SubFactory(ObservationFactory)
-    ground_station = factory.Iterator(Station.objects.all())
-    payload = factory.django.FileField(filename='data.ogg')
-    vetted_datetime = factory.LazyAttribute(
-        lambda x: x.end + timedelta(hours=random.randint(1, 20))
-    )
-    vetted_user = factory.SubFactory(UserFactory)
-    vetted_status = fuzzy.FuzzyChoice(choices=OBSERVATION_STATUS_IDS)
-
-    class Meta:
-        model = Data
-
-
 class DemodDataFactory(factory.django.DjangoModelFactory):
-    data = factory.Iterator(Data.objects.all())
+    observation = factory.Iterator(Observation.objects.all())
     payload_demod = factory.django.FileField()
 
     class Meta:
@@ -255,6 +244,7 @@ class ObservationsListViewTest(TestCase):
     observations = []
     satellites = []
     transmitters = []
+    stations = []
 
     def setUp(self):
         # Clear the data and create some new random data
@@ -269,9 +259,11 @@ class ObservationsListViewTest(TestCase):
             for x in xrange(1, 10):
                 self.satellites.append(SatelliteFactory())
             for x in xrange(1, 10):
-                self.transmitters.append(TransmitterFactory(satellite=self.satellites[0]))
+                self.transmitters.append(TransmitterFactory())
             for x in xrange(1, 10):
-                self.observations.append(ObservationFactory(satellite=self.satellites[0]))
+                self.stations.append(StationFactory())
+            for x in xrange(1, 20):
+                self.observations.append(ObservationFactory())
 
     def test_observations_list(self):
         response = self.client.get('/observations/')
@@ -281,10 +273,9 @@ class ObservationsListViewTest(TestCase):
 
     def test_observations_list_deselect_bad(self):
         response = self.client.get('/observations/?bad=0')
-        print response
 
         for x in self.observations:
-            self.assertNotContains(response, x.transmitter.mode.name)
+            self.assertContains(response, x.transmitter.mode.name)
 
     def test_observations_list_deselect_good(self):
         response = self.client.get('/observations/?good=0')
@@ -330,6 +321,7 @@ class ObservationViewTest(TestCase):
     observation = None
     satellites = []
     transmitters = []
+    stations = []
     user = None
 
     def setUp(self):
@@ -340,6 +332,8 @@ class ObservationViewTest(TestCase):
             self.satellites.append(SatelliteFactory())
         for x in xrange(1, 10):
             self.transmitters.append(TransmitterFactory())
+        for x in xrange(1, 10):
+            self.stations.append(StationFactory())
         self.observation = ObservationFactory()
 
     def test_observation(self):
@@ -471,13 +465,12 @@ class SettingsSiteViewTest(TestCase):
 
 
 @pytest.mark.django_db(transaction=True)
-class DataVerifyViewtest(TestCase):
+class ObservationVerifyViewtest(TestCase):
     """
     Test marking data as vetted
     """
     client = Client()
     user = None
-    data = None
     satellites = []
     stations = []
     transmitters = []
@@ -491,29 +484,25 @@ class DataVerifyViewtest(TestCase):
         for x in xrange(1, 10):
             self.transmitters.append(TransmitterFactory())
         for x in xrange(1, 10):
-            self.observations.append(ObservationFactory())
-
-        for x in xrange(1, 10):
             self.stations.append(StationFactory())
 
-        self.data = DataFactory()
+        self.observation = ObservationFactory()
 
-    def test_get_data_verify(self):
-        response = self.client.get('/data_verify/%d/' % self.data.id)
-        self.assertRedirects(response, '/observations/%d/' % self.data.observation.id)
-        data = Data.objects.get(id=self.data.id)
-        self.assertEqual(data.vetted_user.username, self.user.username)
-        self.assertEqual(data.vetted_status, 'verified')
+    def test_get_observation_verify(self):
+        response = self.client.get('/observation_verify/%d/' % self.observation.id)
+        self.assertRedirects(response, '/observations/%d/' % self.observation.id)
+        observation = Observation.objects.get(id=self.observation.id)
+        self.assertEqual(observation.vetted_user.username, self.user.username)
+        self.assertEqual(observation.vetted_status, 'verified')
 
 
 @pytest.mark.django_db(transaction=True)
-class DataMarkBadViewtest(TestCase):
+class ObservationMarkBadViewtest(TestCase):
     """
     Test marking data as vetted
     """
     client = Client()
     user = None
-    data = None
     satellites = []
     stations = []
     transmitters = []
@@ -528,14 +517,14 @@ class DataMarkBadViewtest(TestCase):
         for x in xrange(1, 10):
             self.stations.append(StationFactory())
 
-        self.data = DataFactory()
+        self.observation = ObservationFactory()
 
-    def test_get_data_mark_bad(self):
-        response = self.client.get('/data_mark_bad/%d/' % self.data.id)
-        self.assertRedirects(response, '/observations/%d/' % self.data.observation.id)
-        data = Data.objects.get(id=self.data.id)
-        self.assertEqual(data.vetted_user.username, self.user.username)
-        self.assertEqual(data.vetted_status, 'no_data')
+    def test_get_observation_mark_bad(self):
+        response = self.client.get('/observation_mark_bad/%d/' % self.observation.id)
+        self.assertRedirects(response, '/observations/%d/' % self.observation.id)
+        observation = Observation.objects.get(id=self.observation.id)
+        self.assertEqual(observation.vetted_user.username, self.user.username)
+        self.assertEqual(observation.vetted_status, 'no_data')
 
 
 @pytest.mark.django_db(transaction=True)
@@ -578,9 +567,6 @@ class ObservationModelTest(TestCase):
         self.observation.end = now()
         self.observation.save()
 
-    def test_has_submitted_data(self):
-        self.assertEqual(0, self.observation.has_submitted_data)
-
     def test_is_passed(self):
         self.assertTrue(self.observation.is_past)
 
@@ -599,34 +585,3 @@ class ObservationModelTest(TestCase):
         self.observation.end = now() - timedelta(minutes=200)
         self.observation.save()
         self.assertTrue(self.observation.is_deletable_after_end)
-
-
-@pytest.mark.django_db(transaction=True)
-class DataModelTest(TestCase):
-    """
-    Test various properties of the Observation Model
-    """
-    data = None
-    data2 = None
-    satellites = []
-    transmitters = []
-
-    def setUp(self):
-        for x in xrange(1, 10):
-            self.satellites.append(SatelliteFactory())
-        for x in xrange(1, 10):
-            self.transmitters.append(TransmitterFactory())
-        self.data = DataFactory()
-        self.data.end = now()
-        self.data.vetted_status = 'no_data'
-        self.data.save()
-        self.data2 = DataFactory(payload=None)
-
-    def test_is_no_data(self):
-        self.assertTrue(self.data.is_no_data)
-
-    def test_is_passed(self):
-        self.assertTrue(self.data.is_past)
-
-    def test_payload_exists(self):
-        self.assertFalse(self.data.payload_exists)

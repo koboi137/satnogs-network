@@ -137,7 +137,7 @@ STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
     'compressor.finders.CompressorFinder',
 )
-MEDIA_ROOT = Path('media').resolve()
+MEDIA_ROOT = getenv('MEDIA_ROOT', Path('media').resolve())
 MEDIA_URL = '/media/'
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
 STATION_DEFAULT_IMAGE = '/static/img/dish.png'
@@ -161,6 +161,9 @@ AUTH_USER_MODEL = 'users.User'
 LOGIN_REDIRECT_URL = 'users:redirect_user'
 LOGIN_URL = 'account_login'
 AUTOSLUG_SLUGIFY_FUNCTION = 'slugify.slugify'
+if ENVIRONMENT == 'production':
+    # Disable registration
+    ACCOUNT_ADAPTER = 'network.users.adapter.NoSignupsAdapter'
 
 # Logging
 LOGGING = {
@@ -259,6 +262,13 @@ CSP_STYLE_SRC = (
 # Database
 DATABASE_URL = getenv('DATABASE_URL', 'sqlite:///db.sqlite3')
 DATABASES = {'default': db_url(DATABASE_URL)}
+DATABASES_EXTRAS = {
+    'OPTIONS': {
+        'init_command': 'SET sql_mode="STRICT_TRANS_TABLES"'
+    },
+}
+if DATABASES['default']['ENGINE'].split('.')[-1] == 'mysql':
+    DATABASES['default'].update(DATABASES_EXTRAS)
 
 # Mapbox API
 MAPBOX_GEOCODE_URL = 'https://api.tiles.mapbox.com/v4/geocode/mapbox.places/'
