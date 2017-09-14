@@ -24,8 +24,7 @@ stage:
     - echo "$SSH_PRIVATE_KEY" >> ~/.ssh/id_rsa
     - chmod -R u=rwX,o=,g= ~/.ssh/
     - echo "$SSH_SERVER_HOSTKEY" > ~/.ssh/known_hosts
-    - git remote add origin ssh://$SERVER_USER@$SERVER_HOST$SERVER_PATH
-    - git push -u origin dev
+    - git push -u ssh://$SERVER_USER@$SERVER_HOST$SERVER_PATH dev
 
 production:
   stage: deploy
@@ -37,5 +36,4 @@ production:
     - echo "$SSH_PRIVATE_KEY" >> ~/.ssh/id_rsa
     - chmod -R u=rwX,o=,g= ~/.ssh/
     - echo "$SSH_SERVER_HOSTKEY" > ~/.ssh/known_hosts
-    - git remote add origin ssh://$SERVER_USER@$SERVER_HOST$SERVER_PATH
-    - git push -u origin master
+    - git push -u ssh://$SERVER_USER@$SERVER_HOST$SERVER_PATH master

@@ -561,9 +561,12 @@ def station_view(request, id):
 
             # using the angles module convert the sexagesimal degree into
             # something more easily read by a human
-            elevation = format(math.degrees(altt), '.0f')
-            azimuth_r = format(math.degrees(azr), '.0f')
-            azimuth_s = format(math.degrees(azs), '.0f')
+            try:
+                elevation = format(math.degrees(altt), '.0f')
+                azimuth_r = format(math.degrees(azr), '.0f')
+                azimuth_s = format(math.degrees(azs), '.0f')
+            except:
+                continue
             passid += 1
 
             # show only if >= configured horizon and in next 6 hours,
