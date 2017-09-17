@@ -402,14 +402,14 @@ def observation_view(request, id):
     """View for single observation page."""
     observation = get_object_or_404(Observation, id=id)
 
-    # not all users will be able to vet data within an observation, allow
-    # staff, observation requestors, and station owners
+    # This context flag will determine if vet buttons appeas for the observation.
+    # That includes observer, station owner involved, staff.
     is_vetting_user = False
-    if request.user.is_authenticated():
-        if request.user == observation.author or \
-            Station.objects.filter(owner=request.user).filter(id=observation.id).count() or \
-                request.user.is_staff:
-                    is_vetting_user = True
+    if observation.author == request.user or request.user.is_staff:
+        is_vetting_user = True
+    if Station.objects.filter(owner=request.user). \
+       filter(id=observation.ground_station.id).count():
+        is_vetting_user = True
 
     # This context flag will determine if a delete button appears for the observation.
     is_deletable = False
