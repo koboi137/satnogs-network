@@ -155,7 +155,7 @@ class ObservationFactory(factory.django.DjangoModelFactory):
         lambda x: x.end + timedelta(hours=random.randint(1, 20))
     )
     vetted_user = factory.SubFactory(UserFactory)
-    vetted_status = fuzzy.FuzzyChoice(choices=OBSERVATION_STATUSES)
+    vetted_status = fuzzy.FuzzyChoice(choices=OBSERVATION_STATUS_IDS)
 
     @factory.lazy_attribute
     def transmitter(self):
