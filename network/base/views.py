@@ -412,11 +412,13 @@ def observation_view(request, id):
         is_vetting_user = True
 
     # This context flag will determine if a delete button appears for the observation.
+    # That includes observer, superusers and people with certain permission.
     is_deletable = False
     if observation.author == request.user and observation.is_deletable_before_start:
         is_deletable = True
-    if request.user.has_perm('base.delete_observation') and \
-            observation.is_deletable_after_end:
+    if request.user.has_perm('base.delete_observation') and observation.is_deletable_after_end:
+        is_deletable = True
+    if request.user.is_superuser():
         is_deletable = True
 
     if settings.ENVIRONMENT == 'dev':
