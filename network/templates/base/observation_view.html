@@ -234,7 +234,7 @@
               <span class="label label-default">{{ demoddata.payload_demod }}</span>
               <div class="well well-sm data-well">
                 {% if demoddata.is_image %}
-                  <img src="{{ demoddata.payload_demod.url }}" alt="data-{{ data.pk }}" class="img-responsive">
+                  <img src="{{ demoddata.payload_demod.url }}" alt="observation-{{ observation.pk }}" class="img-responsive">
                 {% else %}
                   {{ demoddata.display_payload }}
                 {% endif %}
