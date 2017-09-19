@@ -6,7 +6,7 @@ from rest_framework import viewsets, mixins, status
 from rest_framework.response import Response
 
 from network.api.perms import StationOwnerCanEditPermission
-from network.api import serializers, filters
+from network.api import serializers, filters, pagination
 from network.base.models import Observation, Station
 
 
@@ -17,6 +17,7 @@ class ObservationView(viewsets.ModelViewSet, mixins.UpdateModelMixin):
     permission_classes = [
         StationOwnerCanEditPermission
     ]
+    pagination_class = pagination.LinkedHeaderPageNumberPagination
 
     def update(self, request, *args, **kwargs):
         if request.data.get('demoddata'):
