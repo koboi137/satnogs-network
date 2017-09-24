@@ -155,7 +155,7 @@ class ObservationFactory(factory.django.DjangoModelFactory):
         lambda x: x.end + timedelta(hours=random.randint(1, 20))
     )
     vetted_user = factory.SubFactory(UserFactory)
-    vetted_status = fuzzy.FuzzyChoice(choices=OBSERVATION_STATUSES)
+    vetted_status = fuzzy.FuzzyChoice(choices=OBSERVATION_STATUS_IDS)
 
     @factory.lazy_attribute
     def transmitter(self):
@@ -253,8 +253,11 @@ class ObservationsListViewTest(TestCase):
             Transmitter.objects.all().delete()
             Satellite.objects.all().delete()
         self.satellites = []
-        self.observations = []
         self.transmitters = []
+        self.observations_bad = []
+        self.observations_good = []
+        self.observations_unvetted = []
+        self.observations = []
         with transaction.atomic():
             for x in xrange(1, 10):
                 self.satellites.append(SatelliteFactory())
@@ -263,7 +266,17 @@ class ObservationsListViewTest(TestCase):
             for x in xrange(1, 10):
                 self.stations.append(StationFactory())
             for x in xrange(1, 20):
-                self.observations.append(ObservationFactory())
+                obs = ObservationFactory(vetted_status='no_data')
+                self.observations_bad.append(obs)
+                self.observations.append(obs)
+            for x in xrange(1, 20):
+                obs = ObservationFactory(vetted_status='verified')
+                self.observations_good.append(obs)
+                self.observations.append(obs)
+            for x in xrange(1, 20):
+                obs = ObservationFactory(vetted_status='unknown')
+                self.observations_unvetted.append(obs)
+                self.observations.append(obs)
 
     def test_observations_list(self):
         response = self.client.get('/observations/')
@@ -271,22 +284,22 @@ class ObservationsListViewTest(TestCase):
         for x in self.observations:
             self.assertContains(response, x.transmitter.mode.name)
 
-    def test_observations_list_deselect_bad(self):
-        response = self.client.get('/observations/?bad=0')
+    def test_observations_list_select_bad(self):
+        response = self.client.get('/observations/?bad=1')
 
-        for x in self.observations:
+        for x in self.observations_bad:
             self.assertContains(response, x.transmitter.mode.name)
 
-    def test_observations_list_deselect_good(self):
-        response = self.client.get('/observations/?good=0')
+    def test_observations_list_select_good(self):
+        response = self.client.get('/observations/?good=1')
 
-        for x in self.observations:
+        for x in self.observations_good:
             self.assertContains(response, x.transmitter.mode.name)
 
-    def test_observations_list_deselect_unvetted(self):
-        response = self.client.get('/observations/?unvetted=0')
+    def test_observations_list_select_unvetted(self):
+        response = self.client.get('/observations/?unvetted=1')
 
-        for x in self.observations:
+        for x in self.observations_unvetted:
             self.assertContains(response, x.transmitter.mode.name)
 
 
