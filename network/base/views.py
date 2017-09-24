@@ -443,7 +443,7 @@ def observation_view(request, id):
         if request.user.is_superuser:
             is_deletable = True
 
-    if settings.ENVIRONMENT == 'dev':
+    if settings.ENVIRONMENT == 'production':
         discuss_slug = 'https://community.libre.space/t/observation-{0}-{1}-{2}' \
             .format(observation.id, slugify(observation.satellite.name),
                     observation.satellite.norad_cat_id)
@@ -453,10 +453,10 @@ def observation_view(request, id):
             .format(observation.id, observation.satellite.name,
                     observation.satellite.norad_cat_id, observation.id,
                     request.get_host(), request.path)
+        has_comments = True
+        apiurl = '{0}.json'.format(discuss_slug)
         try:
-            apiurl = '{0}.json'.format(discuss_slug)
             urllib2.urlopen(apiurl).read()
-            has_comments = True
         except:
             has_comments = False
 
