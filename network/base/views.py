@@ -172,6 +172,12 @@ class ObservationListView(ListView):
         context['unvetted'] = self.request.GET.get('unvetted', '1')
         if norad_cat_id is not None and norad_cat_id != '':
             context['norad'] = int(norad_cat_id)
+        if 'scheduled' in self.request.session:
+            context['scheduled'] = self.request.session['scheduled']
+            try:
+                del self.request.session['scheduled']
+            except KeyError:
+                pass
         return context
 
 
@@ -207,6 +213,8 @@ def observation_new(request):
 
         total = int(request.POST.get('total'))
 
+        scheduled = []
+
         for item in range(total):
             start = datetime.strptime(
                 request.POST.get('{0}-starting_time'.format(item)), '%Y-%m-%d %H:%M:%S.%f'
@@ -221,17 +229,29 @@ def observation_new(request):
             observer.elevation = ground_station.alt
             tr, azr, tt, altt, ts, azs = observer.next_pass(sat_ephem)
 
-            Observation.objects.create(satellite=sat, transmitter=trans, tle=tle, author=me,
-                                       start=make_aware(start, utc), end=make_aware(end, utc),
-                                       ground_station=ground_station,
-                                       rise_azimuth=format(math.degrees(azr), '.0f'),
-                                       max_altitude=format(math.degrees(altt), '.0f'),
-                                       set_azimuth=format(math.degrees(azs), '.0f'))
+            obs = Observation(satellite=sat, transmitter=trans, tle=tle, author=me,
+                              start=make_aware(start, utc), end=make_aware(end, utc),
+                              ground_station=ground_station,
+                              rise_azimuth=format(math.degrees(azr), '.0f'),
+                              max_altitude=format(math.degrees(altt), '.0f'),
+                              set_azimuth=format(math.degrees(azs), '.0f'))
+            obs.save()
+            scheduled.append(obs.id)
             time_start_new = ephem.Date(ts).datetime() + timedelta(minutes=1)
             observer.date = time_start_new.strftime("%Y-%m-%d %H:%M:%S.%f")
 
-        messages.success(request, 'Observation(s) were scheduled successfully.')
+        try:
+            del request.session['scheduled']
+        except KeyError:
+            pass
+        request.session['scheduled'] = scheduled
 
+        # If it's a single observation redirect to that one
+        if total == 1:
+            messages.success(request, 'Observation was scheduled successfully.')
+            return redirect(reverse('base:observation_view', kwargs={'id': scheduled[0]}))
+
+        messages.success(request, 'Observations were scheduled successfully.')
         return redirect(reverse('base:observations_list'))
 
     satellites = Satellite.objects.filter(transmitters__alive=True) \
@@ -405,21 +425,23 @@ def observation_view(request, id):
     # This context flag will determine if vet buttons appeas for the observation.
     # That includes observer, station owner involved, staff.
     is_vetting_user = False
-    if observation.author == request.user or request.user.is_staff:
-        is_vetting_user = True
-    if Station.objects.filter(owner=request.user). \
-       filter(id=observation.ground_station.id).count():
-        is_vetting_user = True
+    if request.user.is_authenticated():
+        if observation.author == request.user or request.user.is_staff:
+            is_vetting_user = True
+        if Station.objects.filter(owner=request.user). \
+           filter(id=observation.ground_station.id).count():
+            is_vetting_user = True
 
     # This context flag will determine if a delete button appears for the observation.
     # That includes observer, superusers and people with certain permission.
     is_deletable = False
-    if observation.author == request.user and observation.is_deletable_before_start:
-        is_deletable = True
-    if request.user.has_perm('base.delete_observation') and observation.is_deletable_after_end:
-        is_deletable = True
-    if request.user.is_superuser():
-        is_deletable = True
+    if request.user.is_authenticated():
+        if observation.author == request.user and observation.is_deletable_before_start:
+            is_deletable = True
+        if request.user.has_perm('base.delete_observation') and observation.is_deletable_after_end:
+            is_deletable = True
+        if request.user.is_superuser:
+            is_deletable = True
 
     if settings.ENVIRONMENT == 'dev':
         discuss_slug = 'https://community.libre.space/t/observation-{0}-{1}-{2}' \

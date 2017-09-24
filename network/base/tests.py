@@ -263,7 +263,11 @@ class ObservationsListViewTest(TestCase):
             for x in xrange(1, 10):
                 self.stations.append(StationFactory())
             for x in xrange(1, 20):
-                self.observations.append(ObservationFactory())
+                self.observations.append(ObservationFactory(vetted_status='no_data'))
+            for x in xrange(1, 20):
+                self.observations.append(ObservationFactory(vetted_status='verified'))
+            for x in xrange(1, 20):
+                self.observations.append(ObservationFactory(vetted_status='unknown'))
 
     def test_observations_list(self):
         response = self.client.get('/observations/')
