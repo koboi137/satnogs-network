@@ -473,12 +473,15 @@ def observation_view(request, id):
 @login_required
 def observation_delete(request, id):
     """View for deleting observation."""
-    me = request.user
     observation = get_object_or_404(Observation, id=id)
-    # Having non-existent data is also grounds for deletion if user is staff
-    if (observation.author == me and observation.is_deletable_before_start) or \
-            (request.user.has_perm('base.delete_observation') and
-             observation.is_deletable_after_end):
+    is_deletable = False
+    if observation.author == request.user and observation.is_deletable_before_start:
+        is_deletable = True
+    if request.user.has_perm('base.delete_observation') and observation.is_deletable_after_end:
+        is_deletable = True
+    if request.user.is_superuser:
+        is_deletable = True
+    if is_deletable:
         observation.delete()
         messages.success(request, 'Observation deleted successfully.')
     else:
