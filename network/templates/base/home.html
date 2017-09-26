@@ -49,33 +49,33 @@
               </h3>
             </div>
             <div class="caption">
-              <div class="gs-front-line">
-                <span class="label label-info">Owner</span>
-                <span class="gs-front-data">
+              <div class="front-line">
+                <span class="label label-default">Owner</span>
+                <span class="front-data">
                   <a href="{% url 'users:view_user' username=featured_station.owner.username %}">
                     {{ featured_station.owner.displayname }}
                   </a>
                 </span>
               </div>
-              <div class="gs-front-line">
-                <span class="label label-info">Coordinates</span>
-                <span class="gs-front-data">
+              <div class="front-line">
+                <span class="label label-default">Coordinates</span>
+                <span class="front-data">
                   {{ featured_station.lng|floatformat:2 }}°,
                   {{ featured_station.lat|floatformat:2 }}°
                 </span>
               </div>
-              <div class="gs-front-line">
-                <span class="label label-info">Antennas</span>
-                <span class="gs-front-data">
+              <div class="front-line">
+                <span class="label label-default">Antennas</span>
+                <span class="front-data">
                   {% for antenna in featured_station.antenna.all %}
                     {{antenna.band}} {{ antenna.antenna_type }}{% if forloop.last %}{% else %},{% endif %}
                   {% endfor %}
                 </span>
               </div>
               {% if featured_station.success_rate %}
-                <div class="gs-front-line">
-                  <span class="label label-info">Success Rate</span>
-                  <span class="gs-front-data">
+                <div class="front-line">
+                  <span class="label label-default">Success Rate</span>
+                  <span class="front-data">
                     <div class="progress" title="{{ featured_station.success_rate }}%">
                       <div class="progress-bar progress-bar-success" data-success-rate="{{ featured_station.success_rate }}">
                         <span class="sr-only">{{ featured_station.success_rate }}% Complete (success)</span>
