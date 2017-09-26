@@ -56,18 +56,21 @@ class TransmitterAdmin(admin.ModelAdmin):
                        'downlink_low', 'downlink_high', 'baud', 'invert', 'alive', 'mode')
 
 
+class DataDemodInline(admin.TabularInline):
+    model = DemodData
+
+
 @admin.register(Observation)
 class ObservationAdmin(admin.ModelAdmin):
     list_display = ('id', 'author', 'satellite', 'transmitter', 'start_date', 'end_date')
     list_filter = ('start', 'end')
     search_fields = ('satellite', 'author')
+    inlines = [
+        DataDemodInline,
+    ]
 
     def start_date(self, obj):
         return obj.start.strftime('%d.%m.%Y, %H:%M')
 
     def end_date(self, obj):
         return obj.end.strftime('%d.%m.%Y, %H:%M')
-
-
-class DataDemodInline(admin.TabularInline):
-    model = DemodData
