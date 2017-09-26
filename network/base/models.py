@@ -364,7 +364,7 @@ class DemodData(models.Model):
 
     def display_payload(self):
         with open(self.payload_demod.path) as fp:
-            return fp.read()
+            return unicode(fp.read(), errors='replace')
 
 
 @receiver(models.signals.post_delete, sender=DemodData)
