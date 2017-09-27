@@ -1,11 +1,13 @@
+from datetime import timedelta
 import json
 import urllib2
 
 from orbit import satellite
 
 from django.conf import settings
+from django.utils.timezone import now
 
-from network.base.models import Satellite, Tle, Mode, Transmitter
+from network.base.models import Satellite, Tle, Mode, Transmitter, Observation
 from network.celery import app
 
 
@@ -93,3 +95,14 @@ def fetch_data():
             new_transmitter.satellite = sat
             new_transmitter.mode = mode
             new_transmitter.save()
+
+
+@app.task
+def clean_observations():
+    """Task to clean up old observations that lack actual data."""
+    if settings.ENVIRONMENT == 'stage':
+        threshold = now() - timedelta(days=int(settings.OBSERVATION_OLD_RANGE))
+        observations = Observation.objects.filter(end__lt=threshold)
+        for obs in observations:
+            if not obs.is_verified():
+                obs.delete()

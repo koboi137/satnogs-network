@@ -301,11 +301,13 @@ OPBEAT = {
 # Observations settings
 # Datetimes in minutes for scheduling OPTIONS
 # Deletion range in minutes
+# Clean up threshold in days
 DATE_MIN_START = '15'
 DATE_MIN_END = '75'
 DATE_MAX_RANGE = '480'
 OBSERVATION_MAX_DELETION_RANGE = getenv('OBSERVATION_MAX_DELETION_RANGE', 10)
 OBSERVATION_MIN_DELETION_RANGE = getenv('OBSERVATION_MIN_DELETION_RANGE', 60)
+OBSERVATION_OLD_RANGE = getenv('OBSERVATION_OLD_RANGE', 30)
 
 # Station settings
 # Heartbeat for keeping a station online in minutes
