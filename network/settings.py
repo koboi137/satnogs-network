@@ -78,10 +78,10 @@ SERVER_EMAIL = DEFAULT_FROM_EMAIL
 # Cache
 CACHES = {
     'default': {
-        'BACKEND': getenv('CACHE_BACKEND', 'django.core.cache.backends.locmem.LocMemCache'),
-        'LOCATION': getenv('CACHE_LOCATION', 'unique-snowflake'),
+        'BACKEND': getenv('CACHE_BACKEND', 'redis_cache.RedisCache'),
+        'LOCATION': getenv('CACHE_LOCATION', 'unix://var/run/redis/redis.sock'),
         'OPTIONS': {
-            'CLIENT_CLASS': getenv('CACHE_CLIENT_CLASS', None),
+            'CLIENT_CLASS': getenv('CACHE_CLIENT_CLASS', 'django_redis.client.DefaultClient'),
         },
         'KEY_PREFIX': 'network-{0}'.format(ENVIRONMENT),
     }
@@ -213,6 +213,24 @@ LOGGING = {
             'propagate': False,
         },
     }
+}
+
+# Celery
+CELERY_ENABLE_UTC = USE_TZ
+CELERY_TIMEZONE = TIME_ZONE
+CELERY_TASK_RESULTS_EXPIRES = 3600
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_SEND_TASK_ERROR_EMAILS = True
+CELERY_TASK_ALWAYS_EAGER = False
+CELERY_DEFAULT_QUEUE = 'network-{0}-queue'.format(ENVIRONMENT)
+CELERY_BROKER_URL = getenv('CELERY_BROKER_URL', 'redis://redis:6379/0')
+CELERY_RESULT_BACKEND = getenv('CELERY_RESULT_BACKEND', 'redis://redis:6379/0')
+REDIS_CONNECT_RETRY = True
+CELERY_BROKER_TRANSPORT_OPTIONS = {
+    'visibility_timeout': getenv('REDIS_VISIBILITY_TIMEOUT', default=604800),
+    'fanout_prefix': True
 }
 
 # API
