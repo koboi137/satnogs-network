@@ -29,14 +29,13 @@ class Command(BaseCommand):
             tle = sat.tle()
             try:
                 latest_tle = obj.latest_tle.tle1
-                if latest_tle == tle[1]:
-                    self.stdout.write(('{0} - {1}: TLE already exists [defer]')
-                                      .format(obj.name, obj.norad_cat_id))
-                    continue
             except:
                 pass
+            if latest_tle == tle[1]:
+                self.stdout.write(('{0} - {1}: TLE already exists [defer]')
+                                  .format(obj.name, obj.norad_cat_id))
+                continue
 
             Tle.objects.create(tle0=tle[0], tle1=tle[1], tle2=tle[2], satellite=obj)
-
             self.stdout.write(('{0} - {1}: new TLE found [updated]')
                               .format(obj.name, obj.norad_cat_id))

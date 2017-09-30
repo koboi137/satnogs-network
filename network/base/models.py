@@ -319,7 +319,7 @@ class Observation(models.Model):
 
     @property
     def payload_exists(self):
-        """ Run some checks on the payload for existence of data """
+        """Run some checks on the payload for existence of data."""
         if self.payload is None:
             return False
         if not os.path.isfile(os.path.join(settings.MEDIA_ROOT, self.payload.name)):

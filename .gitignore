@@ -24,3 +24,6 @@ media
 /staticfiles/*
 node_modules
 yarn-error.log
+
+# Celery
+celerybeat-schedule
