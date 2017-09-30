@@ -593,7 +593,7 @@ def station_view(request, id):
                 azimuth_r = format(math.degrees(azr), '.0f')
                 azimuth_s = format(math.degrees(azs), '.0f')
             except:
-                continue
+                break
             passid += 1
 
             # show only if >= configured horizon and in next 6 hours,
