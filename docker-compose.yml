@@ -9,6 +9,19 @@ services:
     - MYSQL_ROOT_PASSWORD=toor
   redis:
     image: redis:3.2.8
+  celery:
+    build:
+      context: .
+      dockerfile: docker/dev
+    volumes:
+      - .:/app
+    links:
+      - db
+      - redis
+    environment:
+      - DATABASE_URL=mysql://network:network@db/network
+    command:
+      ./bin/run-celery.sh
   web:
     build:
       context: .
@@ -20,6 +33,7 @@ services:
     links:
       - db
       - redis
+      - celery
     environment:
       - DATABASE_URL=mysql://network:network@db/network
     command:
