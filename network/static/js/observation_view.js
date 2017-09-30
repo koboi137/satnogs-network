@@ -41,7 +41,6 @@ $(document).ready(function() {
             progressDiv.css('display', 'none');
         };
 
-
         wavesurfer.init({
             container: container_el,
             waveColor: '#bf7fbf',
@@ -89,11 +88,10 @@ $(document).ready(function() {
         });
     });
 
-    // Hightlight Data block
+    // Handle Observation tabs
     var uri = new URI(location.href);
-    var data_id = uri.hash();
-    $(data_id).addClass('panel-info');
-
+    var tab = uri.hash();
+    $('.observation-tabs li a[href="' + tab + '"]').tab('show');
 
     // Delete confirmation
     var message = 'Do you really want to delete this Observation?';
