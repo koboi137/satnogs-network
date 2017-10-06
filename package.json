@@ -4,7 +4,7 @@
     "description": "a network of distributed SatNOGS ground stations",
     "repository": {
         "type": "git",
-        "url": "https://github.com/satnogs/satnogs-network"
+        "url": "https://gitlab.com/librespacefoundation/satnogs/satnogs-network"
     },
     "author": "SatNOGS",
     "license": "AGPL-3.0",
