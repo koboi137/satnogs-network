@@ -6,7 +6,7 @@
 {% block title %} - Ground Station {{ station.name }}{% endblock %}
 
 {% block css %}
-  <link rel="stylesheet" href="{% static 'lib/mapbox.js/mapbox.css' %}">
+  <link rel="stylesheet" href="{% static 'lib/mapbox-gl/dist/mapbox-gl.css' %}">
 {% endblock css %}
 
 {% block content %}
@@ -382,7 +382,7 @@
 
 {% block javascript %}
   <script src="{% static 'lib/urijs/src/URI.min.js' %}"></script>
-  <script src="{% static 'lib/mapbox.js/mapbox.js' %}"></script>
+  <script src="{% static 'lib/mapbox-gl/dist/mapbox-gl.js' %}"></script>
   <script src="{% static 'js/station_view.js' %}"></script>
   <script src="{% static 'js/gridsquare.js' %}"></script>
   <script src="{% static 'js/satellite.js' %}"></script>
