@@ -1,4 +1,4 @@
-/* global L, URI */
+/* global mapboxgl, URI */
 
 $(document).ready(function() {
     'use strict';
@@ -24,31 +24,57 @@ $(document).ready(function() {
     }
 
     // Init the map
-    var mapboxid = $('div#map-station').data('mapboxid');
     var mapboxtoken = $('div#map-station').data('mapboxtoken');
 
-    L.mapbox.accessToken = mapboxtoken;
-    L.mapbox.config.FORCE_HTTPS = true;
-    var map = L.mapbox.map('map-station', mapboxid,{
-        zoomControl: false
-    }).setView([station_info.lat, station_info.lng], 6);
+    mapboxgl.accessToken = mapboxtoken;
 
-    // Add a marker
-    L.mapbox.featureLayer({
-        type: 'Feature',
-        geometry: {
-            type: 'Point',
-            coordinates: [
-                parseFloat(station_info.lng),
-                parseFloat(station_info.lat)
-            ]
-        },
-        properties: {
-            title: station_info.name,
-            'marker-size': 'large',
-            'marker-color': '#666',
-        }
-    }).addTo(map);
+    var map = new mapboxgl.Map({
+        container: 'map-station',
+        style: 'mapbox://styles/pierros/cj8kftshl4zll2slbelhkndwo',
+        zoom: 2,
+        minZoom: 2,
+        scrollZoom: false,
+        center: [parseFloat(station_info.lng),parseFloat(station_info.lat)]
+    });
+
+    map.addControl(new mapboxgl.NavigationControl());
+
+    map.on('load', function () {
+
+        map.loadImage('/static/img/pin.png', function(error, image) {
+            map.addImage('pin', image);
+        });
+
+        var map_points = {
+            'id': 'points',
+            'type': 'symbol',
+            'source': {
+                'type': 'geojson',
+                'data': {
+                    'type': 'FeatureCollection',
+                    'features': [{
+                        'type': 'Feature',
+                        'geometry': {
+                            'type': 'Point',
+                            'coordinates': [
+                                parseFloat(station_info.lng),
+                                parseFloat(station_info.lat)]
+                        },
+                        'properties': {
+                            'description': '<a href="/stations/' + station_info.id + '">' + station_info.id + ' - ' + station_info.name + '</a>',
+                            'icon': 'circle'
+                        }
+                    }]
+                }
+            },
+            'layout': {
+                'icon-image': 'pin',
+                'icon-size': 0.4
+            }
+        };
+
+        map.addLayer(map_points);
+    });
 
     // Filters
     $('#antenna-filter').submit(function () {
