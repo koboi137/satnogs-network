@@ -65,9 +65,11 @@
       <div class="front-line">
         <span class="label label-default">Station</span>
         <span class="front-data">
-          <a href="{% url 'base:station_view' id=observation.ground_station.id %}">
-            {{ observation.ground_station.name }}
-          </a>
+          {% if observation.ground_station %}
+            <a href="{% url 'base:station_view' id=observation.ground_station.id %}">
+              {{ observation.ground_station.name }}
+            </a>
+          {% endif %}
         </span>
       </div>
       <div class="front-line">
