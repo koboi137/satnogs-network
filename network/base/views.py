@@ -428,9 +428,13 @@ def observation_view(request, id):
     if request.user.is_authenticated():
         if observation.author == request.user or request.user.is_staff:
             is_vetting_user = True
-        if Station.objects.filter(owner=request.user). \
-           filter(id=observation.ground_station.id).count():
-            is_vetting_user = True
+        # Hadle exception for deleted station
+        try:
+            if Station.objects.filter(owner=request.user). \
+               filter(id=observation.ground_station.id).count():
+                is_vetting_user = True
+        except:
+            pass
 
     # This context flag will determine if a delete button appears for the observation.
     # That includes observer, superusers and people with certain permission.

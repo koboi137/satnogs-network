@@ -41,13 +41,22 @@ class ObservationSerializer(serializers.ModelSerializer):
         return obj.satellite.norad_cat_id
 
     def get_station_name(self, obj):
-        return obj.ground_station.name
+        try:
+            return obj.ground_station.name
+        except:
+            return None
 
     def get_station_lat(self, obj):
-        return obj.ground_station.lat
+        try:
+            return obj.ground_station.lat
+        except:
+            return None
 
     def get_station_lng(self, obj):
-        return obj.ground_station.lng
+        try:
+            return obj.ground_station.lng
+        except:
+            return None
 
 
 class JobSerializer(serializers.ModelSerializer):

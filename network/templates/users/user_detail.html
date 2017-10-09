@@ -146,9 +146,11 @@
                   <span class="datetime-time">{{ observation.end|date:"H:i:s" }}</span>
                 </td>
                 <td>
-                  <a href="{% url 'base:station_view' id=observation.ground_station.id %}">
-                    {{ observation.ground_station }}
-                  </a>
+                  {% if observation.ground_station %}
+                    <a href="{% url 'base:station_view' id=observation.ground_station.id %}">
+                      {{ observation.ground_station }}
+                    </a>
+                  {% endif %}
                 </td>
               </tr>
             {% endfor %}

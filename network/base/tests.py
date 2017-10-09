@@ -180,7 +180,7 @@ class HomeViewTest(TestCase):
     """
     def test_home_page(self):
         response = self.client.get('/')
-        self.assertContains(response, 'Ground stations swarm control, at your fingertips.')
+        self.assertContains(response, 'Crowd-sourced satellite operations')
 
 
 @pytest.mark.django_db(transaction=True)

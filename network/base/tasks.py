@@ -104,5 +104,5 @@ def clean_observations():
         threshold = now() - timedelta(days=int(settings.OBSERVATION_OLD_RANGE))
         observations = Observation.objects.filter(end__lt=threshold)
         for obs in observations:
-            if not obs.is_verified():
+            if not obs.is_verified:
                 obs.delete()
