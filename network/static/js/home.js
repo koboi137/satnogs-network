@@ -24,6 +24,8 @@ $(document).ready(function() {
     });
 
     map.addControl(new mapboxgl.NavigationControl());
+    map.touchZoomRotate.disableRotation();
+    map.dragRotate.disable();
 
     map.on('load', function () {
 
@@ -43,7 +45,8 @@ $(document).ready(function() {
             },
             'layout': {
                 'icon-image': 'pin',
-                'icon-size': 0.4
+                'icon-size': 0.4,
+                'icon-allow-overlap': true
             }
         };
 
@@ -61,19 +64,20 @@ $(document).ready(function() {
                     },
                     'properties': {
                         'description': '<a href="/stations/' + m.id + '">' + m.id + ' - ' + m.name + '</a>',
-                        'icon': 'circle'
                     }
                 });
             });
 
             map.addLayer(map_points);
+            map.repaint = true;
+
         });
     });
 
     // Create a popup, but don't add it to the map yet.
     var popup = new mapboxgl.Popup({
         closeButton: false,
-        closeOnClick: false
+        closeOnClick: true
     });
 
     map.on('mouseenter', 'points', function(e) {
@@ -85,10 +89,5 @@ $(document).ready(function() {
         popup.setLngLat(e.features[0].geometry.coordinates)
             .setHTML(e.features[0].properties.description)
             .addTo(map);
-    });
-
-    map.on('mouseleave', 'places', function() {
-        map.getCanvas().style.cursor = '';
-        popup.remove();
     });
 });

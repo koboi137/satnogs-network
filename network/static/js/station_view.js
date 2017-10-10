@@ -31,9 +31,8 @@ $(document).ready(function() {
     var map = new mapboxgl.Map({
         container: 'map-station',
         style: 'mapbox://styles/pierros/cj8kftshl4zll2slbelhkndwo',
-        zoom: 2,
+        zoom: 5,
         minZoom: 2,
-        scrollZoom: false,
         center: [parseFloat(station_info.lng),parseFloat(station_info.lat)]
     });
 
@@ -69,11 +68,13 @@ $(document).ready(function() {
             },
             'layout': {
                 'icon-image': 'pin',
-                'icon-size': 0.4
+                'icon-size': 0.4,
+                'icon-allow-overlap': true
             }
         };
 
         map.addLayer(map_points);
+        map.repaint = true;
     });
 
     // Filters
