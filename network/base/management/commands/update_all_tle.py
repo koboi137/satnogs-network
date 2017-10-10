@@ -27,6 +27,7 @@ class Command(BaseCommand):
 
             # Get latest satellite TLE and check if it changed
             tle = sat.tle()
+            latest_tle = None
             try:
                 latest_tle = obj.latest_tle.tle1
             except:
