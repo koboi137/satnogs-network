@@ -22,7 +22,7 @@
 
   <div class="collapse{% if norad %} in{% endif %}" id="collapseFilters">
     <div class="filter-section">
-      <form id="satellite-filter" class="form-inline" methon="get" action="{% url 'base:observations_list' %}">
+      <form id="observation-filter" class="form-inline" methon="get" action="{% url 'base:observations_list' %}">
         <div class="form-group">
           <h4>Data:</h4>
           <div class="btn-group" data-toggle="buttons">
@@ -43,6 +43,26 @@
               <option data-norad="{{ satellite.norad_cat_id }}" value="{{ satellite.norad_cat_id }}"
                       {% ifequal satellite.norad_cat_id norad %}selected{% endifequal %}>
                 {{ satellite.norad_cat_id }} - {{ satellite.name }}
+              </option>
+            {% endfor %}
+          </select>
+          <h4>Observer:</h4>
+          <select class="form-control" name="observer" autocomplete="off" id="observer-selection">
+            <option value="" selected>All</option>
+            {% for author in authors %}
+              <option data-author="{{ author.id }}" value="{{ author.id }}"
+                      {% ifequal author.id observer_id %}selected{% endifequal %}>
+                {{ author.displayname }}
+              </option>
+            {% endfor %}
+          </select>
+          <h4>Station:</h4>
+          <select class="form-control" name="station" autocomplete="off" id="station-selection">
+            <option value="" selected>All</option>
+            {% for station in stations %}
+              <option data-station="{{ station }}" value="{{ station.id }}"
+                      {% ifequal station.id station_id %}selected{% endifequal %}>
+                {{ station.id }} - {{ station.name }}
               </option>
             {% endfor %}
           </select>
