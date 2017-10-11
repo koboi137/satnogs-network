@@ -296,9 +296,16 @@
               <td>
                 {% if nextpass.valid and station.online and station.active %}
                   <a href="{% url 'base:observation_new' %}?norad={{ nextpass.norad_cat_id }}&ground_station={{ station.id }}&start_date={{ nextpass.tr|date:"Y/m/d H:i" }}&end_date={{ nextpass.ts|date:"Y/m/d H:i" }}"
-                     class="btn btn-default">schedule</a>
+                     class="btn btn-default"
+                     target="_blank">
+                     schedule
+                     <span class="glyphicon glyphicon-new-window" aria-hidden="true"></span>
+                   </a>
                 {% else %}
-                  <a class="btn btn-default" disabled>schedule</a>
+                  <a class="btn btn-default" disabled>
+                    schedule
+                    <span class="glyphicon glyphicon-new-window" aria-hidden="true"></span>
+                  </a>
                 {% endif %}
               </td>
             </tr>
