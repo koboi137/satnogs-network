@@ -85,7 +85,7 @@ $(document).ready(function() {
         ctx.fill();
     }
 
-    $('canvas').each(function(){
+    $('.polar-plot').each(function(){
         var $this = $(this);
         drawPolarPlot($this.get(0), $this.data().points);
     });

@@ -170,11 +170,13 @@
       <li>
         <a href="#satellites" class="toggle" role="tab" data-toggle="tab">Upcoming passes</a>
       </li>
+      <li id="legend-toggle">
+        <a class="btn btn-default btn-sm" role="button" href="#legend" data-toggle="modal" data-target="#LegendModal">
+            <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> Legend
+        </a>
+      </li>
     </ul>
     <div class="tab-content">
-      <a class="btn btn-default btn-sm" role="button" href="#legend" data-toggle="modal" data-target="#LegendModal">
-          <span class="glyphicon glyphicon-certificate" aria-hidden="true"></span> Legend
-      </a>
       <div class="tab-pane active" id="observations">
         <table class="table table-hover">
           <thead>
@@ -289,7 +291,7 @@
                 <span class="red">⤈</span>{{ nextpass.azs }}°
               </td>
               <td>
-                <canvas width="100" height="100" data-points="{{ nextpass.polar_data }}"></canvas>
+                <canvas class="polar-plot" width="100" height="100" data-points="{{ nextpass.polar_data }}"></canvas>
               </td>
               <td>
                 {% if nextpass.valid and station.online and station.active %}
@@ -305,71 +307,6 @@
         </table>
       </div>
     </div>
-  </div>
-
-  <div class="collapse" id="collapseExample">
-    <div class="collapse in" id="collapseFilters">
-      <div class="filter-section">
-        <form id="antenna-filter" class="form-inline" method="get" action="{% url 'base:station_view' id=station.id %}">
-          <div class="form-group">
-            <h4>Filter:</h4>
-            <div class="btn-group" data-toggle="buttons">
-              <label class="btn btn-default btn-sm {% if unsupported_frequencies == '1' %}active{% endif %}"  aria-expanded="true" aria-controls="unsupported_frequencies">
-                <input type="checkbox" name="unsupported_frequencies" {% if unsupported_frequencies == '1' %}checked{% endif %} autocomplete="off">Include unsupported satellites
-              </label>
-            </div>
-          </div>
-        </form>
-      </div>
-    </div>
-  <table class="table table-hover table-responsive">
-      <thead>
-        <th>Name</th>
-        <th>Timeframe</th>
-        <th>⤉Rise°</th>
-        <th>⇴Max°</th>
-        <th>⤈Set°</th>
-        <th>Polar</th>
-        <th></th>
-      </thead>
-      <tbody>
-        {% for nextpass in nextpasses %}
-          <tr>
-            <td>
-              <a href="#" data-toggle="modal" data-target="#SatelliteModal" data-id="{{ nextpass.norad_cat_id }}">
-                {{ nextpass.norad_cat_id }} - {{ nextpass.name }}
-              </a>
-            </td>
-            <td>
-              <span class="datetime-date">{{ nextpass.tr|date:"Y-m-d" }}</span>
-              <span class="datetime-time">{{ nextpass.tr|date:"H:i:s" }}</span><br>
-              <span class="datetime-date">{{ nextpass.ts|date:"Y-m-d" }}</span>
-              <span class="datetime-time">{{ nextpass.ts|date:"H:i:s" }}</span>
-            </td>
-            <td>
-              <span class="lightgreen">⤉</span>{{ nextpass.azr }}°
-            </td>
-            <td>
-              ⇴{{ nextpass.altt }}°
-            </td>
-            <td>
-              <span class="red">⤈</span>{{ nextpass.azs }}°
-            </td>
-            <td>
-              <canvas width="100" height="100" data-points="{{ nextpass.polar_data }}"></canvas>
-            </td>
-            <td>
-              {% if nextpass.valid and station.online and station.active %}
-                <a href="{% url 'base:observation_new' %}?norad={{ nextpass.norad_cat_id }}&ground_station={{ station.id }}&start_date={{ nextpass.tr|date:"Y/m/d H:i" }}&end_date={{ nextpass.ts|date:"Y/m/d H:i" }}"
-                   class="btn btn-default">schedule</a>
-              {% else %}
-                <a href="#" class="btn btn-default" disabled>schedule</a>
-              {% endif %}
-            </td>
-          </tr>
-        {% endfor %}
-      </tbody>
-    </table>
   </div>
 
   {% if request.user == station.owner %}
