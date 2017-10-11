@@ -7,25 +7,26 @@
 {% block content %}
   <h1>
     Observations
-    {% if user.is_authenticated == 1 %}
-      <a class="btn btn-primary pull-right" href="{% url 'base:observation_new' %}">New Observation</a>
-    {% endif %}
+    <div class="pull-right">
+      <a class="btn btn-default" role="button" data-toggle="collapse"
+              href="#collapseFilters" aria-expanded="false" aria-controls="collapseFilters">
+        <span class="glyphicon glyphicon-th-list" aria-hidden="true"></span> Filters
+      </a>
+      <a class="btn btn-default" role="button" href="#legend" data-toggle="modal" data-target="#LegendModal">
+          <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> Legend
+      </a>
+      {% if user.is_authenticated == 1 %}
+        <a class="btn btn-primary" href="{% url 'base:observation_new' %}">New Observation</a>
+      {% endif %}
+    </div>
   </h1>
 
-  <button class="btn btn-default btn-sm" role="button" data-toggle="collapse"
-          href="#collapseFilters" aria-expanded="false" aria-controls="collapseFilters">
-    <span class="glyphicon glyphicon-th-list" aria-hidden="true"></span> Filters
-  </button>
-  <a class="btn btn-default btn-sm" role="button" href="#legend" data-toggle="modal" data-target="#LegendModal">
-      <span class="glyphicon glyphicon-certificate" aria-hidden="true"></span> Legend
-  </a>
-
   <div class="collapse{% if norad %} in{% endif %}" id="collapseFilters">
-    <div class="filter-section">
-      <form id="observation-filter" class="form-inline" methon="get" action="{% url 'base:observations_list' %}">
-        <div class="form-group">
-          <h4>Data:</h4>
-          <div class="btn-group" data-toggle="buttons">
+    <div class="filter-section row">
+      <form id="observation-filter" class="form" methon="get" action="{% url 'base:observations_list' %}">
+        <div class="form-group col-md-3">
+          <label for="data-selector">Data</label>
+          <div id="data-selector" class="btn-group" data-toggle="buttons">
             <label class="btn btn-default btn-sm {% if bad == '1' %}active{% endif %}"  aria-expanded="true" aria-controls="bad">
               <input type="checkbox" name="bad" {% if bad == '1' %}checked{% endif %} autocomplete="off">Bad
             </label>
@@ -36,7 +37,9 @@
               <input type="checkbox" name="good" {% if good == '1' %}checked{% endif %} autocomplete="off">Good
             </label>
           </div>
-          <h4>Satellite:</h4>
+        </div>
+        <div class="form-group col-md-3">
+          <label for="satellite-selection">Satellite</label>
           <select class="form-control" name="norad" autocomplete="off" id="satellite-selection">
             <option value="" selected>All</option>
             {% for satellite in satellites %}
@@ -46,7 +49,9 @@
               </option>
             {% endfor %}
           </select>
-          <h4>Observer:</h4>
+        </div>
+        <div class="form-group col-md-3">
+          <label for="observer-selection">Observer</label>
           <select class="form-control" name="observer" autocomplete="off" id="observer-selection">
             <option value="" selected>All</option>
             {% for author in authors %}
@@ -56,7 +61,9 @@
               </option>
             {% endfor %}
           </select>
-          <h4>Station:</h4>
+        </div>
+        <div class="form-group col-md-3">
+          <label for="station-selection">Station</label>
           <select class="form-control" name="station" autocomplete="off" id="station-selection">
             <option value="" selected>All</option>
             {% for station in stations %}
