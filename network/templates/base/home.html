@@ -60,8 +60,7 @@
               <div class="front-line">
                 <span class="label label-default">Coordinates</span>
                 <span class="front-data">
-                  {{ featured_station.lng|floatformat:2 }}°,
-                  {{ featured_station.lat|floatformat:2 }}°
+                  {{ featured_station.lat|floatformat:-3 }}°, {{ featured_station.lng|floatformat:-3 }}°
                 </span>
               </div>
               <div class="front-line">
