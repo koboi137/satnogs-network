@@ -26,6 +26,9 @@ $(document).ready(function() {
     map.addControl(new mapboxgl.NavigationControl());
     map.touchZoomRotate.disableRotation();
     map.dragRotate.disable();
+    if ('ontouchstart' in window) {
+        map.dragPan.disable();
+    }
 
     map.on('load', function () {
 

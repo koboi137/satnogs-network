@@ -132,6 +132,10 @@ footer {
     padding: 10px;
 }
 
+.navbar-default {
+    background-color: white;
+}
+
 #main-navbar {
     margin-top: 2%;
 }
@@ -143,10 +147,22 @@ footer {
     height: 100%;
 }
 
-#call2action {
+.call2action {
     height: 80px;
     margin-top: 70vh;
-    margin-bottom: 10vh;
+    margin-bottom: 15vh;
+}
+
+.call2action h3 {
+    margin-top: 10px;
+}
+
+.call2action .btn {
+    margin-left: 30px;
+}
+
+.call2action .panel {
+    background: rgba(255, 255, 255, 0.8);
 }
 
 .img-gs-front {
@@ -177,9 +193,11 @@ footer {
     width: 80px;
 }
 
-#call2action .btn-lg {
-    margin-left: 30px;
-    margin-top: -8px;
+@media screen and (max-width: 550px) {
+
+    .call2action .btn {
+        margin-left: 0;
+    }
 }
 
 .coloredDiv {
@@ -224,11 +242,8 @@ footer {
     color: #ffff00;
 }
 
-.leaflet-left {
-    display: none;
-}
-
-.mapbox-improve-map {
+.mapbox-improve-map,
+.mapboxgl-ctrl-bottom-left {
     display: none;
 }
 
