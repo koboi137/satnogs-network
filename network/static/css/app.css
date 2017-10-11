@@ -255,6 +255,10 @@ span.datetime-time {
     color: lightgreen;
 }
 
+#legend-toggle {
+  float: right;
+}
+
 /* Stations
 ==================== */
 
