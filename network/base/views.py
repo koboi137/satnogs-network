@@ -21,6 +21,7 @@ from rest_framework import serializers, viewsets
 
 from network.base.models import (Station, Transmitter, Observation,
                                  Satellite, Antenna, Tle, Rig)
+from network.users.models import User
 from network.base.forms import StationForm, SatelliteFilterForm
 from network.base.decorators import admin_required
 from network.base.helpers import calculate_polar_data, resolve_overlaps
@@ -29,7 +30,7 @@ from network.base.helpers import calculate_polar_data, resolve_overlaps
 class StationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Station
-        fields = ('name', 'lat', 'lng')
+        fields = ('name', 'lat', 'lng', 'id')
 
 
 class StationAllView(viewsets.ReadOnlyModelViewSet):
@@ -130,6 +131,8 @@ class ObservationListView(ListView):
         Optionally filter based on good/bad/unvetted
         """
         norad_cat_id = self.request.GET.get('norad', '')
+        observer = self.request.GET.get('observer', '')
+        station = self.request.GET.get('station', '')
         bad = self.request.GET.get('bad', '1')
         if bad == '0':
             bad = False
@@ -146,11 +149,16 @@ class ObservationListView(ListView):
         else:
             unvetted = True
 
-        if norad_cat_id == '':
-            observations = Observation.objects.all()
-        else:
-            observations = Observation.objects.filter(
+        observations = Observation.objects.all()
+        if not norad_cat_id == '':
+            observations = observations.filter(
                 satellite__norad_cat_id=norad_cat_id)
+        if not observer == '':
+            observations = observations.filter(
+                author=observer)
+        if not station == '':
+            observations = observations.filter(
+                ground_station_id=station)
 
         if not bad:
             observations = observations.exclude(vetted_status='no_data')
@@ -166,12 +174,20 @@ class ObservationListView(ListView):
         """
         context = super(ObservationListView, self).get_context_data(**kwargs)
         context['satellites'] = Satellite.objects.all()
+        context['authors'] = User.objects.all()
+        context['stations'] = Station.objects.all()
         norad_cat_id = self.request.GET.get('norad', None)
+        observer = self.request.GET.get('observer', None)
+        station = self.request.GET.get('station', None)
         context['bad'] = self.request.GET.get('bad', '1')
         context['good'] = self.request.GET.get('good', '1')
         context['unvetted'] = self.request.GET.get('unvetted', '1')
         if norad_cat_id is not None and norad_cat_id != '':
             context['norad'] = int(norad_cat_id)
+        if observer is not None and observer != '':
+            context['observer_id'] = int(observer)
+        if station is not None and station != '':
+            context['station_id'] = int(station)
         if 'scheduled' in self.request.session:
             context['scheduled'] = self.request.session['scheduled']
             try:
@@ -428,9 +444,13 @@ def observation_view(request, id):
     if request.user.is_authenticated():
         if observation.author == request.user or request.user.is_staff:
             is_vetting_user = True
-        if Station.objects.filter(owner=request.user). \
-           filter(id=observation.ground_station.id).count():
-            is_vetting_user = True
+        # Hadle exception for deleted station
+        try:
+            if Station.objects.filter(owner=request.user). \
+               filter(id=observation.ground_station.id).count():
+                is_vetting_user = True
+        except:
+            pass
 
     # This context flag will determine if a delete button appears for the observation.
     # That includes observer, superusers and people with certain permission.

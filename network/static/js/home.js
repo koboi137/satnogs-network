@@ -1,4 +1,4 @@
-/*global L*/
+/*global mapboxgl*/
 
 $(document).ready(function() {
     'use strict';
@@ -9,36 +9,88 @@ $(document).ready(function() {
     $('.progress-bar-success').css('width', success_rate + '%');
     $('.progress-bar-danger').css('width', percentagerest + '%');
 
-    var mapboxid = $('div#map').data('mapboxid');
     var mapboxtoken = $('div#map').data('mapboxtoken');
     var stations = $('div#map').data('stations');
 
-    L.mapbox.accessToken = mapboxtoken;
-    L.mapbox.config.FORCE_HTTPS = true;
-    var map = L.mapbox.map('map', mapboxid, {
-        zoomControl: false
-    }).setView([40, 0], 3);
-    L.mapbox.featureLayer().addTo(map);
+    mapboxgl.accessToken = mapboxtoken;
 
-    $.ajax({
-        url: stations
-    }).done(function(data) {
-        data.forEach(function(m) {
-            L.mapbox.featureLayer({
-                type: 'Feature',
-                geometry: {
-                    type: 'Point',
-                    coordinates: [
-                        parseFloat(m.lng),
-                        parseFloat(m.lat)
-                    ]
-                },
-                properties: {
-                    title: m.name,
-                    'marker-size': 'large',
-                    'marker-color': '#666',
-                }
-            }).addTo(map);
+    var map = new mapboxgl.Map({
+        container: 'map',
+        style: 'mapbox://styles/pierros/cj8kftshl4zll2slbelhkndwo',
+        zoom: 2,
+        minZoom: 2,
+        scrollZoom: false,
+        center: [10,29]
+    });
+
+    map.addControl(new mapboxgl.NavigationControl());
+    map.touchZoomRotate.disableRotation();
+    map.dragRotate.disable();
+    if ('ontouchstart' in window) {
+        map.dragPan.disable();
+    }
+
+    map.on('load', function () {
+
+        map.loadImage('/static/img/pin.png', function(error, image) {
+            map.addImage('pin', image);
         });
+
+        var map_points = {
+            'id': 'points',
+            'type': 'symbol',
+            'source': {
+                'type': 'geojson',
+                'data': {
+                    'type': 'FeatureCollection',
+                    'features': []
+                }
+            },
+            'layout': {
+                'icon-image': 'pin',
+                'icon-size': 0.4,
+                'icon-allow-overlap': true
+            }
+        };
+
+        $.ajax({
+            url: stations
+        }).done(function(data) {
+            data.forEach(function(m) {
+                map_points.source.data.features.push({
+                    'type': 'Feature',
+                    'geometry': {
+                        'type': 'Point',
+                        'coordinates': [
+                            parseFloat(m.lng),
+                            parseFloat(m.lat)]
+                    },
+                    'properties': {
+                        'description': '<a href="/stations/' + m.id + '">' + m.id + ' - ' + m.name + '</a>',
+                    }
+                });
+            });
+
+            map.addLayer(map_points);
+            map.repaint = true;
+
+        });
+    });
+
+    // Create a popup, but don't add it to the map yet.
+    var popup = new mapboxgl.Popup({
+        closeButton: false,
+        closeOnClick: true
+    });
+
+    map.on('mouseenter', 'points', function(e) {
+        // Change the cursor style as a UI indicator.
+        map.getCanvas().style.cursor = 'pointer';
+
+        // Populate the popup and set its coordinates
+        // based on the feature found.
+        popup.setLngLat(e.features[0].geometry.coordinates)
+            .setHTML(e.features[0].properties.description)
+            .addTo(map);
     });
 });

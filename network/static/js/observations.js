@@ -1,7 +1,7 @@
 $(document).ready(function() {
     'use strict';
 
-    $('#satellite-filter').submit(function () {
+    $('#observation-filter').submit(function () {
         var the_form = $(this);
 
         the_form.find('input[type="checkbox"]').each( function () {
@@ -19,14 +19,20 @@ $(document).ready(function() {
     });
 
     $('.filter-section input[type=checkbox]').change(function() {
-        $('#satellite-filter').submit();
+        $('#observation-filter').submit();
     });
 
     // Satellite Filters
     $('#satellite-selection').bind('keyup change', function() {
-        $('#satellite-filter').submit();
+        $('#observation-filter').submit();
     });
-    if ($('#satellite-selection').val()) {
+    $('#observer-selection').bind('keyup change', function() {
+        $('#observation-filter').submit();
+    });
+    $('#station-selection').bind('keyup change', function() {
+        $('#observation-filter').submit();
+    });
+    if ($('#satellite-selection').val() || $('#observer-selection').val() || $('#station-selection').val()) {
 
         $('#collapseFilters').show();
     }

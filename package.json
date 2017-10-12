@@ -4,7 +4,7 @@
     "description": "a network of distributed SatNOGS ground stations",
     "repository": {
         "type": "git",
-        "url": "https://github.com/satnogs/satnogs-network"
+        "url": "https://gitlab.com/librespacefoundation/satnogs/satnogs-network"
     },
     "author": "SatNOGS",
     "license": "AGPL-3.0",
@@ -20,7 +20,7 @@
         "dnt-helper": "schalkneethling/dnt-helper",
         "eonasdan-bootstrap-datetimepicker": "^4.17.47",
         "jquery": "^3.2.1",
-        "mapbox.js": "^3.1.1",
+        "mapbox-gl": "^0.40.1",
         "moment": "^2.18.1",
         "urijs": "^1.18.12",
         "wavesurfer.js": "^1.4.0"
@@ -34,8 +34,8 @@
         "eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js",
         "d3/d3.min.js",
         "d3-timeline/src/d3-timeline.js",
-        "mapbox.js/mapbox.css",
-        "mapbox.js/mapbox.js",
+        "mapbox-gl/dist/mapbox-gl.css",
+        "mapbox-gl/dist/mapbox-gl.js",
         "moment/min/moment.min.js",
         "wavesurfer.js/dist/wavesurfer.min.js",
         "wavesurfer.js/dist/plugin/wavesurfer.spectrogram.min.js",
