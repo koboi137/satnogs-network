@@ -127,6 +127,11 @@ class Station(models.Model):
             return False
 
     @property
+    def observations_count(self):
+        count = self.observations.all().count()
+        return count
+
+    @property
     def apikey(self):
         return get_apikey(user=self.owner)
 
