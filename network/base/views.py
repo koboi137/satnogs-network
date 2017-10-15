@@ -458,6 +458,9 @@ def observation_view(request, id):
     if request.user.is_authenticated():
         if observation.author == request.user and observation.is_deletable_before_start:
             is_deletable = True
+        if (observation.ground_station.owner == request.user and
+                observation.is_deletable_before_start):
+            is_deletable = True
         if request.user.has_perm('base.delete_observation') and observation.is_deletable_after_end:
             is_deletable = True
         if request.user.is_superuser:
