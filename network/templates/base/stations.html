@@ -50,9 +50,12 @@
                 </td>
               {% else %}
                 <td>
-                  {{ station.lat|floatformat:-3 }}°, {{ station.lng|floatformat:-3 }}°
                   {% if station.qthlocator %}
-                    - {{ station.qthlocator }}
+                    <span data-toggle="tooltip" data-placement="bottom"
+                          title="{{ station.lat|floatformat:-3 }}°, {{ station.lng|floatformat:-3 }}°">
+                    {{ station.qthlocator }}
+                  {% else %}
+                    {{ station.lat|floatformat:-1 }}°, {{ station.lng|floatformat:-1 }}°
                   {% endif %}
                   @{{ station.alt}}m
                 </td>
@@ -100,5 +103,4 @@
 
 {% block javascript %}
   <script src="{% static 'js/gridsquare.js' %}"></script>
-  <script src="{% static 'js/stations.js' %}"></script>
 {% endblock javascript %}
