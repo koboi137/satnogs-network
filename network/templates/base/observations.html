@@ -139,6 +139,7 @@
         </tbody>
       </table>
       {% if is_paginated %}{% load paginator %}{% paginator request 3 %}{% endif %}
+      Query returned {{ observations|length }} observation{{ observations|length|pluralize }}
     </div>
   </div>
   {% include 'includes/satellite.html' %}

@@ -174,8 +174,8 @@ class ObservationListView(ListView):
         """
         context = super(ObservationListView, self).get_context_data(**kwargs)
         context['satellites'] = Satellite.objects.all()
-        context['authors'] = User.objects.all()
-        context['stations'] = Station.objects.all()
+        context['authors'] = User.objects.all().order_by('first_name', 'last_name', 'username')
+        context['stations'] = Station.objects.all().order_by('id')
         norad_cat_id = self.request.GET.get('norad', None)
         observer = self.request.GET.get('observer', None)
         station = self.request.GET.get('station', None)
