@@ -301,6 +301,10 @@ span.datetime-time {
     margin-top: 10px;
 }
 
+.station-antennas .label-info {
+    margin: 2px;
+}
+
 /* Observations
 ==================== */
 

@@ -174,8 +174,8 @@ class ObservationListView(ListView):
         """
         context = super(ObservationListView, self).get_context_data(**kwargs)
         context['satellites'] = Satellite.objects.all()
-        context['authors'] = User.objects.all()
-        context['stations'] = Station.objects.all()
+        context['authors'] = User.objects.all().order_by('first_name', 'last_name', 'username')
+        context['stations'] = Station.objects.all().order_by('id')
         norad_cat_id = self.request.GET.get('norad', None)
         observer = self.request.GET.get('observer', None)
         station = self.request.GET.get('station', None)
@@ -457,6 +457,9 @@ def observation_view(request, id):
     is_deletable = False
     if request.user.is_authenticated():
         if observation.author == request.user and observation.is_deletable_before_start:
+            is_deletable = True
+        if (observation.ground_station.owner == request.user and
+                observation.is_deletable_before_start):
             is_deletable = True
         if request.user.has_perm('base.delete_observation') and observation.is_deletable_after_end:
             is_deletable = True

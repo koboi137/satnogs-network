@@ -19,7 +19,8 @@
           <th>ID</th>
           <th>Name</th>
           <th>Location</th>
-          <th>Altitude</th>
+          <th>Last seen</th>
+          <th>Observations</th>
           <th>Antennas</th>
           <th>Owner</th>
         </thead>
@@ -49,16 +50,39 @@
                 </td>
               {% else %}
                 <td>
-                  {{ station.lat|floatformat:-3 }}°, {{ station.lng|floatformat:-3 }}°
                   {% if station.qthlocator %}
-                    - {{ station.qthlocator }}
+                    <span data-toggle="tooltip" data-placement="bottom"
+                          title="{{ station.lat|floatformat:-3 }}°, {{ station.lng|floatformat:-3 }}°">
+                    {{ station.qthlocator }}
+                  {% else %}
+                    {{ station.lat|floatformat:-1 }}°, {{ station.lng|floatformat:-1 }}°
                   {% endif %}
+                  @{{ station.alt}}m
                 </td>
               {% endif %}
-              <td>{{ station.alt}} m</td>
               <td>
+                {% if station.last_seen %}
+                  {{ station.last_seen|timesince }} ago
+                {% else %}
+                  Never seen
+                {% endif %}
+              </td>
+              <td>
+                {% if station.success_rate %}
+                  <span class="badge" data-toggle="tooltip" data-placement="bottom"
+                        title="{{ station.success_rate }}% Success">
+                    {{ station.observations_count }}
+                  </span>
+                {% else %}
+                  No stats
+                {% endif %}
+              </td>
+              <td class="station-antennas">
                 {% for antenna in station.antenna.all %}
-                  {{ antenna.band}} {{ antenna.get_antenna_type_display }} | {{ antenna.frequency|frq }} - {{ antenna.frequency_max|frq }}<br>
+                  <span class="label label-info" data-toggle="tooltip" data-placement="bottom"
+                        title="{{ antenna.frequency|frq }} - {{ antenna.frequency_max|frq }}">
+                    {{ antenna.band}} {{ antenna.get_antenna_type_display }}
+                  </span>
                 {% endfor %}
               </td>
               <td>

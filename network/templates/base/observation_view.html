@@ -32,12 +32,12 @@
         {% if observation.is_past %}
           {% if not observation.is_vetted and is_vetting_user %}
             <a href="{% url 'base:observation_verify' id=observation.id %}">
-              <button id="verify-data" type="button" class="btn btn-default">
+              <button id="verify-data" type="button" class="btn btn-success">
                 <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span> Good
               </button>
             </a>
             <a href="{% url 'base:observation_mark_bad' id=observation.id %}">
-              <button id="bad-data" type="button" class="btn btn-default">
+              <button id="bad-data" type="button" class="btn btn-danger">
                 <span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span> Bad
               </button>
             </a>
