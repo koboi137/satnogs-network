@@ -27,14 +27,17 @@
         <div class="form-group col-md-3">
           <label for="data-selector">Data</label>
           <div id="data-selector" class="btn-group" data-toggle="buttons">
-            <label class="btn btn-default btn-sm {% if bad == '1' %}active{% endif %}"  aria-expanded="true" aria-controls="bad">
+            <label class="btn btn-info btn-sm {% if future == '1' %}active{% endif %}"  aria-expanded="true" aria-controls="future">
+              <input type="checkbox" name="future" {% if future == '1' %}checked{% endif %} autocomplete="off">Future
+            </label>
+            <label class="btn btn-success btn-sm {% if good == '1' %}active{% endif %}"  aria-expanded="true" aria-controls="good">
+              <input type="checkbox" name="good" {% if good == '1' %}checked{% endif %} autocomplete="off">Good
+            </label>
+            <label class="btn btn-danger btn-sm {% if bad == '1' %}active{% endif %}"  aria-expanded="true" aria-controls="bad">
               <input type="checkbox" name="bad" {% if bad == '1' %}checked{% endif %} autocomplete="off">Bad
             </label>
-            <label class="btn btn-default btn-sm {% if unvetted == '1' %}active{% endif %}"  aria-expanded="true" aria-controls="unvetted">
+            <label class="btn btn-warning btn-sm {% if unvetted == '1' %}active{% endif %}"  aria-expanded="true" aria-controls="unvetted">
               <input type="checkbox" name="unvetted" {% if unvetted == '1' %}checked{% endif %} autocomplete="off">Unvetted
-            </label>
-            <label class="btn btn-default btn-sm {% if good == '1' %}active{% endif %}"  aria-expanded="true" aria-controls="good">
-              <input type="checkbox" name="good" {% if good == '1' %}checked{% endif %} autocomplete="off">Good
             </label>
           </div>
         </div>

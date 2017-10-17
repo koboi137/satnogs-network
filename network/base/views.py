@@ -133,6 +133,7 @@ class ObservationListView(ListView):
         norad_cat_id = self.request.GET.get('norad', '')
         observer = self.request.GET.get('observer', '')
         station = self.request.GET.get('station', '')
+
         bad = self.request.GET.get('bad', '1')
         if bad == '0':
             bad = False
@@ -148,6 +149,11 @@ class ObservationListView(ListView):
             unvetted = False
         else:
             unvetted = True
+        future = self.request.GET.get('future', '1')
+        if future == '0':
+            future = False
+        else:
+            future = True
 
         observations = Observation.objects.all()
         if not norad_cat_id == '':
@@ -165,7 +171,12 @@ class ObservationListView(ListView):
         if not good:
             observations = observations.exclude(vetted_status='verified')
         if not unvetted:
-            observations = observations.exclude(vetted_status='unknown')
+            observations = observations.exclude(vetted_status='unknown',
+                                                id__in=[o.id for
+                                                        o in observations if o.end < now()])
+        if not future:
+            observations = observations.exclude(id__in=[o.id for
+                                                        o in observations if o.end > now()])
         return observations
 
     def get_context_data(self, **kwargs):
@@ -179,6 +190,7 @@ class ObservationListView(ListView):
         norad_cat_id = self.request.GET.get('norad', None)
         observer = self.request.GET.get('observer', None)
         station = self.request.GET.get('station', None)
+        context['future'] = self.request.GET.get('future', '1')
         context['bad'] = self.request.GET.get('bad', '1')
         context['good'] = self.request.GET.get('good', '1')
         context['unvetted'] = self.request.GET.get('unvetted', '1')
