@@ -2,9 +2,9 @@
 -r production.txt
 
 # Debug & Testing
-sqlparse==0.2.3 \
-    --hash=sha256:740a023ef38ce11bbb99a9d143856f56ef4ec5b0d7a853f58c02c65b035114c4 \
-    --hash=sha256:becd7cc7cebbdf311de8ceedfcf2bd2403297024418801947f8c953025beeff8
+sqlparse==0.2.4 \
+    --hash=sha256:d9cf190f51cbb26da0412247dfe4fb5f4098edb73db84e02f9fc21fdca31fed4 \
+    --hash=sha256:ce028444cfab83be538752a2ffdb56bc417b7784ff35bb9a3062413717807dec
 flake8==3.4.1 \
     --hash=sha256:f1a9d8886a9cbefb52485f4f4c770832c7fb569c084a9a314fb1eaa37c0c2c86 \
     --hash=sha256:c20044779ff848f67f89c56a0e4624c04298cd476e25253ac0c36f910a1a11d8
