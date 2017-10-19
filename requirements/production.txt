@@ -1,7 +1,7 @@
 # Basic
-Django==1.11.5 \
-    --hash=sha256:89162f70a74aac62a53f975128faba6099a7ef2c9d8140a41ae9d6210bda05cd \
-    --hash=sha256:1836878162dfdf865492bacfdff0321e4ee8f1e7d51d93192546000b54982b29
+Django==1.11.6 \
+    --hash=sha256:7ab6a9c798a5f9f359ee6da3677211f883fb02ef32cebe9b29751eb7a871febf \
+    --hash=sha256:c3b42ca1efa1c0a129a9e863134cc3fe705c651dea3a04a7998019e522af0c60
 django-shortuuidfield==0.1.3 \
     --hash=sha256:a292c0fe5538abe947b131e2b914edd9ac44afcc6a40eaec71448e6231a3ef00
 celery==4.1.0 \
