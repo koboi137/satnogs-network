@@ -100,9 +100,9 @@ https://github.com/comzeradd/orbit/archive/cache.zip \
     --hash=sha256:7cae6b5a171f615698325debf80546d338e4bb73a697e2368619debf1582ac19
 
 # API
-djangorestframework==3.6.4 \
-    --hash=sha256:0f9bfbac702f3376dfb2db4971ad8af4e066bfa35393b1b85e085f7e8b91189a \
-    --hash=sha256:de8ac68b3cf6dd41b98e01dcc92dc0022a5958f096eafc181a17fa975d18ca42
+djangorestframework==3.7.1 \
+    --hash=sha256:cd7f0f678d63e2be561834ff2049eef6d9fd6fb85c63bea7e94597b36c015bf4 \
+    --hash=sha256:305b2c6564ca46d3b558ba21110ed717135c467adf1a6dfd192bd85f4bb04d50
 Markdown==2.6.9 \
     --hash=sha256:73af797238b95768b3a9b6fe6270e250e5c09d988b8e5b223fd5efa4e06faf81
 django-filter==1.0.4 \
