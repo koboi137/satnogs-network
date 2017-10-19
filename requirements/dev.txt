@@ -128,7 +128,7 @@ PyYAML==3.12 \
 pytest-forked==0.2 \
     --hash=sha256:e4500cd0509ec4a26535f7d4112a8cc0f17d3a41c29ffd4eab479d2a55b30805 \
     --hash=sha256:f275cb48a73fc61a6710726348e1da6d68a978f0ec0c54ece5a5fae5977e5a08
-email-validator==1.0.2 \
-    --hash=sha256:feec98c601524619e67b377f52ce331920f026d1b2e05bf5d6d0031ec844b600
+email-validator==1.0.3 \
+    --hash=sha256:ddc4b5b59fa699bb10127adcf7ad4de78fde4ec539a072b104b8bb16da666ae5
 dnspython==1.15.0 \
    --hash=sha256:861e6e58faa730f9845aaaa9c6c832851fbf89382ac52915a51f89c71accdd31
