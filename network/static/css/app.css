@@ -177,8 +177,8 @@ footer {
 }
 
 .front-line {
-    margin-top: 10px;
-    margin-bottom: 10px;
+    margin-top: 12px;
+    margin-bottom: 12px;
     clear: both;
 }
 
@@ -218,7 +218,12 @@ footer {
 }
 
 .tab-data {
-    padding-top: 25px;
+    margin-top: 25px;
+}
+
+.data-label {
+    margin-top: 10px;
+    display: inline-block;
 }
 
 .data-well {
@@ -260,6 +265,10 @@ code.log p {
 
 span.datetime-time {
     margin-left: 10px;
+}
+
+.datetime-data {
+    margin-bottom: 12px;
 }
 
 .red {
@@ -392,9 +401,8 @@ span.datetime-time {
     padding: 15px;
 }
 
-.filter-section {
-    display: inline-block;
-    margin-right: 20px;
+#data-selector {
+    display: block;
 }
 
 #collapseFilters h4,

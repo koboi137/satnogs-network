@@ -27,14 +27,17 @@
         <div class="form-group col-md-3">
           <label for="data-selector">Data</label>
           <div id="data-selector" class="btn-group" data-toggle="buttons">
-            <label class="btn btn-default btn-sm {% if bad == '1' %}active{% endif %}"  aria-expanded="true" aria-controls="bad">
+            <label class="btn btn-info btn-sm {% if future == '1' %}active{% endif %}"  aria-expanded="true" aria-controls="future">
+              <input type="checkbox" name="future" {% if future == '1' %}checked{% endif %} autocomplete="off">Future
+            </label>
+            <label class="btn btn-success btn-sm {% if good == '1' %}active{% endif %}"  aria-expanded="true" aria-controls="good">
+              <input type="checkbox" name="good" {% if good == '1' %}checked{% endif %} autocomplete="off">Good
+            </label>
+            <label class="btn btn-danger btn-sm {% if bad == '1' %}active{% endif %}"  aria-expanded="true" aria-controls="bad">
               <input type="checkbox" name="bad" {% if bad == '1' %}checked{% endif %} autocomplete="off">Bad
             </label>
-            <label class="btn btn-default btn-sm {% if unvetted == '1' %}active{% endif %}"  aria-expanded="true" aria-controls="unvetted">
+            <label class="btn btn-warning btn-sm {% if unvetted == '1' %}active{% endif %}"  aria-expanded="true" aria-controls="unvetted">
               <input type="checkbox" name="unvetted" {% if unvetted == '1' %}checked{% endif %} autocomplete="off">Unvetted
-            </label>
-            <label class="btn btn-default btn-sm {% if good == '1' %}active{% endif %}"  aria-expanded="true" aria-controls="good">
-              <input type="checkbox" name="good" {% if good == '1' %}checked{% endif %} autocomplete="off">Good
             </label>
           </div>
         </div>
@@ -87,6 +90,7 @@
           <th>Frequency</th>
           <th>Encoding</th>
           <th>Timeframe</th>
+          <th>Results</th>
           <th>Observer</th>
           <th>Station</th>
         </thead>
@@ -115,12 +119,37 @@
                 </a>
               </td>
               <td>{{ observation.transmitter.downlink_low|frq }}</td>
-              <td>{{ observation.transmitter.mode|default:"-" }}</td>
               <td>
-                <span class="datetime-date">{{ observation.start|date:"Y-m-d" }}</span>
-                <span class="datetime-time">{{ observation.start|date:"H:i:s" }}</span><br>
-                <span class="datetime-date">{{ observation.end|date:"Y-m-d" }}</span>
-                <span class="datetime-time">{{ observation.end|date:"H:i:s" }}</span>
+                <span data-toggle="tooltip" data-placement="bottom" title="{{ observation.transmitter.description }}">
+                  {{ observation.transmitter.mode|default:"-" }}
+                </span>
+              </td>
+              <td>
+                <span data-toggle="tooltip" data-placement="bottom" title="{{ observation.start|timesince }} ago">
+                  <span class="datetime-date">{{ observation.start|date:"Y-m-d" }}</span>
+                  <span class="datetime-time">{{ observation.start|date:"H:i:s" }}</span><br>
+                </span>
+                <span data-toggle="tooltip" data-placement="bottom" title="{{ observation.end|timesince }} ago">
+                  <span class="datetime-date">{{ observation.end|date:"Y-m-d" }}</span>
+                  <span class="datetime-time">{{ observation.end|date:"H:i:s" }}</span>
+                </span>
+              </td>
+              <td>
+                {% if observation.waterfall %}
+                  <span class="glyphicon glyphicon-barcode" aria-hidden="true"
+                        data-toggle="tooltip" data-placement="bottom"
+                        title="Waterfall uploaded"></span>
+                {% endif %}
+                {% if observation.payload_exists %}
+                  <span class="glyphicon glyphicon-volume-up" aria-hidden="true"
+                        data-toggle="tooltip" data-placement="bottom"
+                        title="Audio uploaded"></span>
+                {% endif %}
+                {% if observation.demoddata.all %}
+                  <span class="glyphicon glyphicon-file" aria-hidden="true"
+                        data-toggle="tooltip" data-placement="bottom"
+                        title="{{ observation.demoddata.all|length }} Data uploaded"></span>
+                {% endif %}
               </td>
               <td>
                 <a href="{% url 'users:view_user' username=observation.author.username %}">
