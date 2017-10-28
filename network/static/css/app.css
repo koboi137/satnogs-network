@@ -187,6 +187,12 @@ footer {
     .front-border {
         border-right: 1px solid lightgray;
     }
+
+    .sticky-div {
+        position: sticky;
+        -webkit-position: sticky; /* for safari */
+        top: 15px;
+    }
 }
 
 #navbar-logo {
@@ -458,13 +464,18 @@ span.datetime-time {
     border-radius: 5px;
 }
 
+.satellite-success {
+    width: 100px;
+    margin-top: 20px;
+}
+
 /* Overwrite display:none
    of bootstrap tab panel */
 
 .tab-content > .tab-pane {
     visibility: hidden;
     display: inline;
-    position: absolute;
+    position: fixed;
 }
 
 .tab-content > .active {
@@ -472,7 +483,3 @@ span.datetime-time {
     position: initial;
 }
 
-.satellite-success {
-    width: 100px;
-    margin-top: 20px;
-}
