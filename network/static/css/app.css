@@ -293,16 +293,15 @@ span.datetime-time {
 ==================== */
 
 #map-station {
-    margin-top: 2%;
     width: 100%;
-    height: 200px;
+    height: 300px;
     border-radius: 5px;
 }
 
 .station-view-image {
-    width: 200px;
-    float: right;
+    height: 300px;
     border-radius: 5px;
+    float: right;
 }
 
 .station-edit-image {
@@ -482,4 +481,3 @@ span.datetime-time {
     visibility: visible;
     position: initial;
 }
-

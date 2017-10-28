@@ -1,4 +1,4 @@
-/* global mapboxgl, URI */
+/* global mapboxgl */
 
 $(document).ready(function() {
     'use strict';
@@ -84,7 +84,6 @@ $(document).ready(function() {
         the_form.find('input[type="checkbox"]').each( function () {
             var the_checkbox = $(this);
 
-
             if( the_checkbox.is(':checked') === true ) {
                 the_checkbox.attr('value','1');
             } else {
@@ -95,12 +94,7 @@ $(document).ready(function() {
         });
     });
 
-    $('.filter-section input[type=checkbox]').change(function() {
+    $('#antenna-filter input[type=checkbox]').change(function() {
         $('#antenna-filter').submit();
     });
-
-    // Hightlight Data block
-    var uri = new URI(location.href);
-    var tab = uri.hash();
-    $('ul.nav a[href="' + tab + '"]').tab('show');
 });
