@@ -58,7 +58,7 @@
         <span class="front-data">
           {% if observation.ground_station %}
             <a href="{% url 'base:station_view' id=observation.ground_station.id %}">
-              {{ observation.ground_station.name }}
+              {{ observation.ground_station.id }} - {{ observation.ground_station.name }}
             </a>
           {% endif %}
         </span>
@@ -110,6 +110,12 @@
               {% endif %}
             {% endif %}
           {% endif %}
+        </span>
+      </div>
+      <div class="front-line">
+        <span class="label label-default">Transmitter</span>
+        <span class="front-data">
+          {{ observation.transmitter.description }}
         </span>
       </div>
       <div class="front-line">
