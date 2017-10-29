@@ -103,4 +103,21 @@ $(document).ready(function() {
             }
         });
     }
+
+    // Hotkeys bindings
+    $(document).bind('keyup', function(event){
+        if (event.which == 88) {
+            var link_delete = $('#obs-delete');
+            link_delete[0].click();
+        } else if (event.which == 68) {
+            var link_discuss = $('#obs-discuss');
+            link_discuss[0].click();
+        } else if (event.which == 71) {
+            var link_good = $('#verify-data');
+            link_good[0].click();
+        } else if (event.which == 66) {
+            var link_bad = $('#bad-data');
+            link_bad[0].click();
+        }
+    });
 });
