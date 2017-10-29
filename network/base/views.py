@@ -172,11 +172,11 @@ class ObservationListView(ListView):
             observations = observations.exclude(vetted_status='verified')
         if not unvetted:
             observations = observations.exclude(vetted_status='unknown',
-                                                id__in=[o.id for
-                                                        o in observations if o.end < now()])
+                                                id__in=(o.id for
+                                                        o in observations if o.is_past))
         if not future:
-            observations = observations.exclude(id__in=[o.id for
-                                                        o in observations if o.end > now()])
+            observations = observations.exclude(id__in=(o.id for
+                                                        o in observations if o.is_future))
         return observations
 
     def get_context_data(self, **kwargs):
