@@ -20,6 +20,11 @@
     </div>
     <div class="col-md-6 col-sm-6 text-right hidden-xs">
       <h2>
+        {% if user.is_authenticated %}
+          <a href="#" class="btn" data-toggle="modal" data-target="#HotkeysModal">
+            <span class="glyphicon glyphicon-fire" aria-hidden="true" title="Hotkeys"></span>
+          </a>
+        {% endif %}
         {% if discuss_slug %}
           <a id="obs-discuss"
              data-slug="{{ discuss_slug }}"
@@ -291,6 +296,9 @@
 
   <!-- Satellite Modal -->
   {% include 'includes/satellite.html' %}
+
+  <!-- Hotkeys Modal -->
+  {% include 'includes/observation-hotkeys.html' %}
 
 {% endblock content %}
 
