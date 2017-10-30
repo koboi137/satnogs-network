@@ -265,15 +265,15 @@ class ObservationsListViewTest(TestCase):
                 self.transmitters.append(TransmitterFactory())
             for x in xrange(1, 10):
                 self.stations.append(StationFactory())
-            for x in xrange(1, 20):
+            for x in xrange(1, 10):
                 obs = ObservationFactory(vetted_status='no_data')
                 self.observations_bad.append(obs)
                 self.observations.append(obs)
-            for x in xrange(1, 20):
+            for x in xrange(1, 10):
                 obs = ObservationFactory(vetted_status='verified')
                 self.observations_good.append(obs)
                 self.observations.append(obs)
-            for x in xrange(1, 20):
+            for x in xrange(1, 10):
                 obs = ObservationFactory(vetted_status='unknown')
                 self.observations_unvetted.append(obs)
                 self.observations.append(obs)

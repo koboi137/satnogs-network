@@ -104,11 +104,9 @@ TEMPLATES = [
             Path('network/templates').resolve(),
         ],
         'OPTIONS': {
-            'debug': False,
             'context_processors': [
                 'django.contrib.auth.context_processors.auth',
                 'django.template.context_processors.debug',
-                'django.template.context_processors.i18n',
                 'django.template.context_processors.media',
                 'django.template.context_processors.static',
                 'django.template.context_processors.tz',
@@ -118,8 +116,10 @@ TEMPLATES = [
                 'network.base.context_processors.stage_notice',
             ],
             'loaders': [
-                'django.template.loaders.filesystem.Loader',
-                'django.template.loaders.app_directories.Loader',
+                ('django.template.loaders.cached.Loader', [
+                    'django.template.loaders.filesystem.Loader',
+                    'django.template.loaders.app_directories.Loader',
+                ]),
             ],
         },
 
@@ -140,7 +140,7 @@ STATICFILES_FINDERS = (
 MEDIA_ROOT = getenv('MEDIA_ROOT', Path('media').resolve())
 MEDIA_URL = '/media/'
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
-STATION_DEFAULT_IMAGE = '/static/img/dish.png'
+STATION_DEFAULT_IMAGE = '/static/img/ground_station_no_image.png'
 SATELLITE_DEFAULT_IMAGE = 'https://db.satnogs.org/static/img/sat.png'
 
 # App conf
@@ -329,3 +329,9 @@ ITEMS_PER_PAGE = 25
 
 # User settings
 AVATAR_GRAVATAR_DEFAULT = getenv('AVATAR_GRAVATAR_DEFAULT', 'mm')
+
+if ENVIRONMENT == 'dev':
+    # Disable template caching
+    for backend in TEMPLATES:
+        del backend['OPTIONS']['loaders']
+        backend['APP_DIRS'] = True

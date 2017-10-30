@@ -187,6 +187,12 @@ footer {
     .front-border {
         border-right: 1px solid lightgray;
     }
+
+    .sticky-div {
+        position: sticky;
+        -webkit-position: sticky; /* for safari */
+        top: 15px;
+    }
 }
 
 #navbar-logo {
@@ -287,16 +293,17 @@ span.datetime-time {
 ==================== */
 
 #map-station {
-    margin-top: 2%;
     width: 100%;
-    height: 200px;
+    height: 300px;
     border-radius: 5px;
 }
 
 .station-view-image {
-    width: 200px;
-    float: right;
+    object-fit: cover;
+    max-width: 100%;
+    height: 300px;
     border-radius: 5px;
+    float: right;
 }
 
 .station-edit-image {
@@ -458,21 +465,21 @@ span.datetime-time {
     border-radius: 5px;
 }
 
+.satellite-success {
+    width: 100px;
+    margin-top: 20px;
+}
+
 /* Overwrite display:none
    of bootstrap tab panel */
 
 .tab-content > .tab-pane {
     visibility: hidden;
     display: inline;
-    position: absolute;
+    position: fixed;
 }
 
 .tab-content > .active {
     visibility: visible;
     position: initial;
-}
-
-.satellite-success {
-    width: 100px;
-    margin-top: 20px;
 }
