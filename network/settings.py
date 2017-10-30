@@ -140,7 +140,7 @@ STATICFILES_FINDERS = (
 MEDIA_ROOT = getenv('MEDIA_ROOT', Path('media').resolve())
 MEDIA_URL = '/media/'
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
-STATION_DEFAULT_IMAGE = '/static/img/dish.png'
+STATION_DEFAULT_IMAGE = '/static/img/ground_station_no_image.png'
 SATELLITE_DEFAULT_IMAGE = 'https://db.satnogs.org/static/img/sat.png'
 
 # App conf

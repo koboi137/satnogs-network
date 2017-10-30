@@ -299,6 +299,8 @@ span.datetime-time {
 }
 
 .station-view-image {
+    object-fit: cover;
+    max-width: 100%;
     height: 300px;
     border-radius: 5px;
     float: right;
