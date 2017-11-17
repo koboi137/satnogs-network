@@ -130,3 +130,6 @@ pur==4.0.2 \
     --hash=sha256:908f8bf28ef05b16ba315c06f5b766b47e3c695e8927da01301b8321f280220d
 email_validator==1.0.3 \
     --hash=sha256:ddc4b5b59fa699bb10127adcf7ad4de78fde4ec539a072b104b8bb16da666ae5
+text-unidecode==1.1 \
+    --hash=sha256:d0afd5e8a7ac69bfb1372e1bbfa3c63c22e3db8ae1284690e96b45c4430d08d0 \
+    --hash=sha256:02efd86b9c0f489f858d8cead62e94d3760dab444054b258734716f7602330a3

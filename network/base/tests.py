@@ -2,8 +2,6 @@ import random
 from datetime import datetime, timedelta
 import pytest
 
-from mock import Mock, patch
-
 import factory
 from factory import fuzzy
 from django.utils.timezone import now
@@ -470,11 +468,6 @@ class SettingsSiteViewTest(TestCase):
     def test_get(self):
         response = self.client.get('/settings_site/')
         self.assertContains(response, 'Fetch Data')
-
-    @patch('urllib2.urlopen', Mock())
-    def test_post(self):
-        response = self.client.post('/settings_site/', {'fetch': True})
-        self.assertRedirects(response, '/settings_site/')
 
 
 @pytest.mark.django_db(transaction=True)

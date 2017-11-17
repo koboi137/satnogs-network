@@ -3,12 +3,10 @@ import ephem
 import math
 from operator import itemgetter
 from datetime import datetime, timedelta
-from StringIO import StringIO
 
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.core.management import call_command
 from django.core.urlresolvers import reverse
 from django.http import JsonResponse, HttpResponseNotFound, HttpResponseServerError, HttpResponse
 from django.shortcuts import get_object_or_404, render, redirect
@@ -25,6 +23,7 @@ from network.users.models import User
 from network.base.forms import StationForm, SatelliteFilterForm
 from network.base.decorators import admin_required
 from network.base.helpers import calculate_polar_data, resolve_overlaps
+from network.base.tasks import update_all_tle, fetch_data
 
 
 class StationSerializer(serializers.ModelSerializer):
@@ -46,7 +45,7 @@ def satellite_position(request, sat_id):
             str(sat.latest_tle.tle1),
             str(sat.latest_tle.tle2)
         )
-    except:
+    except (ValueError, AttributeError):
         data = {}
     else:
         now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
@@ -98,21 +97,10 @@ def robots(request):
 def settings_site(request):
     """View to render settings page."""
     if request.method == 'POST':
-        if request.POST['fetch']:
-            try:
-                data_out = StringIO()
-                tle_out = StringIO()
-                call_command('fetch_data', stdout=data_out)
-                call_command('update_all_tle', stdout=tle_out)
-                request.session['settings_out'] = data_out.getvalue() + tle_out.getvalue()
-            except:
-                messages.error(request, 'fetch command failed.')
-        return redirect(reverse('base:settings_site'))
-
-    fetch_out = request.session.get('settings_out', False)
-    if fetch_out:
-        del request.session['settings_out']
-        return render(request, 'base/settings_site.html', {'fetch_data': fetch_out})
+        fetch_data.delay()
+        update_all_tle.delay()
+        messages.success(request, 'Data fetching task was triggered successfully!')
+        return redirect(reverse('users:view_user', kwargs={"username": request.user.username}))
     return render(request, 'base/settings_site.html')
 
 
@@ -323,7 +311,7 @@ def prediction_windows(request, sat_id, transmitter, start_date, end_date,
     try:
         sat = Satellite.objects.filter(transmitters__alive=True) \
             .filter(status='alive').distinct().get(norad_cat_id=sat_id)
-    except:
+    except Satellite.DoesNotExist:
         data = {
             'error': 'You should select a Satellite first.'
         }
@@ -335,7 +323,7 @@ def prediction_windows(request, sat_id, transmitter, start_date, end_date,
             str(sat.latest_tle.tle1),
             str(sat.latest_tle.tle2)
         )
-    except:
+    except (ValueError, AttributeError):
         data = {
             'error': 'No TLEs for this satellite yet.'
         }
@@ -343,7 +331,7 @@ def prediction_windows(request, sat_id, transmitter, start_date, end_date,
 
     try:
         downlink = Transmitter.objects.get(id=int(transmitter)).downlink_low
-    except:
+    except Transmitter.DoesNotExist:
         data = {
             'error': 'You should select a Transmitter first.'
         }
@@ -431,7 +419,7 @@ def prediction_windows(request, sat_id, transmitter, start_date, end_date,
                                     'end': window_end.strftime("%Y-%m-%d %H:%M:%S.%f"),
                                     'az_start': azr
                                 })
-                        except:
+                        except IndexError:
                             pass
                 else:
                     # window start outside of window bounds
@@ -461,7 +449,7 @@ def observation_view(request, id):
             if Station.objects.filter(owner=request.user). \
                filter(id=observation.ground_station.id).count():
                 is_vetting_user = True
-        except:
+        except AttributeError:
             pass
 
     # This context flag will determine if a delete button appears for the observation.
@@ -492,7 +480,7 @@ def observation_view(request, id):
         apiurl = '{0}.json'.format(discuss_slug)
         try:
             urllib2.urlopen(apiurl).read()
-        except:
+        except urllib2.URLError:
             has_comments = False
 
         return render(request, 'base/observation_view.html',
@@ -567,7 +555,7 @@ def station_view(request, id):
     try:
         satellites = Satellite.objects.filter(transmitters__alive=True) \
             .filter(status='alive').distinct()
-    except:
+    except Satellite.DoesNotExist:
         pass  # we won't have any next passes to display
 
     # Load the station information and invoke ephem so we can
@@ -627,7 +615,7 @@ def station_view(request, id):
                 elevation = format(math.degrees(altt), '.0f')
                 azimuth_r = format(math.degrees(azr), '.0f')
                 azimuth_s = format(math.degrees(azs), '.0f')
-            except:
+            except TypeError:
                 break
             passid += 1
 
@@ -717,8 +705,8 @@ def station_delete(request, id):
 
 def satellite_view(request, id):
     try:
-        sat = get_object_or_404(Satellite, norad_cat_id=id)
-    except:
+        sat = Satellite.objects.get(norad_cat_id=id)
+    except Satellite.DoesNotExist:
         data = {
             'error': 'Unable to find that satellite.'
         }

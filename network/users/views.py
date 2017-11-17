@@ -42,7 +42,7 @@ def view_user(request, username):
     stations = Station.objects.filter(owner=user)
     try:
         token = Token.objects.get(user=user)
-    except:
+    except Token.DoesNotExist:
         token = Token.objects.create(user=user)
     form = StationForm()
     antennas = Antenna.objects.all()

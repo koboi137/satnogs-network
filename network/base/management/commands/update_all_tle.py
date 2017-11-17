@@ -17,7 +17,7 @@ class Command(BaseCommand):
         for obj in satellites:
             try:
                 sat = satellite(obj.norad_cat_id)
-            except:
+            except IndexError:
                 self.stdout.write(('{0} - {1}: TLE not found [error]')
                                   .format(obj.name, obj.norad_cat_id))
                 continue
@@ -30,7 +30,7 @@ class Command(BaseCommand):
             latest_tle = None
             try:
                 latest_tle = obj.latest_tle.tle1
-            except:
+            except AttributeError:
                 pass
             if latest_tle == tle[1]:
                 self.stdout.write(('{0} - {1}: TLE already exists [defer]')

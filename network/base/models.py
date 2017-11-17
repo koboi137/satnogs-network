@@ -108,7 +108,7 @@ class Station(models.Model):
         try:
             heartbeat = self.last_seen + timedelta(minutes=int(settings.STATION_HEARTBEAT_TIME))
             return self.active and heartbeat > now()
-        except:
+        except TypeError:
             return False
 
     def state(self):
@@ -171,7 +171,7 @@ class Satellite(models.Model):
         try:
             line = self.latest_tle.tle1
             return line[65:68]
-        except:
+        except AttributeError:
             return False
 
     @property
@@ -182,7 +182,7 @@ class Satellite(models.Model):
             epoch = (datetime.strptime(yd, "%y%j") +
                      timedelta(seconds=float("." + s) * 24 * 60 * 60))
             return epoch
-        except:
+        except (AttributeError, IndexError):
             return False
 
     @property
@@ -208,21 +208,21 @@ class Satellite(models.Model):
     def success_rate(self):
         try:
             return int(100 * (float(self.verified_count) / float(self.data_count)))
-        except:
+        except (ZeroDivisionError, TypeError):
             return 0
 
     @property
     def empty_rate(self):
         try:
             return int(100 * (float(self.empty_count) / float(self.data_count)))
-        except:
+        except (ZeroDivisionError, TypeError):
             return 0
 
     @property
     def unknown_rate(self):
         try:
             return int(100 * (float(self.unknown_count) / float(self.data_count)))
-        except:
+        except (ZeroDivisionError, TypeError):
             return 0
 
     def __unicode__(self):
@@ -362,7 +362,7 @@ class DemodData(models.Model):
         with open(self.payload_demod.path) as fp:
             try:
                 Image.open(fp)
-            except:
+            except (IOError, TypeError):
                 return False
             else:
                 return True
