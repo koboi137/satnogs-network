@@ -1,21 +1,28 @@
 from django.core.exceptions import ObjectDoesNotExist
 
 
-def schedule_perms(user):
+def schedule_perms(user, station=None):
     """
     This context flag will determine if user can schedule an observation.
     That includes station owners, moderators, admins.
     see: https://wiki.satnogs.org/Operation#Network_permissions_matrix
     """
-    can_schedule = False
     if user.is_authenticated():
+        if station:
+            if station.is_offline:
+                return False
+            if station.is_testing:
+                if station not in user.ground_stations.all():
+                    return False
+
         if user.ground_stations.exists():
-            can_schedule = True
+            return True
         if user.groups.filter(name='Moderators').exists():
-            can_schedule = True
+            return True
         if user.is_superuser:
-            can_schedule = True
-    return can_schedule
+            return True
+
+    return False
 
 
 def delete_perms(user, observation):

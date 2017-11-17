@@ -174,8 +174,6 @@ $(document).ready(function() {
             var len = data.nextpasses.length - 1;
             var new_obs = $('#station-info').attr('data-new-obs');
             var station = $('#station-info').attr('data-id');
-            var station_online = $('#station-info').data('online');
-            var station_active = $('#station-info').data('active');
             var can_schedule =  $('#station-info').data('schedule');
 
             var jobs = [];
@@ -192,7 +190,7 @@ $(document).ready(function() {
             });
 
             for (var i = 0; i <= len; i++) {
-                var schedulable = data.nextpasses[i].valid && station_online && station_active && can_schedule;
+                var schedulable = data.nextpasses[i].valid && can_schedule;
                 var json_polar_data = JSON.stringify(data.nextpasses[i].polar_data);
                 var tr = moment(data.nextpasses[i].tr).format('YYYY/MM/DD HH:mm');
                 var ts = moment(data.nextpasses[i].ts).format('YYYY/MM/DD HH:mm');
