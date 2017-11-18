@@ -239,7 +239,7 @@
               <canvas class="polar-plot" width="100" height="100" data-points="{{ nextpass.polar_data }}"></canvas>
             </td>
             <td>
-              {% if nextpass.valid and station.online and station.active %}
+              {% if nextpass.valid and station.online and station.active and can_schedule %}
                 <a href="{% url 'base:observation_new' %}?norad={{ nextpass.norad_cat_id }}&ground_station={{ station.id }}&start_date={{ nextpass.tr|date:"Y/m/d H:i" }}&end_date={{ nextpass.ts|date:"Y/m/d H:i" }}"
                    class="btn btn-default"
                    target="_blank">

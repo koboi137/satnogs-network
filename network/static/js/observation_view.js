@@ -113,7 +113,7 @@ $(document).ready(function() {
             var link_discuss = $('#obs-discuss');
             link_discuss[0].click();
         } else if (event.which == 71) {
-            var link_good = $('#verify-data');
+            var link_good = $('#good-data');
             link_good[0].click();
         } else if (event.which == 66) {
             var link_bad = $('#bad-data');

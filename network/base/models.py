@@ -298,16 +298,6 @@ class Observation(models.Model):
     def is_future(self):
         return self.end > now()
 
-    @property
-    def is_deletable_before_start(self):
-        deletion = self.start - timedelta(minutes=int(settings.OBSERVATION_MAX_DELETION_RANGE))
-        return deletion > now()
-
-    @property
-    def is_deletable_after_end(self):
-        deletion = self.end + timedelta(minutes=int(settings.OBSERVATION_MIN_DELETION_RANGE))
-        return deletion < now()
-
     # this payload has been vetted good/bad by someone
     @property
     def is_vetted(self):

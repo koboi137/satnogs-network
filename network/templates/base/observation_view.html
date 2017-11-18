@@ -34,7 +34,7 @@
             Discuss
           </a>
         {% endif %}
-        {% if is_deletable %}
+        {% if can_delete %}
           <a href="{% url 'base:observation_delete' id=observation.id %}" id="obs-delete" class="btn btn-danger">
             <span class="glyphicon glyphicon-trash" aria-hidden="true" title="Delete Observation"></span>
           </a>
@@ -77,11 +77,11 @@
           {% if observation.is_verified %}
             <span class="label label-xs label-success" aria-hidden="true"
                   data-toggle="tooltip" data-placement="right"
-                  title="Verified good on {{ observation.vetted_datetime|date:"Y-m-d H:i:s" }} by {{ observation.vetted_user.displayname }}">Verified</span>
+                  title="Vetted good on {{ observation.vetted_datetime|date:"Y-m-d H:i:s" }} by {{ observation.vetted_user.displayname }}">Good</span>
           {% elif observation.is_no_data %}
             <span class="label label-xs label-danger" aria-hidden="true"
                   data-toggle="tooltip" data-placement="right"
-                  title="Verified bad on {{ observation.vetted_datetime|date:"Y-m-d H:i:s" }} by {{ observation.vetted_user.displayname }}">Bad</span>
+                  title="Vetted bad on {{ observation.vetted_datetime|date:"Y-m-d H:i:s" }} by {{ observation.vetted_user.displayname }}">Bad</span>
           {% elif observation.is_future %}
             <span class="label label-xs label-info" aria-hidden="true"
                   data-toggle="tooltip" data-placement="right"
@@ -91,17 +91,17 @@
                   data-toggle="tooltip" data-placement="right"
                   title="This observation needs vetting">Unvetted</span>
             {% if observation.is_past %}
-              {% if not observation.is_vetted and is_vetting_user %}
+              {% if not observation.is_vetted and can_vet %}
                 <div class="pull-right">
                   <a href="https://wiki.satnogs.org/Operation#Rating_observations" target="_blank">
                     <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
                   </a>
-                  <a href="{% url 'base:observation_verify' id=observation.id %}">
-                    <button id="verify-data" type="button" class="btn btn-xs btn-success">
+                  <a href="{% url 'base:observation_vet_good' id=observation.id %}">
+                    <button id="good-data" type="button" class="btn btn-xs btn-success">
                       <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span>
                     </button>
                   </a>
-                  <a href="{% url 'base:observation_mark_bad' id=observation.id %}">
+                  <a href="{% url 'base:observation_vet_bad' id=observation.id %}">
                     <button id="bad-data" type="button" class="btn btn-xs btn-danger">
                       <span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span>
                     </button>
@@ -283,7 +283,7 @@
           Discuss
         </a>
       {% endif %}
-      {% if is_deletable %}
+      {% if can_delete %}
         <a href="{% url 'base:observation_delete' id=observation.id %}" id="obs-delete" class="btn btn-danger">
           <span class="glyphicon glyphicon-trash" aria-hidden="true" title="Delete Observation"></span> Delete
         </a>

@@ -23,6 +23,7 @@ from network.users.models import User
 from network.base.forms import StationForm, SatelliteFilterForm
 from network.base.decorators import admin_required
 from network.base.helpers import calculate_polar_data, resolve_overlaps
+from network.base.perms import schedule_perms, delete_perms, vet_perms
 from network.base.tasks import update_all_tle, fetch_data
 
 
@@ -194,6 +195,7 @@ class ObservationListView(ListView):
                 del self.request.session['scheduled']
             except KeyError:
                 pass
+        context['can_schedule'] = schedule_perms(self.request.user)
         return context
 
 
@@ -201,6 +203,12 @@ class ObservationListView(ListView):
 def observation_new(request):
     """View for new observation"""
     me = request.user
+
+    can_schedule = schedule_perms(me)
+    if not can_schedule:
+        messages.error(request, 'You don\'t have permissions to schedule observations')
+        return redirect(reverse('base:observations_list'))
+
     if request.method == 'POST':
         sat_id = request.POST.get('satellite')
         trans_id = request.POST.get('transmitter')
@@ -438,33 +446,9 @@ def observation_view(request, id):
     """View for single observation page."""
     observation = get_object_or_404(Observation, id=id)
 
-    # This context flag will determine if vet buttons appeas for the observation.
-    # That includes observer, station owner involved, staff.
-    is_vetting_user = False
-    if request.user.is_authenticated():
-        if observation.author == request.user or request.user.is_staff:
-            is_vetting_user = True
-        # Hadle exception for deleted station
-        try:
-            if Station.objects.filter(owner=request.user). \
-               filter(id=observation.ground_station.id).count():
-                is_vetting_user = True
-        except AttributeError:
-            pass
+    can_vet = vet_perms(request.user, observation)
 
-    # This context flag will determine if a delete button appears for the observation.
-    # That includes observer, superusers and people with certain permission.
-    is_deletable = False
-    if request.user.is_authenticated():
-        if observation.author == request.user and observation.is_deletable_before_start:
-            is_deletable = True
-        if (observation.ground_station.owner == request.user and
-                observation.is_deletable_before_start):
-            is_deletable = True
-        if request.user.has_perm('base.delete_observation') and observation.is_deletable_after_end:
-            is_deletable = True
-        if request.user.is_superuser:
-            is_deletable = True
+    can_delete = delete_perms(request.user, observation)
 
     if settings.ENVIRONMENT == 'production':
         discuss_slug = 'https://community.libre.space/t/observation-{0}-{1}-{2}' \
@@ -486,25 +470,19 @@ def observation_view(request, id):
         return render(request, 'base/observation_view.html',
                       {'observation': observation, 'has_comments': has_comments,
                        'discuss_url': discuss_url, 'discuss_slug': discuss_slug,
-                       'is_vetting_user': is_vetting_user, 'is_deletable': is_deletable})
+                       'can_vet': can_vet, 'can_delete': can_delete})
 
     return render(request, 'base/observation_view.html',
-                  {'observation': observation, 'is_vetting_user': is_vetting_user,
-                   'is_deletable': is_deletable})
+                  {'observation': observation, 'can_vet': can_vet,
+                   'can_delete': can_delete})
 
 
 @login_required
 def observation_delete(request, id):
     """View for deleting observation."""
     observation = get_object_or_404(Observation, id=id)
-    is_deletable = False
-    if observation.author == request.user and observation.is_deletable_before_start:
-        is_deletable = True
-    if request.user.has_perm('base.delete_observation') and observation.is_deletable_after_end:
-        is_deletable = True
-    if request.user.is_superuser:
-        is_deletable = True
-    if is_deletable:
+    can_delete = delete_perms(request.user, observation)
+    if can_delete:
         observation.delete()
         messages.success(request, 'Observation deleted successfully.')
     else:
@@ -513,24 +491,32 @@ def observation_delete(request, id):
 
 
 @login_required
-def observation_verify(request, id):
-    me = request.user
+def observation_vet_good(request, id):
     observation = get_object_or_404(Observation, id=id)
-    observation.vetted_status = 'verified'
-    observation.vetted_user = me
-    observation.vetted_datetime = datetime.today()
-    observation.save(update_fields=['vetted_status', 'vetted_user', 'vetted_datetime'])
+    can_vet = vet_perms(request.user, observation)
+    if can_vet:
+        observation.vetted_status = 'verified'
+        observation.vetted_user = request.user
+        observation.vetted_datetime = datetime.today()
+        observation.save(update_fields=['vetted_status', 'vetted_user', 'vetted_datetime'])
+        messages.success(request, 'Observation vetted successfully.')
+    else:
+        messages.error(request, 'Permission denied.')
     return redirect(reverse('base:observation_view', kwargs={'id': observation.id}))
 
 
 @login_required
-def observation_mark_bad(request, id):
-    me = request.user
+def observation_vet_bad(request, id):
     observation = get_object_or_404(Observation, id=id)
-    observation.vetted_status = 'no_data'
-    observation.vetted_user = me
-    observation.vetted_datetime = datetime.today()
-    observation.save(update_fields=['vetted_status', 'vetted_user', 'vetted_datetime'])
+    can_vet = vet_perms(request.user, observation)
+    if can_vet:
+        observation.vetted_status = 'no_data'
+        observation.vetted_user = request.user
+        observation.vetted_datetime = datetime.today()
+        observation.save(update_fields=['vetted_status', 'vetted_user', 'vetted_datetime'])
+        messages.success(request, 'Observation vetted successfully.')
+    else:
+        messages.error(request, 'Permission denied.')
     return redirect(reverse('base:observation_view', kwargs={'id': observation.id}))
 
 
@@ -658,12 +644,14 @@ def station_view(request, id):
             else:
                 keep_digging = False
 
+    can_schedule = schedule_perms(request.user)
+
     return render(request, 'base/station_view.html',
                   {'station': station, 'form': form, 'antennas': antennas,
                    'mapbox_id': settings.MAPBOX_MAP_ID,
                    'mapbox_token': settings.MAPBOX_TOKEN,
                    'nextpasses': sorted(nextpasses, key=itemgetter('tr')),
-                   'rigs': rigs,
+                   'rigs': rigs, 'can_schedule': can_schedule,
                    'unsupported_frequencies': unsupported_frequencies})
 
 
