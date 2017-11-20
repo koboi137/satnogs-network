@@ -27,6 +27,7 @@ ANTENNA_TYPES = (
     ('quadrafilar', 'Quadrafilar'),
     ('eggbeater', 'Eggbeater'),
     ('lindenblad', 'Lindenblad'),
+    ('paralindy', 'Parasitic Lindenblad')
 )
 OBSERVATION_STATUSES = (
     ('unknown', 'Unknown'),
