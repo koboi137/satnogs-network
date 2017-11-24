@@ -8,6 +8,6 @@ DATABASE_URL='sqlite:///db.sqlite3'
 DB_API_ENDPOINT='https://db.satnogs.org/api/'
 
 # Cache
-CACHE_BACKEND='django.core.cache.backends.locmem.LocMemCache'
-CACHE_LOCATION='unique-snowflake'
-CACHE_CLIENT_CLASS=None
+CACHE_BACKEND = 'django.core.cache.backends.locmem.LocMemCache'
+CACHE_LOCATION = 'unique-snowflake'
+CACHE_CLIENT_CLASS = None

@@ -332,6 +332,11 @@ ITEMS_PER_PAGE = 25
 # User settings
 AVATAR_GRAVATAR_DEFAULT = config('AVATAR_GRAVATAR_DEFAULT', default='mm')
 
+# Archive.org
+S3_ACCESS_KEY = config('S3_ACCESS_KEY', default='')
+S3_SECRET_KEY = config('S3_SECRET_KEY', default='')
+ARCHIVE_COLLECTION = config('ARCHIVE_COLLECTION', default='test_collection')
+
 if ENVIRONMENT == 'dev':
     # Disable template caching
     for backend in TEMPLATES:
