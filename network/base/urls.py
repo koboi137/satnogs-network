@@ -22,10 +22,10 @@ base_urlpatterns = ([
     url(r'^prediction_windows/(?P<sat_id>[\w.@+-]+)/(?P<transmitter>[\w.@+-]+)/'
         '(?P<start_date>.+)/(?P<end_date>.+)/$',
         views.prediction_windows, name='prediction_windows'),
-    url(r'^observation_verify/(?P<id>[0-9]+)/$', views.observation_verify,
-        name='observation_verify'),
-    url(r'^observation_mark_bad/(?P<id>[0-9]+)/$', views.observation_mark_bad,
-        name='observation_mark_bad'),
+    url(r'^observation_vet_good/(?P<id>[0-9]+)/$', views.observation_vet_good,
+        name='observation_vet_good'),
+    url(r'^observation_vet_bad/(?P<id>[0-9]+)/$', views.observation_vet_bad,
+        name='observation_vet_bad'),
 
     # Stations
     url(r'^stations/$', views.stations_list, name='stations_list'),

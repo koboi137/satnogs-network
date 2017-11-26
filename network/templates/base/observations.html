@@ -15,7 +15,7 @@
       <a class="btn btn-default" role="button" href="#legend" data-toggle="modal" data-target="#LegendModal">
           <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> Legend
       </a>
-      {% if user.is_authenticated == 1 %}
+      {% if can_schedule %}
         <a class="btn btn-primary" href="{% url 'base:observation_new' %}">New Observation</a>
       {% endif %}
     </div>
