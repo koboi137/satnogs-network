@@ -226,7 +226,7 @@ def observation_new(request):
         start = make_aware(start_time, utc)
         end = make_aware(end_time, utc)
         sat = Satellite.objects.get(norad_cat_id=sat_id)
-        trans = Transmitter.objects.get(id=trans_id)
+        trans = Transmitter.objects.get(uuid=trans_id)
         tle = Tle.objects.get(id=sat.latest_tle.id)
 
         sat_ephem = ephem.readtle(str(sat.latest_tle.tle0),
@@ -338,7 +338,7 @@ def prediction_windows(request, sat_id, transmitter, start_date, end_date,
         return JsonResponse(data, safe=False)
 
     try:
-        downlink = Transmitter.objects.get(id=int(transmitter)).downlink_low
+        downlink = Transmitter.objects.get(uuid=transmitter).downlink_low
     except Transmitter.DoesNotExist:
         data = {
             'error': 'You should select a Transmitter first.'

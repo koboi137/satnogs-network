@@ -56,7 +56,7 @@
               <option id="no-transmitter" value="" disabled selected>No transmitter available</option>
               {% for transmitter in transmitters %}
                 <option data-satellite="{{ transmitter.satellite.norad_cat_id }}"
-                        value="{{ transmitter.id }}" >
+                        value="{{ transmitter.uuid }}" >
                   {{ transmitter.description }} - {{ transmitter.downlink_low|frq }} - {{ transmitter.mode|default:"" }}
                 </option>
               {% endfor %}
