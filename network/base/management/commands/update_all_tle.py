@@ -22,9 +22,6 @@ class Command(BaseCommand):
                                   .format(obj.name, obj.norad_cat_id))
                 continue
 
-            obj.name = sat.name()
-            obj.save()
-
             # Get latest satellite TLE and check if it changed
             tle = sat.tle()
             latest_tle = None
