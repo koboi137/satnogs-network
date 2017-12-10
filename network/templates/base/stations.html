@@ -69,10 +69,12 @@
               </td>
               <td>
                 {% if station.success_rate %}
-                  <span class="badge" data-toggle="tooltip" data-placement="bottom"
-                        title="{{ station.success_rate }}% Success">
-                    {{ station.observations_count }}
-                  </span>
+                  <a href="{% url 'base:observations_list' %}?station={{ station.id }}">
+                    <span class="badge" data-toggle="tooltip" data-placement="bottom"
+                          title="{{ station.success_rate }}% Success">
+                      {{ station.observations_count }}
+                    </span>
+                  </a>
                 {% else %}
                   No stats
                 {% endif %}
