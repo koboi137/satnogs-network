@@ -99,7 +99,7 @@
             <tr data-norad="{{ observation.satellite.norad_cat_id }}"
                 {% if observation.id in scheduled %}class="bg-info"{% endif %}>
               <td>
-                <a href="{% url 'base:observation_view' id=observation.id %}">
+                <a href="{% url 'base:observation_view' id=observation.id %}" class="obs-link">
                   {% if observation.is_verified %}
                     <span class="label label-success" title="There is known good data in this observation"
                   {% elif observation.is_future %}
@@ -168,7 +168,8 @@
         </tbody>
       </table>
       {% if is_paginated %}{% load paginator %}{% paginator request 3 %}{% endif %}
-      Query returned {{ observations|length }} observation{{ observations|length|pluralize }}
+      Query returned {{ observations|length }} observation{{ observations|length|pluralize }}.
+      <a id="open-all" href="#">Open all in tabs</a>
     </div>
   </div>
   {% include 'includes/satellite.html' %}
