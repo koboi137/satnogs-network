@@ -36,4 +36,10 @@ $(document).ready(function() {
 
         $('#collapseFilters').show();
     }
+
+    $('#open-all').click(function() {
+        $('a.obs-link').each(function() {
+            window.open($(this).attr('href'));
+        });
+    });
 });
