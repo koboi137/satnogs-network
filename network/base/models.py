@@ -13,6 +13,7 @@ from django.utils.timezone import now
 
 from network.users.models import User
 from network.base.helpers import get_apikey
+from network.base.managers import ObservarionQuerySet
 
 
 RIG_TYPES = ['Radio', 'SDR']
@@ -27,6 +28,7 @@ ANTENNA_TYPES = (
     ('quadrafilar', 'Quadrafilar'),
     ('eggbeater', 'Eggbeater'),
     ('lindenblad', 'Lindenblad'),
+    ('paralindy', 'Parasitic Lindenblad')
 )
 OBSERVATION_STATUSES = (
     ('unknown', 'Unknown'),
@@ -108,7 +110,7 @@ class Station(models.Model):
         try:
             heartbeat = self.last_seen + timedelta(minutes=int(settings.STATION_HEARTBEAT_TIME))
             return self.active and heartbeat > now()
-        except:
+        except TypeError:
             return False
 
     def state(self):
@@ -129,6 +131,11 @@ class Station(models.Model):
     @property
     def observations_count(self):
         count = self.observations.all().count()
+        return count
+
+    @property
+    def observations_future_count(self):
+        count = self.observations.is_future().count()
         return count
 
     @property
@@ -171,7 +178,7 @@ class Satellite(models.Model):
         try:
             line = self.latest_tle.tle1
             return line[65:68]
-        except:
+        except AttributeError:
             return False
 
     @property
@@ -182,7 +189,7 @@ class Satellite(models.Model):
             epoch = (datetime.strptime(yd, "%y%j") +
                      timedelta(seconds=float("." + s) * 24 * 60 * 60))
             return epoch
-        except:
+        except (AttributeError, IndexError):
             return False
 
     @property
@@ -208,21 +215,21 @@ class Satellite(models.Model):
     def success_rate(self):
         try:
             return int(100 * (float(self.verified_count) / float(self.data_count)))
-        except:
+        except (ZeroDivisionError, TypeError):
             return 0
 
     @property
     def empty_rate(self):
         try:
             return int(100 * (float(self.empty_count) / float(self.data_count)))
-        except:
+        except (ZeroDivisionError, TypeError):
             return 0
 
     @property
     def unknown_rate(self):
         try:
             return int(100 * (float(self.unknown_count) / float(self.data_count)))
-        except:
+        except (ZeroDivisionError, TypeError):
             return 0
 
     def __unicode__(self):
@@ -297,16 +304,6 @@ class Observation(models.Model):
     def is_future(self):
         return self.end > now()
 
-    @property
-    def is_deletable_before_start(self):
-        deletion = self.start - timedelta(minutes=int(settings.OBSERVATION_MAX_DELETION_RANGE))
-        return deletion > now()
-
-    @property
-    def is_deletable_after_end(self):
-        deletion = self.end + timedelta(minutes=int(settings.OBSERVATION_MIN_DELETION_RANGE))
-        return deletion < now()
-
     # this payload has been vetted good/bad by someone
     @property
     def is_vetted(self):
@@ -342,6 +339,8 @@ class Observation(models.Model):
     def get_absolute_url(self):
         return reverse('base:observation_view', kwargs={'id': self.id})
 
+    objects = ObservarionQuerySet.as_manager()
+
 
 @receiver(models.signals.post_delete, sender=Observation)
 def observation_remove_files(sender, instance, **kwargs):
@@ -362,7 +361,7 @@ class DemodData(models.Model):
         with open(self.payload_demod.path) as fp:
             try:
                 Image.open(fp)
-            except:
+            except (IOError, TypeError):
                 return False
             else:
                 return True

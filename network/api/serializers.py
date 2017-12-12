@@ -43,19 +43,19 @@ class ObservationSerializer(serializers.ModelSerializer):
     def get_station_name(self, obj):
         try:
             return obj.ground_station.name
-        except:
+        except AttributeError:
             return None
 
     def get_station_lat(self, obj):
         try:
             return obj.ground_station.lat
-        except:
+        except AttributeError:
             return None
 
     def get_station_lng(self, obj):
         try:
             return obj.ground_station.lng
-        except:
+        except AttributeError:
             return None
 
 
@@ -90,7 +90,7 @@ class JobSerializer(serializers.ModelSerializer):
     def get_mode(self, obj):
         try:
             return obj.transmitter.mode.name
-        except:
+        except AttributeError:
             return ''
 
 

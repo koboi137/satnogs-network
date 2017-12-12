@@ -142,6 +142,13 @@ MEDIA_URL = '/media/'
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
 STATION_DEFAULT_IMAGE = '/static/img/ground_station_no_image.png'
 SATELLITE_DEFAULT_IMAGE = 'https://db.satnogs.org/static/img/sat.png'
+COMPRESS_ENABLED = getenv('COMPRESS_ENABLED', False)
+COMPRESS_OFFLINE = getenv('COMPRESS_OFFLINE', False)
+COMPRESS_CACHE_BACKEND = getenv('COMPRESS_CACHE_BACKEND', 'default')
+COMPRESS_CSS_FILTERS = [
+    'compressor.filters.css_default.CssAbsoluteFilter',
+    'compressor.filters.cssmin.rCSSMinFilter'
+]
 
 # App conf
 ROOT_URLCONF = 'network.urls'
@@ -242,7 +249,7 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',
     ),
     'DEFAULT_FILTER_BACKENDS': (
-        'rest_framework.filters.DjangoFilterBackend',
+        'django_filters.rest_framework.DjangoFilterBackend',
     )
 }
 
@@ -311,8 +318,6 @@ OPBEAT = {
 DATE_MIN_START = '15'
 DATE_MIN_END = '75'
 DATE_MAX_RANGE = '480'
-OBSERVATION_MAX_DELETION_RANGE = getenv('OBSERVATION_MAX_DELETION_RANGE', 10)
-OBSERVATION_MIN_DELETION_RANGE = getenv('OBSERVATION_MIN_DELETION_RANGE', 60)
 OBSERVATION_OLD_RANGE = getenv('OBSERVATION_OLD_RANGE', 30)
 
 # Station settings

@@ -15,7 +15,7 @@
       <a class="btn btn-default" role="button" href="#legend" data-toggle="modal" data-target="#LegendModal">
           <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> Legend
       </a>
-      {% if user.is_authenticated == 1 %}
+      {% if can_schedule %}
         <a class="btn btn-primary" href="{% url 'base:observation_new' %}">New Observation</a>
       {% endif %}
     </div>
@@ -97,78 +97,79 @@
         <tbody>
           {% for observation in observations %}
             <tr data-norad="{{ observation.satellite.norad_cat_id }}"
-                {% if observation.id in scheduled %}class="bg-info"{% endif %}>
-              <td>
-                <a href="{% url 'base:observation_view' id=observation.id %}">
-                  {% if observation.is_verified %}
-                    <span class="label label-success" title="There is known good data in this observation"
-                  {% elif observation.is_future %}
-                    <span class="label label-info" title="This observation is in the future"
-                  {% elif not observation.is_vetted %}
-                    <span class="label label-warning" title="There is data that needs vetting in this observation"
-                  {% else %}
-                    <span class="label label-danger" title="No good data in this observation"
-                  {% endif %}>
-                  {{ observation.id }}
-                  </span>
-                </a>
-              </td>
-              <td>
-                <a href="#" data-toggle="modal" data-target="#SatelliteModal" data-id="{{ observation.satellite.norad_cat_id }}">
-                  {{ observation.satellite.name }}
-                </a>
-              </td>
-              <td>{{ observation.transmitter.downlink_low|frq }}</td>
-              <td>
-                <span data-toggle="tooltip" data-placement="bottom" title="{{ observation.transmitter.description }}">
-                  {{ observation.transmitter.mode|default:"-" }}
-                </span>
-              </td>
-              <td>
-                <span data-toggle="tooltip" data-placement="bottom" title="{{ observation.start|timesince }} ago">
-                  <span class="datetime-date">{{ observation.start|date:"Y-m-d" }}</span>
-                  <span class="datetime-time">{{ observation.start|date:"H:i:s" }}</span><br>
-                </span>
-                <span data-toggle="tooltip" data-placement="bottom" title="{{ observation.end|timesince }} ago">
-                  <span class="datetime-date">{{ observation.end|date:"Y-m-d" }}</span>
-                  <span class="datetime-time">{{ observation.end|date:"H:i:s" }}</span>
-                </span>
-              </td>
-              <td>
-                {% if observation.waterfall %}
-                  <span class="glyphicon glyphicon-picture" aria-hidden="true"
-                        data-toggle="tooltip" data-placement="bottom"
-                        title="Waterfall uploaded"></span>
-                {% endif %}
-                {% if observation.payload_exists %}
-                  <span class="glyphicon glyphicon-volume-up" aria-hidden="true"
-                        data-toggle="tooltip" data-placement="bottom"
-                        title="Audio uploaded"></span>
-                {% endif %}
-                {% if observation.demoddata.all %}
-                  <span class="glyphicon glyphicon-file" aria-hidden="true"
-                        data-toggle="tooltip" data-placement="bottom"
-                        title="{{ observation.demoddata.all|length }} Data uploaded"></span>
-                {% endif %}
-              </td>
-              <td>
-                <a href="{% url 'users:view_user' username=observation.author.username %}">
-                  {{ observation.author.displayname }}
-                </a>
-              </td>
-              <td>
-                {% if observation.ground_station %}
-                  <a href="{% url 'base:station_view' id=observation.ground_station.id %}">
-                    {{ observation.ground_station }}
+                  {% if observation.id in scheduled %}class="bg-info"{% endif %}>
+                <td>
+                  <a href="{% url 'base:observation_view' id=observation.id %}" class="obs-link">
+                    {% if observation.is_verified %}
+                      <span class="label label-success" title="There is known good data in this observation"
+                    {% elif observation.is_future %}
+                      <span class="label label-info" title="This observation is in the future"
+                    {% elif not observation.is_vetted %}
+                      <span class="label label-warning" title="There is data that needs vetting in this observation"
+                    {% else %}
+                      <span class="label label-danger" title="No good data in this observation"
+                    {% endif %}>
+                    {{ observation.id }}
+                    </span>
                   </a>
-                {% endif %}
-              </td>
-            </tr>
+                </td>
+                <td>
+                  <a href="#" data-toggle="modal" data-target="#SatelliteModal" data-id="{{ observation.satellite.norad_cat_id }}">
+                    {{ observation.satellite.name }}
+                  </a>
+                </td>
+                <td>{{ observation.transmitter.downlink_low|frq }}</td>
+                <td>
+                  <span data-toggle="tooltip" data-placement="bottom" title="{{ observation.transmitter.description }}">
+                    {{ observation.transmitter.mode|default:"-" }}
+                  </span>
+                </td>
+                <td>
+                  <span data-toggle="tooltip" data-placement="bottom" title="{{ observation.start|timesince }} ago">
+                    <span class="datetime-date">{{ observation.start|date:"Y-m-d" }}</span>
+                    <span class="datetime-time">{{ observation.start|date:"H:i:s" }}</span><br>
+                  </span>
+                  <span data-toggle="tooltip" data-placement="bottom" title="{{ observation.end|timesince }} ago">
+                    <span class="datetime-date">{{ observation.end|date:"Y-m-d" }}</span>
+                    <span class="datetime-time">{{ observation.end|date:"H:i:s" }}</span>
+                  </span>
+                </td>
+                <td>
+                  {% if observation.waterfall %}
+                    <span class="glyphicon glyphicon-picture" aria-hidden="true"
+                          data-toggle="tooltip" data-placement="bottom"
+                          title="Waterfall uploaded"></span>
+                  {% endif %}
+                  {% if observation.payload_exists %}
+                    <span class="glyphicon glyphicon-volume-up" aria-hidden="true"
+                          data-toggle="tooltip" data-placement="bottom"
+                          title="Audio uploaded"></span>
+                  {% endif %}
+                  {% if observation.demoddata.all %}
+                    <span class="glyphicon glyphicon-file" aria-hidden="true"
+                          data-toggle="tooltip" data-placement="bottom"
+                          title="{{ observation.demoddata.all|length }} Data uploaded"></span>
+                  {% endif %}
+                </td>
+                <td>
+                  <a href="{% url 'users:view_user' username=observation.author.username %}">
+                    {{ observation.author.displayname }}
+                  </a>
+                </td>
+                <td>
+                  {% if observation.ground_station %}
+                    <a href="{% url 'base:station_view' id=observation.ground_station.id %}">
+                      {{ observation.ground_station }}
+                    </a>
+                  {% endif %}
+                </td>
+              </tr>
           {% endfor %}
         </tbody>
       </table>
       {% if is_paginated %}{% load paginator %}{% paginator request 3 %}{% endif %}
-      Query returned {{ observations|length }} observation{{ observations|length|pluralize }}
+      Query returned {{ observations|length }} observation{{ observations|length|pluralize }}.
+      <a id="open-all" href="#">Open all in tabs</a>
     </div>
   </div>
   {% include 'includes/satellite.html' %}

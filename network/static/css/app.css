@@ -289,6 +289,10 @@ span.datetime-time {
     float: right;
 }
 
+.badge-info {
+    background-color: #5bc0de;
+}
+
 /* Stations
 ==================== */
 

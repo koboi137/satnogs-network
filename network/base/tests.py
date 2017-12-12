@@ -2,15 +2,13 @@ import random
 from datetime import datetime, timedelta
 import pytest
 
-from mock import Mock, patch
-
 import factory
 from factory import fuzzy
-from django.utils.timezone import now
+
 from django.db import transaction
+from django.contrib.auth.models import Group
 from django.test import TestCase, Client
-from django.conf import settings
-from django.contrib.auth.models import Permission
+from django.utils.timezone import now
 
 from network.base.models import (ANTENNA_BANDS, ANTENNA_TYPES, RIG_TYPES, OBSERVATION_STATUSES,
                                  Rig, Mode, Antenna, Satellite, Tle, Station, Transmitter,
@@ -339,8 +337,8 @@ class ObservationViewTest(TestCase):
 
     def setUp(self):
         self.user = UserFactory()
-        self.user.user_permissions.add(
-            Permission.objects.get(codename='delete_observation'))
+        g = Group.objects.get(name='Moderators')
+        g.user_set.add(self.user)
         for x in xrange(1, 10):
             self.satellites.append(SatelliteFactory())
         for x in xrange(1, 10):
@@ -353,14 +351,6 @@ class ObservationViewTest(TestCase):
         response = self.client.get('/observations/%d/' % self.observation.id)
         self.assertContains(response, self.observation.author.username)
         self.assertContains(response, self.observation.transmitter.mode.name)
-        if not self.observation.is_deletable_before_start:
-            self.assertNotContains(response, 'Delete Observation')
-
-    def test_observation_staff(self):
-        self.client.force_login(self.user)
-        response = self.client.get('/observations/%d/' % self.observation.id)
-        if self.observation.is_deletable_after_end:
-            self.assertContains(response, 'Delete Observation')
 
 
 @pytest.mark.django_db(transaction=True)
@@ -383,11 +373,6 @@ class ObservationDeleteTest(TestCase):
             self.transmitters.append(TransmitterFactory())
         self.observation = ObservationFactory()
         self.observation.author = self.user
-        # observations in progress cannot be deleted
-        self.observation.start = datetime.now() + timedelta(
-            minutes=(2 * int(settings.OBSERVATION_MAX_DELETION_RANGE)))
-        self.observation.end = datetime.now() - timedelta(
-            minutes=(2 * int(settings.OBSERVATION_MIN_DELETION_RANGE)))
         self.observation.save()
 
     def test_observation_delete_author(self):
@@ -396,20 +381,19 @@ class ObservationDeleteTest(TestCase):
         self.assertRedirects(response, '/observations/')
         response = self.client.get('/observations/')
         with self.assertRaises(Observation.DoesNotExist):
-            _lookup = Observation.objects.get(pk=self.observation.id)       # noqa:F841
+            _lookup = Observation.objects.get(pk=self.observation.id)  # noqa:F841
 
-    def test_observation_delete_staff(self):
-        """Deletion OK when user is staff and there is no data"""
+    def test_observation_delete_moderator(self):
+        """Deletion OK when user is moderator and there is no data"""
         self.user = UserFactory()
-        self.user.user_permissions.add(
-            Permission.objects.get(codename='delete_observation'))
-        self.user.save()
+        g = Group.objects.get(name='Moderators')
+        g.user_set.add(self.user)
         self.client.force_login(self.user)
         response = self.client.get('/observations/%d/delete/' % self.observation.id)
         self.assertRedirects(response, '/observations/')
         response = self.client.get('/observations/')
         with self.assertRaises(Observation.DoesNotExist):
-            _lookup = Observation.objects.get(pk=self.observation.id)       # noqa:F841
+            _lookup = Observation.objects.get(pk=self.observation.id)  # noqa:F841
 
 
 @pytest.mark.django_db(transaction=True)
@@ -471,16 +455,11 @@ class SettingsSiteViewTest(TestCase):
         response = self.client.get('/settings_site/')
         self.assertContains(response, 'Fetch Data')
 
-    @patch('urllib2.urlopen', Mock())
-    def test_post(self):
-        response = self.client.post('/settings_site/', {'fetch': True})
-        self.assertRedirects(response, '/settings_site/')
-
 
 @pytest.mark.django_db(transaction=True)
 class ObservationVerifyViewtest(TestCase):
     """
-    Test marking data as vetted
+    Test vetting data as good
     """
     client = Client()
     user = None
@@ -491,6 +470,8 @@ class ObservationVerifyViewtest(TestCase):
 
     def setUp(self):
         self.user = UserFactory()
+        g = Group.objects.get(name='Moderators')
+        g.user_set.add(self.user)
         self.client.force_login(self.user)
         for x in xrange(1, 10):
             self.satellites.append(SatelliteFactory())
@@ -501,8 +482,8 @@ class ObservationVerifyViewtest(TestCase):
 
         self.observation = ObservationFactory()
 
-    def test_get_observation_verify(self):
-        response = self.client.get('/observation_verify/%d/' % self.observation.id)
+    def test_get_observation_vet_good(self):
+        response = self.client.get('/observation_vet_good/%d/' % self.observation.id)
         self.assertRedirects(response, '/observations/%d/' % self.observation.id)
         observation = Observation.objects.get(id=self.observation.id)
         self.assertEqual(observation.vetted_user.username, self.user.username)
@@ -512,7 +493,7 @@ class ObservationVerifyViewtest(TestCase):
 @pytest.mark.django_db(transaction=True)
 class ObservationMarkBadViewtest(TestCase):
     """
-    Test marking data as vetted
+    Test vetting data as bad
     """
     client = Client()
     user = None
@@ -522,6 +503,8 @@ class ObservationMarkBadViewtest(TestCase):
 
     def setUp(self):
         self.user = UserFactory()
+        g = Group.objects.get(name='Moderators')
+        g.user_set.add(self.user)
         self.client.force_login(self.user)
         for x in xrange(1, 10):
             self.satellites.append(SatelliteFactory())
@@ -532,8 +515,8 @@ class ObservationMarkBadViewtest(TestCase):
 
         self.observation = ObservationFactory()
 
-    def test_get_observation_mark_bad(self):
-        response = self.client.get('/observation_mark_bad/%d/' % self.observation.id)
+    def test_get_observation_vet_bad(self):
+        response = self.client.get('/observation_vet_bad/%d/' % self.observation.id)
         self.assertRedirects(response, '/observations/%d/' % self.observation.id)
         observation = Observation.objects.get(id=self.observation.id)
         self.assertEqual(observation.vetted_user.username, self.user.username)
@@ -582,19 +565,3 @@ class ObservationModelTest(TestCase):
 
     def test_is_passed(self):
         self.assertTrue(self.observation.is_past)
-
-    def test_is_deletable_before_start(self):
-        self.observation.start = now() - timedelta(minutes=2)
-        self.observation.save()
-        self.assertFalse(self.observation.is_deletable_before_start)
-        self.observation.start = now() + timedelta(minutes=100)
-        self.observation.save()
-        self.assertTrue(self.observation.is_deletable_before_start)
-
-    def test_is_deletable_after_end(self):
-        self.observation.end = now()
-        self.observation.save()
-        self.assertFalse(self.observation.is_deletable_after_end)
-        self.observation.end = now() - timedelta(minutes=200)
-        self.observation.save()
-        self.assertTrue(self.observation.is_deletable_after_end)

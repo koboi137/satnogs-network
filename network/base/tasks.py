@@ -19,14 +19,14 @@ def update_all_tle():
     for obj in satellites:
         try:
             sat = satellite(obj.norad_cat_id)
-        except:
+        except IndexError:
             continue
 
         # Get latest satellite TLE and check if it changed
         tle = sat.tle()
         try:
             latest_tle = obj.latest_tle.tle1
-        except:
+        except AttributeError:
             pass
         if latest_tle == tle[1]:
             continue
@@ -46,7 +46,7 @@ def fetch_data():
         modes = urllib2.urlopen(modes_url).read()
         satellites = urllib2.urlopen(satellites_url).read()
         transmitters = urllib2.urlopen(transmitters_url).read()
-    except:
+    except urllib2.URLError:
         raise Exception('API is unreachable')
 
     # Fetch Modes
