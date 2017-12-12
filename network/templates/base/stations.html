@@ -19,8 +19,10 @@
           <th>ID</th>
           <th>Name</th>
           <th>Location</th>
-          <th>Last seen</th>
-          <th>Observations</th>
+          <th>
+            <span class="badge">Total</span>
+            <span class="badge badge-info">Future</span>
+          </th>
           <th>Antennas</th>
           <th>Owner</th>
         </thead>
@@ -34,6 +36,13 @@
                                  label-success
                                {% else %}
                                  label-danger
+                               {% endif %}"
+                        data-toggle="tooltip"
+                        data-placement="bottom"
+                        title="{% if station.last_seen %}
+                                 Seen {{ station.last_seen|timesince }} ago
+                               {% else %}
+                                 Never seen
                                {% endif %}">
                     {{ station.id }}
                   </span>
@@ -61,27 +70,21 @@
                 </td>
               {% endif %}
               <td>
-                {% if station.last_seen %}
-                  {{ station.last_seen|timesince }} ago
-                {% else %}
-                  Never seen
-                {% endif %}
-              </td>
-              <td>
-                {% if station.success_rate %}
-                  <a href="{% url 'base:observations_list' %}?station={{ station.id }}">
-                    <span class="badge" data-toggle="tooltip" data-placement="bottom"
-                          title="{{ station.success_rate }}% Success">
-                      {{ station.observations_count }}
-                    </span>
-                  </a>
-                {% else %}
-                  No stats
-                {% endif %}
+                <a href="{% url 'base:observations_list' %}?station={{ station.id }}">
+                  <span class="badge" data-toggle="tooltip" data-placement="bottom"
+                        title="{{ station.success_rate }}% Success">
+                    {{ station.observations_count }}
+                  </span>
+                </a>
+                <a href="{% url 'base:observations_list' %}?future=1&good=0&bad=0&unvetted=0&station={{ station.id }}">
+                  <span class="badge badge-info">
+                    {{ station.observations_future_count }}
+                  </span>
+                </a>
               </td>
               <td class="station-antennas">
                 {% for antenna in station.antenna.all %}
-                  <span class="label label-info" data-toggle="tooltip" data-placement="bottom"
+                  <span class="label label-primary" data-toggle="tooltip" data-placement="bottom"
                         title="{{ antenna.frequency|frq }} - {{ antenna.frequency_max|frq }}">
                     {{ antenna.band}} {{ antenna.get_antenna_type_display }}
                   </span>
