@@ -13,6 +13,7 @@ from django.utils.timezone import now
 
 from network.users.models import User
 from network.base.helpers import get_apikey
+from network.base.managers import ObservarionQuerySet
 
 
 RIG_TYPES = ['Radio', 'SDR']
@@ -130,6 +131,11 @@ class Station(models.Model):
     @property
     def observations_count(self):
         count = self.observations.all().count()
+        return count
+
+    @property
+    def observations_future_count(self):
+        count = self.observations.is_future().count()
         return count
 
     @property
@@ -332,6 +338,8 @@ class Observation(models.Model):
 
     def get_absolute_url(self):
         return reverse('base:observation_view', kwargs={'id': self.id})
+
+    objects = ObservarionQuerySet.as_manager()
 
 
 @receiver(models.signals.post_delete, sender=Observation)
