@@ -293,6 +293,15 @@ span.datetime-time {
     background-color: #5bc0de;
 }
 
+.badge-unvetted {
+    background-color: #ff8c00;
+}
+
+.owner_stations {
+    margin-right: 8px;
+}
+
+
 /* Stations
 ==================== */
 

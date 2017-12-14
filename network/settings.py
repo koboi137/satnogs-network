@@ -114,6 +114,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'network.base.context_processors.analytics',
                 'network.base.context_processors.stage_notice',
+                'network.base.context_processors.user_processor',
             ],
             'loaders': [
                 ('django.template.loaders.cached.Loader', [
