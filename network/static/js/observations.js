@@ -7,7 +7,6 @@ $(document).ready(function() {
         the_form.find('input[type="checkbox"]').each( function () {
             var the_checkbox = $(this);
 
-
             if( the_checkbox.is(':checked') === true ) {
                 the_checkbox.attr('value','1');
             } else {
@@ -32,8 +31,11 @@ $(document).ready(function() {
     $('#station-selection').bind('keyup change', function() {
         $('#observation-filter').submit();
     });
-    if ($('#satellite-selection').val() || $('#observer-selection').val() || $('#station-selection').val()) {
-
+    if (window.location.hash == '#collapseFilters') {
+        $('#collapseFilters').hide();
+    } else if ($('#satellite-selection').val() ||
+               $('#observer-selection').val() ||
+               $('#station-selection').val()) {
         $('#collapseFilters').show();
     }
 
