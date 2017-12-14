@@ -325,6 +325,21 @@ span.datetime-time {
     margin: 2px;
 }
 
+.antenna-pill {
+    color: #333;
+    margin: 2px;
+    background-color: #eee;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 4px 8px;
+    font-size: 12px;
+    cursor: help;
+}
+
+.total-pill {
+    background-color: #072;
+}
+
 /* Observations
 ==================== */
 
