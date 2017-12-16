@@ -17,20 +17,8 @@ python-decouple==3.1 \
     --hash=sha256:1317df14b43efee4337a4aa02914bf004f010cd56d6c4bd894e6474ec8c4fe2d
 dj-database-url==0.4.2 \
     --hash=sha256:e16d94c382ea0564c48038fa7fe8d9c890ef1ab1a8ec4cb48e732c124b9482fd
-opbeat==3.5.3 \
-    --hash=sha256:e4c97eaaeb5e9f5f12935446d92821d2cfa12c31aaa7d02af8d4bb67be7eb8ac \
-    --hash=sha256:83f7f64f99baa7d62976717a7e71f6bdfb5552860e5da850865926b84b4cbfed \
-    --hash=sha256:2b73bc118fb7382f760f1e7e74ff7e8fc878f9a7c63c46b270e4b85da1aef574 \
-    --hash=sha256:54c9dd207aa70d1ff61da106f3822c24c9829303f95a3dc051356dc32ddfaa86 \
-    --hash=sha256:47a0ddfd8a228295cc0ea938a5232ebe48b875641e3f45a8861cc8249d116888 \
-    --hash=sha256:ad8c66d622a7b84909c7a9dbcdcff2334554ad4597c0ac22ea70c2419154176c \
-    --hash=sha256:70d41972f8f9b6902fa63ba4463d34a04e147c3e5a9db54519aed55b16c41dcc \
-    --hash=sha256:2da2cdf9f943c2f6096504564920f6c7122bd9e58233fe38a6ed6ff86fc410db \
-    --hash=sha256:88567f723a0be06380cd334345a038e8569cbeb2ba13b55240b668467251ac24 \
-    --hash=sha256:1de2a4d48041d26608cfd08ccd19495678bfd2ff98ec0075ad18a577b459d3ad \
-    --hash=sha256:effc0b4724ace209b54f2529eb7746c6c7b0974b653f464516af23a16c984cee \
-    --hash=sha256:4e0d45a43b988a23d8178f1f3f170b5ccf95b2a7ebf87b9fd43330b1ad2ae41f \
-    --hash=sha256:32354c83171a67c76e837d41973c6964dce3c874ec7ef5cf47aaf8d7dd9fa7cb
+opbeat==3.6.0 \
+    --hash=sha256:d9b24bcdf7b09c6a32f83d855bb85acd30ecb5815f93242ff4caab808dfbec97
 
 # Cache
 redis==2.10.6 \
@@ -40,8 +28,9 @@ django-redis-cache==1.7.1 \
     --hash=sha256:2b4e3510bbcaf3d331975717afd6f15a36fbaf7622504599d2727dc99f90c64d
 
 # Security
-django-braces==1.11.0 \
-    --hash=sha256:6be8277a535565e2140f7b1eb83ec26aa8d181acc8bb046875142a2792e4babe
+django-braces==1.12.0 \
+    --hash=sha256:7c5b91c75240ccf2eb124fe3b09dd4978e8f4d412b553bb791920bd55839159c \
+    --hash=sha256:7e0cb698f3cd17cc58d50aea4a663233f44228144b81d85e1b9bad05aa7f3f80
 django-csp==3.3 \
     --hash=sha256:a95eeeb04df155b6270612238700f16abd2b0cc3d32dbcfca8c7fd06d26dacba \
     --hash=sha256:db082b75075672fb9cf4a622c75c94ee624cb566ffe9d2a645687e58598b6d39
@@ -116,8 +105,8 @@ https://github.com/comzeradd/orbit/archive/cache.zip \
 djangorestframework==3.7.3 \
     --hash=sha256:79268055755125caaebface3acbe13150bbc3a83b78e9bf1a1abfde7ab0c5231 \
     --hash=sha256:067960e5e9e5586d3b2d53a1d626c4800dc33cd8309487d404fc63355674556f
-Markdown==2.6.9 \
-    --hash=sha256:73af797238b95768b3a9b6fe6270e250e5c09d988b8e5b223fd5efa4e06faf81
+Markdown==2.6.10 \
+    --hash=sha256:cfa536d1ee8984007fcecc5a38a493ff05c174cb74cb2341dafd175e6bc30851
 django-filter==1.1.0 \
     --hash=sha256:ec0ef1ba23ef95b1620f5d481334413700fb33f45cd76d56a63f4b0b1d76976a \
     --hash=sha256:ea204242ea83790e1512c9d0d8255002a652a6f4986e93cee664f28955ba0c22
