@@ -219,7 +219,7 @@ def observation_new(request):
             messages.error(request, 'Please use the datetime dialogs to submit valid values.')
             return redirect(reverse('base:observation_new'))
 
-        if (end_time - start_time) > timedelta(minutes=int(settings.DATE_MAX_RANGE)):
+        if (end_time - start_time) > timedelta(minutes=settings.OBSERVATION_DATE_MAX_RANGE):
             messages.error(request, 'Please use the datetime dialogs to submit valid timeframe.')
             return redirect(reverse('base:observation_new'))
 
@@ -309,9 +309,9 @@ def observation_new(request):
     return render(request, 'base/observation_new.html',
                   {'satellites': satellites,
                    'transmitters': transmitters, 'obs_filter': obs_filter,
-                   'date_min_start': settings.DATE_MIN_START,
-                   'date_min_end': settings.DATE_MIN_END,
-                   'date_max_range': settings.DATE_MAX_RANGE})
+                   'date_min_start': settings.OBSERVATION_DATE_MIN_START,
+                   'date_min_end': settings.OBSERVATION_DATE_MIN_END,
+                   'date_max_range': settings.OBSERVATION_DATE_MAX_RANGE})
 
 
 def prediction_windows(request, sat_id, transmitter, start_date, end_date,
@@ -612,7 +612,7 @@ def station_view(request, id):
                 if (float(elevation) >= station.horizon and tr < ts):
                     valid = True
                     if tr < ephem.Date(datetime.now() +
-                                       timedelta(minutes=int(settings.DATE_MIN_START))):
+                                       timedelta(minutes=settings.OBSERVATION_DATE_MIN_START)):
                         valid = False
                     polar_data = calculate_polar_data(observer,
                                                       sat_ephem,
