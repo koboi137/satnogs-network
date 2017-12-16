@@ -4,9 +4,6 @@ import os
 
 from celery import Celery
 
-import dotenv
-
-dotenv.read_dotenv('.env')
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'network.settings')
 
