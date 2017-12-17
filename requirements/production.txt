@@ -7,6 +7,9 @@ django-shortuuidfield==0.1.3 \
 celery==4.1.0 \
     --hash=sha256:81a67f0d53a688ec2bc8557bd5d6d7218f925a6f2e6df80e01560de9e28997ec \
     --hash=sha256:77ff3730198d6a17b3c1f05579ebe570b579efb35f6d7e13dba3b1368d068b35
+internetarchive==1.7.4 \
+    --hash=sha256:87c781464889d44bd496247b99cdff4392a86438ac48515a09a6e52f526e5025 \
+    --hash=sha256:41c5cc3cbc143bb789a055cbc3c12f162f186af63c70490f48688a83136ff1c0
 
 # Configuration
 unicode-slugify==0.1.3 \
@@ -217,3 +220,22 @@ kombu==4.1.0 \
 vine==1.1.4 \
     --hash=sha256:6849544be74ec3638e84d90bc1cf2e1e9224cc10d96cd4383ec3f69e9bce077b \
     --hash=sha256:52116d59bc45392af9fdd3b75ed98ae48a93e822cee21e5fda249105c59a7a72
+args==0.1.0 \
+    --hash=sha256:a785b8d837625e9b61c39108532d95b85274acd679693b71ebb5156848fcf814
+docopt==0.6.2 \
+    --hash=sha256:49b3a825280bd66b3aa83585ef59c4a8c82f2c8a522dbe754a8bc8d08c85c491
+schema==0.6.6 \
+    --hash=sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 \
+    --hash=sha256:758b59ffc654d3794f6edd6e67db948f26164ddcd3cd7dde8bbeefc4934482d3 \
+    --hash=sha256:0e1b5453ea462a10744c612bc8989e2a058609beac7deba9edbac8c5b1a2e2b0
+jsonpointer==1.14 \
+    --hash=sha256:381b613fd1afd65376fb28948c4744f035e47ab049a9fdde0c48cc1c30b68559 \
+    --hash=sha256:c681af823545c731b7b38aedd5d4eee4c5eff87bc0f25e0ff25444a4189eac4d
+jsonpatch==1.20 \
+    --hash=sha256:4b084a9c3f4b256d7e1fab66efb13c3560f107d9b21939ef3ee6d5858fa636ca \
+    --hash=sha256:b12594a0cfe634bdd2a5c027250af2dd84932d493568e88ae722871edc3eb02d
+clint==0.5.1 \
+    --hash=sha256:05224c32b1075563d0b16d0015faaf9da43aa214e4a2140e51f08789e7a4c5aa
+backports.csv==1.0.5 \
+    --hash=sha256:d3b0cefaaca92be3d2d4ceec140827cae1d871da7fff5db70697d72328357d65 \
+    --hash=sha256:8c421385cbc6042ba90c68c871c5afc13672acaf91e1508546d6cda6725ebfc6
