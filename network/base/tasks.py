@@ -1,7 +1,9 @@
 from datetime import timedelta
 import json
+import os
 import urllib2
 
+from internetarchive import upload
 from orbit import satellite
 
 from django.conf import settings
@@ -98,6 +100,30 @@ def fetch_data():
 
 
 @app.task
+def archive_audio(obs_id):
+    obs = Observation.objects.get(id=obs_id)
+    suffix = '-{0}'.format(settings.ENVIRONMENT)
+    if settings.ENVIRONMENT == 'production':
+        suffix = ''
+    identifier = 'satnogs{0}-observation-{1}'.format(suffix, obs.id)
+    if not obs.archived and obs.payload:
+        if os.path.isfile(obs.payload.path):
+            ogg = obs.payload.path
+            md = dict(collection=settings.ARCHIVE_COLLECTION,
+                      title=identifier,
+                      mediatype='audio')
+            res = upload(identifier, files=[ogg], metadata=md,
+                         access_key=settings.S3_ACCESS_KEY,
+                         secret_key=settings.S3_SECRET_KEY)
+            if res[0].status_code == 200:
+                obs.archived = True
+                obs.archive_url = res[0].url
+                obs.archive_identifier = identifier
+                obs.save()
+                os.remove(obs.payload.path)
+
+
+@app.task
 def clean_observations():
     """Task to clean up old observations that lack actual data."""
     if settings.ENVIRONMENT == 'stage':
@@ -106,3 +132,5 @@ def clean_observations():
         for obs in observations:
             if not obs.is_verified:
                 obs.delete()
+            else:
+                archive_audio.delay(obs.id)

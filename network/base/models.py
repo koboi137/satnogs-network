@@ -295,6 +295,9 @@ class Observation(models.Model):
     rise_azimuth = models.FloatField(blank=True, null=True)
     max_altitude = models.FloatField(blank=True, null=True)
     set_azimuth = models.FloatField(blank=True, null=True)
+    archived = models.BooleanField(default=False)
+    archive_identifier = models.CharField(max_length=255, blank=True)
+    archive_url = models.URLField(blank=True, null=True)
 
     @property
     def is_past(self):

@@ -19,10 +19,8 @@
           <th>ID</th>
           <th>Name</th>
           <th>Location</th>
-          <th>
-            <span class="badge">Total</span>
-            <span class="badge badge-info">Future</span>
-          </th>
+          <th>Total</th>
+          <th>Future</th>
           <th>Antennas</th>
           <th>Owner</th>
         </thead>
@@ -71,11 +69,13 @@
               {% endif %}
               <td>
                 <a href="{% url 'base:observations_list' %}?station={{ station.id }}">
-                  <span class="badge" data-toggle="tooltip" data-placement="bottom"
+                  <span class="badge total-pill" data-toggle="tooltip" data-placement="bottom"
                         title="{{ station.success_rate }}% Success">
                     {{ station.observations_count }}
                   </span>
                 </a>
+              </td>
+              <td>
                 <a href="{% url 'base:observations_list' %}?future=1&good=0&bad=0&unvetted=0&station={{ station.id }}">
                   <span class="badge badge-info">
                     {{ station.observations_future_count }}
@@ -84,7 +84,7 @@
               </td>
               <td class="station-antennas">
                 {% for antenna in station.antenna.all %}
-                  <span class="label label-primary" data-toggle="tooltip" data-placement="bottom"
+                  <span class="antenna-pill" data-toggle="tooltip" data-placement="bottom"
                         title="{{ antenna.frequency|frq }} - {{ antenna.frequency_max|frq }}">
                     {{ antenna.band}} {{ antenna.get_antenna_type_display }}
                   </span>

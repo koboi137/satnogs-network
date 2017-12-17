@@ -293,6 +293,17 @@ span.datetime-time {
     background-color: #5bc0de;
 }
 
+.badge-unvetted {
+    background-color: #ff8c00;
+    margin-top: -15px;
+    margin-left: -7px;
+    font-size: .7em;
+}
+
+.owner_stations {
+    margin-right: 8px;
+}
+
 /* Stations
 ==================== */
 
@@ -323,6 +334,21 @@ span.datetime-time {
 
 .station-antennas .label-info {
     margin: 2px;
+}
+
+.antenna-pill {
+    color: #333;
+    margin: 2px;
+    background-color: #eee;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 4px 8px;
+    font-size: 12px;
+    cursor: help;
+}
+
+.total-pill {
+    background-color: #072;
 }
 
 /* Observations
