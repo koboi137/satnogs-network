@@ -323,7 +323,7 @@ class Observation(models.Model):
         return self.vetted_status == 'no_data'
 
     @property
-    def payload_exists(self):
+    def has_audio(self):
         """Run some checks on the payload for existence of data."""
         if self.payload is None:
             return False
@@ -331,7 +331,18 @@ class Observation(models.Model):
             return False
         if self.payload.size == 0:
             return False
+        if self.archive_url:
+            return True
         return True
+
+    @property
+    def audio_url(self):
+        if self.has_audio:
+            if self.archive_url:
+                return self.archive_url
+            else:
+                return self.payload.url
+        return ''
 
     class Meta:
         ordering = ['-start', '-end']
