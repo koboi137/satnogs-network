@@ -8,6 +8,7 @@ from internetarchive import upload
 from orbit import satellite
 
 from django.conf import settings
+from django.contrib.sites.models import Site
 from django.utils.timezone import now
 
 from network.base.models import Satellite, Tle, Mode, Transmitter, Observation
@@ -111,9 +112,15 @@ def archive_audio(obs_id):
         if os.path.isfile(obs.payload.path):
             ogg = obs.payload.path
             filename = obs.payload.name.split('/')[-1]
+            site = Site.objects.get_current()
+            description = ('<p>Audio file from SatNOGS{0} <a href="{1}observations/{2}">'
+                           'Observation {3}</a></p>').format(suffix, site.dommain,
+                                                             obs.id, obs.id)
             md = dict(collection=settings.ARCHIVE_COLLECTION,
                       title=identifier,
-                      mediatype='audio')
+                      mediatype='audio',
+                      licenseurl='http://creativecommons.org/licenses/by-sa/4.0/',
+                      description=description)
             try:
                 res = upload(identifier, files=[ogg], metadata=md,
                              access_key=settings.S3_ACCESS_KEY,
