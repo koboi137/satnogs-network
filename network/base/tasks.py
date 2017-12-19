@@ -1,6 +1,7 @@
 from datetime import timedelta
 import json
 import os
+from requests.exceptions import ReadTimeout
 import urllib2
 
 from internetarchive import upload
@@ -109,18 +110,22 @@ def archive_audio(obs_id):
     if not obs.archived and obs.payload:
         if os.path.isfile(obs.payload.path):
             ogg = obs.payload.path
+            filename = obs.payload.name.split('/')[-1]
             md = dict(collection=settings.ARCHIVE_COLLECTION,
                       title=identifier,
                       mediatype='audio')
-            res = upload(identifier, files=[ogg], metadata=md,
-                         access_key=settings.S3_ACCESS_KEY,
-                         secret_key=settings.S3_SECRET_KEY)
+            try:
+                res = upload(identifier, files=[ogg], metadata=md,
+                             access_key=settings.S3_ACCESS_KEY,
+                             secret_key=settings.S3_SECRET_KEY)
+            except ReadTimeout:
+                return
             if res[0].status_code == 200:
                 obs.archived = True
-                obs.archive_url = res[0].url
+                obs.archive_url = '{0}{1}/{2}'.format(settings.ARCHIVE_URL, identifier, filename)
                 obs.archive_identifier = identifier
                 obs.save()
-                os.remove(obs.payload.path)
+                obs.payload.delete()
 
 
 @app.task

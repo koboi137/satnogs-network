@@ -262,6 +262,7 @@ ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost', cast=Csv())
 CSP_DEFAULT_SRC = (
     "'self'",
     'https://*.mapbox.com',
+    'https://*.archive.org',
 )
 CSP_SCRIPT_SRC = (
     "'self'",
@@ -336,6 +337,7 @@ AVATAR_GRAVATAR_DEFAULT = config('AVATAR_GRAVATAR_DEFAULT', default='mm')
 S3_ACCESS_KEY = config('S3_ACCESS_KEY', default='')
 S3_SECRET_KEY = config('S3_SECRET_KEY', default='')
 ARCHIVE_COLLECTION = config('ARCHIVE_COLLECTION', default='test_collection')
+ARCHIVE_URL = 'https://archive.org/download/'
 
 if ENVIRONMENT == 'dev':
     # Disable template caching
