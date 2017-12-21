@@ -66,11 +66,12 @@ class JobSerializer(serializers.ModelSerializer):
     tle2 = serializers.SerializerMethodField()
     mode = serializers.SerializerMethodField()
     transmitter = serializers.SerializerMethodField()
+    baud = serializers.SerializerMethodField()
 
     class Meta:
         model = Observation
         fields = ('id', 'start', 'end', 'ground_station', 'tle0', 'tle1', 'tle2',
-                  'frequency', 'mode', 'transmitter')
+                  'frequency', 'mode', 'transmitter', 'baud')
 
     def get_frequency(self, obj):
         return obj.transmitter.downlink_low
@@ -92,6 +93,9 @@ class JobSerializer(serializers.ModelSerializer):
             return obj.transmitter.mode.name
         except AttributeError:
             return ''
+
+    def get_baud(self, obj):
+        return obj.transmitter.baud
 
 
 class SettingsSerializer(serializers.ModelSerializer):
