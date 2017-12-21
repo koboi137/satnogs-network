@@ -21,7 +21,7 @@ from network.base.models import (Station, Transmitter, Observation,
                                  Satellite, Antenna, Tle, Rig)
 from network.users.models import User
 from network.base.forms import StationForm, SatelliteFilterForm
-from network.base.decorators import admin_required
+from network.base.decorators import admin_required, ajax_required
 from network.base.helpers import calculate_polar_data, resolve_overlaps
 from network.base.perms import schedule_perms, delete_perms, vet_perms
 from network.base.tasks import update_all_tle, fetch_data
@@ -38,6 +38,7 @@ class StationAllView(viewsets.ReadOnlyModelViewSet):
     serializer_class = StationSerializer
 
 
+@ajax_required
 def satellite_position(request, sat_id):
     sat = get_object_or_404(Satellite, norad_cat_id=sat_id)
     try:
@@ -314,6 +315,7 @@ def observation_new(request):
                    'date_max_range': settings.OBSERVATION_DATE_MAX_RANGE})
 
 
+@ajax_required
 def prediction_windows(request, sat_id, transmitter, start_date, end_date,
                        station_id=None):
     try:
