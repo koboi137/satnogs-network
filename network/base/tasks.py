@@ -114,8 +114,8 @@ def archive_audio(obs_id):
             filename = obs.payload.name.split('/')[-1]
             site = Site.objects.get_current()
             description = ('<p>Audio file from SatNOGS{0} <a href="{1}observations/{2}">'
-                           'Observation {3}</a></p>').format(suffix, site.dommain,
-                                                             obs.id, obs.id)
+                           'Observation {3}</a>.</p>').format(suffix, site.domain,
+                                                              obs.id, obs.id)
             md = dict(collection=settings.ARCHIVE_COLLECTION,
                       title=identifier,
                       mediatype='audio',
@@ -138,11 +138,10 @@ def archive_audio(obs_id):
 @app.task
 def clean_observations():
     """Task to clean up old observations that lack actual data."""
-    if settings.ENVIRONMENT == 'stage':
-        threshold = now() - timedelta(days=int(settings.OBSERVATION_OLD_RANGE))
-        observations = Observation.objects.filter(end__lt=threshold)
-        for obs in observations:
+    threshold = now() - timedelta(days=int(settings.OBSERVATION_OLD_RANGE))
+    observations = Observation.objects.filter(end__lt=threshold)
+    for obs in observations:
+        if settings.ENVIRONMENT == 'stage':
             if not obs.is_verified:
                 obs.delete()
-            else:
-                archive_audio.delay(obs.id)
+        archive_audio.delay(obs.id)
