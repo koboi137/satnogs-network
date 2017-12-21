@@ -110,9 +110,9 @@ class SatelliteFactory(factory.django.DjangoModelFactory):
 
 class TleFactory(factory.django.DjangoModelFactory):
     """Tle model factory."""
-    tle0 = '3CAT-2'
-    tle1 = '1 40043U 14033AK  16355.56523826  .00000180  00000-0  34302-4 0  9994'
-    tle2 = '2 40043  97.8794 239.3735 0060963 147.7144 212.7819 14.73885035134520'
+    tle0 = 'ISS (ZARYA)'
+    tle1 = '1 25544U 98067A   17355.27738426  .00002760  00000-0  48789-4 0  9995'
+    tle2 = '2 25544  51.6403 185.6460 0002546 270.9261  71.9125 15.54204066 90844'
     updated = fuzzy.FuzzyDateTime(now() - timedelta(days=3), now())
     satellite = factory.SubFactory(SatelliteFactory)
 

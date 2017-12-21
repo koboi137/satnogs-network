@@ -4,7 +4,7 @@ from unipath import Path
 
 ROOT = Path(__file__).parent.parent
 
-ENVIRONMENT = config('ENVIRONMENT', default='production')
+ENVIRONMENT = config('ENVIRONMENT', default='dev')
 DEBUG = config('DEBUG', default=False, cast=bool)
 
 # Apps
