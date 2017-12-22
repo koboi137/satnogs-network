@@ -158,11 +158,11 @@
         </span>
       </div>
       <div class="front-line">
-        {% if observation.payload or observation.waterfall %}
+        {% if observation.has_audio or observation.waterfall %}
           <span class="label label-default">Downloads</span>
           <span class="front-data">
-          {% if observation.payload %}
-            <a href="{{ MEDIA_URL }}{{ observation.payload }}"
+          {% if observation.has_audio %}
+            <a href="{{ observation.audio_url }}"
                target="_blank"
                download="">
               <button type="button" class="btn btn-default btn-xs">
@@ -229,14 +229,14 @@
             {% endif %}
           </div>
           <div role="tabpanel" class="tab-pane" id="tab-audio">
-            {% if observation.payload %}
+            {% if observation.has_audio %}
               <div id="loading-{{ observation.id }}" class="notice">Loading audio...</div>
               <div class="progress progress-striped active" id="progress-bar-{{ observation.id }}">
                 <div class="progress-bar progress-bar-info"></div>
               </div>
               <div class="wave tab-data" id="data-{{ observation.id }}"
                    data-id="{{ observation.id }}"
-                   data-payload="{{ MEDIA_URL }}{{ observation.payload }}"></div>
+                   data-audio="{{ observation.audio_url }}"></div>
               <div id="wave-spectrogram"></div>
               <button type="button" class="btn btn-primary btn-xs playpause">
                 <span class="glyphicon glyphicon-play"></span>

@@ -20,7 +20,7 @@ $(document).ready(function() {
         var $this = $(this);
         var wid = $this.data('id');
         var wavesurfer = Object.create(WaveSurfer);
-        var data_payload_url = $this.data('payload');
+        var data_audio_url = $this.data('audio');
         var container_el = '#data-' + wid;
         $(container_el).css('opacity', '0');
         var loading = '#loading-' + wid;
@@ -60,7 +60,7 @@ $(document).ready(function() {
         });
 
         $('a[href="#tab-audio"]').on('shown.bs.tab', function () {
-            wavesurfer.load(data_payload_url);
+            wavesurfer.load(data_audio_url);
             $('a[href="#tab-audio"]').off('shown.bs.tab');
         });
 

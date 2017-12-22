@@ -110,9 +110,9 @@ class SatelliteFactory(factory.django.DjangoModelFactory):
 
 class TleFactory(factory.django.DjangoModelFactory):
     """Tle model factory."""
-    tle0 = '3CAT-2'
-    tle1 = '1 40043U 14033AK  16355.56523826  .00000180  00000-0  34302-4 0  9994'
-    tle2 = '2 40043  97.8794 239.3735 0060963 147.7144 212.7819 14.73885035134520'
+    tle0 = 'ISS (ZARYA)'
+    tle1 = '1 25544U 98067A   17355.27738426  .00002760  00000-0  48789-4 0  9995'
+    tle2 = '2 25544  51.6403 185.6460 0002546 270.9261  71.9125 15.54204066 90844'
     updated = fuzzy.FuzzyDateTime(now() - timedelta(days=3), now())
     satellite = factory.SubFactory(SatelliteFactory)
 
@@ -189,29 +189,6 @@ class AboutViewTest(TestCase):
     def test_about_page(self):
         response = self.client.get('/about/')
         self.assertContains(response, 'SatNOGS Network is a global management interface')
-
-
-@pytest.mark.django_db
-class SatellitePositionViewTest(TestCase):
-    """
-    Simple test to make sure this view returns a valid json
-    """
-    client = Client()
-
-    satellites = []
-    tles = []
-
-    def setUp(self):
-        for x in xrange(1, 10):
-            self.tles.append(TleFactory())
-        for x in xrange(1, 10):
-            self.satellites = Satellite.objects.all()
-
-    def test_satellite_position(self):
-        for x in self.satellites:
-            response = self.client.get('/satellite_position/{0}/'.format(x.norad_cat_id))
-            response.json()['lat']
-            response.json()['lon']
 
 
 @pytest.mark.django_db

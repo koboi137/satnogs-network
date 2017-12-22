@@ -1,6 +1,7 @@
 import os
 from datetime import datetime, timedelta
 from PIL import Image
+import requests
 from shortuuidfield import ShortUUIDField
 
 from django.conf import settings
@@ -323,8 +324,10 @@ class Observation(models.Model):
         return self.vetted_status == 'no_data'
 
     @property
-    def payload_exists(self):
+    def has_audio(self):
         """Run some checks on the payload for existence of data."""
+        if self.archive_url:
+            return True
         if self.payload is None:
             return False
         if not os.path.isfile(os.path.join(settings.MEDIA_ROOT, self.payload.name)):
@@ -332,6 +335,16 @@ class Observation(models.Model):
         if self.payload.size == 0:
             return False
         return True
+
+    @property
+    def audio_url(self):
+        if self.has_audio:
+            if self.archive_url:
+                r = requests.get(self.archive_url, allow_redirects=False)
+                return r.headers['Location']
+            else:
+                return self.payload.url
+        return ''
 
     class Meta:
         ordering = ['-start', '-end']

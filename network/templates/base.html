@@ -54,7 +54,7 @@
               {% if owner_vetting_count %}
                 <li data-toggle="tooltip"
                     data-placement="bottom"
-                    title="{{ owner_vetting_count }} obersvations need vetting">
+                    title="{{ owner_vetting_count }} observations need vetting">
                   <a href="{% url 'base:observations_list' %}?observer={{ request.user.id }}&future=0&good=0&bad=0&unvetted=1">
                     <span class="glyphicon glyphicon-check" aria-hidden="true"></span>
                     <span class="badge badge-unvetted">{{ owner_vetting_count }}</span>
