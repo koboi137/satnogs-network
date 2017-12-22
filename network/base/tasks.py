@@ -113,7 +113,7 @@ def archive_audio(obs_id):
             ogg = obs.payload.path
             filename = obs.payload.name.split('/')[-1]
             site = Site.objects.get_current()
-            description = ('<p>Audio file from SatNOGS{0} <a href="{1}observations/{2}">'
+            description = ('<p>Audio file from SatNOGS{0} <a href="{1}/observations/{2}">'
                            'Observation {3}</a>.</p>').format(suffix, site.domain,
                                                               obs.id, obs.id)
             md = dict(collection=settings.ARCHIVE_COLLECTION,
