@@ -540,6 +540,22 @@ def station_view(request, id):
     rigs = Rig.objects.all()
     unsupported_frequencies = request.GET.get('unsupported_frequencies', '0')
 
+    can_schedule = schedule_perms(request.user)
+
+    return render(request, 'base/station_view.html',
+                  {'station': station, 'form': form, 'antennas': antennas,
+                   'mapbox_id': settings.MAPBOX_MAP_ID,
+                   'mapbox_token': settings.MAPBOX_TOKEN,
+                   'rigs': rigs, 'can_schedule': can_schedule,
+                   'unsupported_frequencies': unsupported_frequencies})
+
+
+@ajax_required
+def pass_predictions(request, id):
+    """Endpoint for pass predictions"""
+    station = get_object_or_404(Station, id=id)
+    unsupported_frequencies = request.GET.get('unsupported_frequencies', '0')
+
     try:
         satellites = Satellite.objects.filter(transmitters__alive=True) \
             .filter(status='alive').distinct()
@@ -622,7 +638,6 @@ def station_view(request, id):
                                                       ts.datetime(), 10)
                     sat_pass = {'passid': passid,
                                 'mytime': str(observer.date),
-                                'debug': observer.next_pass(sat_ephem),
                                 'name': str(satellite.name),
                                 'id': str(satellite.id),
                                 'success_rate': str(satellite.success_rate),
@@ -635,7 +650,7 @@ def station_view(request, id):
                                 'norad_cat_id': str(satellite.norad_cat_id),
                                 'tr': tr.datetime(),  # Rise time
                                 'azr': azimuth_r,     # Rise Azimuth
-                                'tt': tt,             # Max altitude time
+                                'tt': tt.datetime(),  # Max altitude time
                                 'altt': elevation,    # Max altitude
                                 'ts': ts.datetime(),  # Set time
                                 'azs': azimuth_s,     # Set azimuth
@@ -646,15 +661,12 @@ def station_view(request, id):
             else:
                 keep_digging = False
 
-    can_schedule = schedule_perms(request.user)
+    data = {
+        'id': id,
+        'nextpasses': sorted(nextpasses, key=itemgetter('tr'))
+    }
 
-    return render(request, 'base/station_view.html',
-                  {'station': station, 'form': form, 'antennas': antennas,
-                   'mapbox_id': settings.MAPBOX_MAP_ID,
-                   'mapbox_token': settings.MAPBOX_TOKEN,
-                   'nextpasses': sorted(nextpasses, key=itemgetter('tr')),
-                   'rigs': rigs, 'can_schedule': can_schedule,
-                   'unsupported_frequencies': unsupported_frequencies})
+    return JsonResponse(data, safe=False)
 
 
 @require_POST
