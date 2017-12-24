@@ -22,6 +22,8 @@ base_urlpatterns = ([
     url(r'^prediction_windows/(?P<sat_id>[\w.@+-]+)/(?P<transmitter>[\w.@+-]+)/'
         '(?P<start_date>.+)/(?P<end_date>.+)/$',
         views.prediction_windows, name='prediction_windows'),
+    url(r'^pass_predictions/(?P<id>[\w.@+-]+)/$',
+        views.pass_predictions, name='pass_predictions'),
     url(r'^observation_vet_good/(?P<id>[0-9]+)/$', views.observation_vet_good,
         name='observation_vet_good'),
     url(r'^observation_vet_bad/(?P<id>[0-9]+)/$', views.observation_vet_bad,
