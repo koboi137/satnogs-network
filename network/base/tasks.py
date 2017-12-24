@@ -142,6 +142,6 @@ def clean_observations():
     observations = Observation.objects.filter(end__lt=threshold)
     for obs in observations:
         if settings.ENVIRONMENT == 'stage':
-            if not obs.is_verified:
+            if not obs.is_good:
                 obs.delete()
         archive_audio.delay(obs.id)

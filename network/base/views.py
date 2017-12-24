@@ -159,7 +159,7 @@ class ObservationListView(ListView):
         if not bad:
             observations = observations.exclude(vetted_status='no_data')
         if not good:
-            observations = observations.exclude(vetted_status='verified')
+            observations = observations.exclude(vetted_status='good')
         if not unvetted:
             observations = observations.exclude(vetted_status='unknown',
                                                 id__in=(o.id for
@@ -493,30 +493,18 @@ def observation_delete(request, id):
 
 
 @login_required
-def observation_vet_good(request, id):
+def observation_vet(request, id, status):
     observation = get_object_or_404(Observation, id=id)
     can_vet = vet_perms(request.user, observation)
-    if can_vet:
-        observation.vetted_status = 'verified'
+    if status in ['good', 'bad', 'failed', 'unknown'] and can_vet:
+        observation.vetted_status = status
         observation.vetted_user = request.user
-        observation.vetted_datetime = datetime.today()
+        observation.vetted_datetime = now()
         observation.save(update_fields=['vetted_status', 'vetted_user', 'vetted_datetime'])
-        messages.success(request, 'Observation vetted successfully.')
-    else:
-        messages.error(request, 'Permission denied.')
-    return redirect(reverse('base:observation_view', kwargs={'id': observation.id}))
-
-
-@login_required
-def observation_vet_bad(request, id):
-    observation = get_object_or_404(Observation, id=id)
-    can_vet = vet_perms(request.user, observation)
-    if can_vet:
-        observation.vetted_status = 'no_data'
-        observation.vetted_user = request.user
-        observation.vetted_datetime = datetime.today()
-        observation.save(update_fields=['vetted_status', 'vetted_user', 'vetted_datetime'])
-        messages.success(request, 'Observation vetted successfully.')
+        if not status == 'unknown':
+            messages.success(request, 'Observation vetted successfully. [<a href="{0}">Undo</a>]'
+                             .format(reverse('base:observation_vet',
+                                             kwargs={'id': observation.id, 'status': 'unknown'})))
     else:
         messages.error(request, 'Permission denied.')
     return redirect(reverse('base:observation_view', kwargs={'id': observation.id}))
@@ -642,10 +630,10 @@ def pass_predictions(request, id):
                                 'id': str(satellite.id),
                                 'success_rate': str(satellite.success_rate),
                                 'unknown_rate': str(satellite.unknown_rate),
-                                'empty_rate': str(satellite.empty_rate),
+                                'bad_rate': str(satellite.bad_rate),
                                 'data_count': str(satellite.data_count),
-                                'verified_count': str(satellite.verified_count),
-                                'empty_count': str(satellite.empty_count),
+                                'good_count': str(satellite.good_count),
+                                'bad_count': str(satellite.bad_count),
                                 'unknown_count': str(satellite.unknown_count),
                                 'norad_cat_id': str(satellite.norad_cat_id),
                                 'tr': tr.datetime(),  # Rise time
@@ -720,8 +708,8 @@ def satellite_view(request, id):
         'names': sat.names,
         'image': sat.image,
         'success_rate': sat.success_rate,
-        'verified_count': sat.verified_count,
-        'empty_count': sat.empty_count,
+        'good_count': sat.good_count,
+        'bad_count': sat.bad_count,
         'unknown_count': sat.unknown_count,
         'data_count': sat.data_count,
     }

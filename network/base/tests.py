@@ -241,11 +241,11 @@ class ObservationsListViewTest(TestCase):
             for x in xrange(1, 10):
                 self.stations.append(StationFactory())
             for x in xrange(1, 10):
-                obs = ObservationFactory(vetted_status='no_data')
+                obs = ObservationFactory(vetted_status='bad')
                 self.observations_bad.append(obs)
                 self.observations.append(obs)
             for x in xrange(1, 10):
-                obs = ObservationFactory(vetted_status='verified')
+                obs = ObservationFactory(vetted_status='good')
                 self.observations_good.append(obs)
                 self.observations.append(obs)
             for x in xrange(1, 10):
@@ -434,9 +434,9 @@ class SettingsSiteViewTest(TestCase):
 
 
 @pytest.mark.django_db(transaction=True)
-class ObservationVerifyViewtest(TestCase):
+class ObservationVetViewtest(TestCase):
     """
-    Test vetting data as good
+    Test vetting data
     """
     client = Client()
     user = None
@@ -456,48 +456,39 @@ class ObservationVerifyViewtest(TestCase):
             self.transmitters.append(TransmitterFactory())
         for x in xrange(1, 10):
             self.stations.append(StationFactory())
-
-        self.observation = ObservationFactory()
+        for x in xrange(1, 5):
+            self.observations.append(ObservationFactory(vetted_status='unknown'))
 
     def test_get_observation_vet_good(self):
-        response = self.client.get('/observation_vet_good/%d/' % self.observation.id)
-        self.assertRedirects(response, '/observations/%d/' % self.observation.id)
-        observation = Observation.objects.get(id=self.observation.id)
+        obs = self.observations[0]
+        response = self.client.get('/observation_vet/%d/good/' % obs.id)
+        self.assertRedirects(response, '/observations/%d/' % obs.id)
+        observation = Observation.objects.get(id=obs.id)
         self.assertEqual(observation.vetted_user.username, self.user.username)
-        self.assertEqual(observation.vetted_status, 'verified')
-
-
-@pytest.mark.django_db(transaction=True)
-class ObservationMarkBadViewtest(TestCase):
-    """
-    Test vetting data as bad
-    """
-    client = Client()
-    user = None
-    satellites = []
-    stations = []
-    transmitters = []
-
-    def setUp(self):
-        self.user = UserFactory()
-        g = Group.objects.get(name='Moderators')
-        g.user_set.add(self.user)
-        self.client.force_login(self.user)
-        for x in xrange(1, 10):
-            self.satellites.append(SatelliteFactory())
-        for x in xrange(1, 10):
-            self.transmitters.append(TransmitterFactory())
-        for x in xrange(1, 10):
-            self.stations.append(StationFactory())
-
-        self.observation = ObservationFactory()
+        self.assertEqual(observation.vetted_status, 'good')
 
     def test_get_observation_vet_bad(self):
-        response = self.client.get('/observation_vet_bad/%d/' % self.observation.id)
-        self.assertRedirects(response, '/observations/%d/' % self.observation.id)
-        observation = Observation.objects.get(id=self.observation.id)
+        obs = self.observations[1]
+        response = self.client.get('/observation_vet/%d/bad/' % obs.id)
+        self.assertRedirects(response, '/observations/%d/' % obs.id)
+        observation = Observation.objects.get(id=obs.id)
         self.assertEqual(observation.vetted_user.username, self.user.username)
-        self.assertEqual(observation.vetted_status, 'no_data')
+        self.assertEqual(observation.vetted_status, 'bad')
+
+    def test_get_observation_vet_failed(self):
+        obs = self.observations[2]
+        response = self.client.get('/observation_vet/%d/failed/' % obs.id)
+        self.assertRedirects(response, '/observations/%d/' % obs.id)
+        observation = Observation.objects.get(id=obs.id)
+        self.assertEqual(observation.vetted_user.username, self.user.username)
+        self.assertEqual(observation.vetted_status, 'failed')
+
+    def test_get_observation_undo_vet(self):
+        obs = self.observations[0]
+        response = self.client.get('/observation_vet/%d/unknown/' % obs.id)
+        self.assertRedirects(response, '/observations/%d/' % obs.id)
+        observation = Observation.objects.get(id=obs.id)
+        self.assertEqual(observation.vetted_status, 'unknown')
 
 
 @pytest.mark.django_db(transaction=True)

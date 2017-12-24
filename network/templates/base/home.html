@@ -122,17 +122,13 @@
                     <tr>
                       <td>
                         <a href="{% url 'base:observation_view' id=observation.id %}">
-                          {% if observation.is_verified %}
-                            <span class="label label-success" title="There is known good data in this observation"
+                          {% if observation.is_vetted %}
+                            <span class="label label-{{observation.vetted_status }}">{{ observation.id }}</span>
                           {% elif observation.is_future %}
-                            <span class="label label-info" title="This observation is in the future"
-                          {% elif not observation.is_vetted %}
-                            <span class="label label-warning" title="There is data that needs vetting in this observation"
+                            <span class="label label-future">{{ observation.id }}</span>
                           {% else %}
-                            <span class="label label-danger" title="No good data in this observation"
-                          {% endif %}>
-                          {{ observation.id }}
-                          </span>
+                            <span class="label label-unknown">{{ observation.id }}</span>
+                          {% endif %}
                         </a>
                       </td>
                       <td>

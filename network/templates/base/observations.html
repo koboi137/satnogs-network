@@ -27,16 +27,16 @@
         <div class="form-group col-md-3">
           <label for="data-selector">Data</label>
           <div id="data-selector" class="btn-group" data-toggle="buttons">
-            <label class="btn btn-info btn-sm {% if future == '1' %}active{% endif %}"  aria-expanded="true" aria-controls="future">
+            <label class="btn btn-future btn-sm {% if future == '1' %}active{% endif %}"  aria-expanded="true" aria-controls="future">
               <input type="checkbox" name="future" {% if future == '1' %}checked{% endif %} autocomplete="off">Future
             </label>
-            <label class="btn btn-success btn-sm {% if good == '1' %}active{% endif %}"  aria-expanded="true" aria-controls="good">
+            <label class="btn btn-good btn-sm {% if good == '1' %}active{% endif %}"  aria-expanded="true" aria-controls="good">
               <input type="checkbox" name="good" {% if good == '1' %}checked{% endif %} autocomplete="off">Good
             </label>
-            <label class="btn btn-danger btn-sm {% if bad == '1' %}active{% endif %}"  aria-expanded="true" aria-controls="bad">
+            <label class="btn btn-bad btn-sm {% if bad == '1' %}active{% endif %}"  aria-expanded="true" aria-controls="bad">
               <input type="checkbox" name="bad" {% if bad == '1' %}checked{% endif %} autocomplete="off">Bad
             </label>
-            <label class="btn btn-warning btn-sm {% if unvetted == '1' %}active{% endif %}"  aria-expanded="true" aria-controls="unvetted">
+            <label class="btn btn-unknown btn-sm {% if unvetted == '1' %}active{% endif %}"  aria-expanded="true" aria-controls="unvetted">
               <input type="checkbox" name="unvetted" {% if unvetted == '1' %}checked{% endif %} autocomplete="off">Unvetted
             </label>
           </div>
@@ -100,17 +100,13 @@
                   {% if observation.id in scheduled %}class="bg-info"{% endif %}>
                 <td>
                   <a href="{% url 'base:observation_view' id=observation.id %}" class="obs-link">
-                    {% if observation.is_verified %}
-                      <span class="label label-success" title="There is known good data in this observation"
+                    {% if observation.is_vetted %}
+                      <span class="label label-{{observation.vetted_status }}">{{ observation.id }}</span>
                     {% elif observation.is_future %}
-                      <span class="label label-info" title="This observation is in the future"
-                    {% elif not observation.is_vetted %}
-                      <span class="label label-warning" title="There is data that needs vetting in this observation"
+                      <span class="label label-future">{{ observation.id }}</span>
                     {% else %}
-                      <span class="label label-danger" title="No good data in this observation"
-                    {% endif %}>
-                    {{ observation.id }}
-                    </span>
+                      <span class="label label-unknown">{{ observation.id }}</span>
+                    {% endif %}
                   </a>
                 </td>
                 <td>
