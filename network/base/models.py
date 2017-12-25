@@ -33,9 +33,9 @@ ANTENNA_TYPES = (
 )
 OBSERVATION_STATUSES = (
     ('unknown', 'Unknown'),
-    ('verified', 'Verified'),
-    ('data_not_verified', 'Has Data, Not Verified'),
-    ('no_data', 'No Data'),
+    ('good', 'Good'),
+    ('bad', 'Bad'),
+    ('failed', 'Failed'),
 )
 SATELLITE_STATUS = ['alive', 'dead', 're-entered']
 
@@ -122,10 +122,10 @@ class Station(models.Model):
 
     @property
     def success_rate(self):
-        observations = self.observations.all().count()
-        success = self.observations.exclude(payload='').count()
+        observations = self.observations.all()
+        success = observations.filter(id__in=(o.id for o in observations if o.has_audio)).count()
         if observations:
-            return int(100 * (float(success) / float(observations)))
+            return int(100 * (float(success) / float(observations.count())))
         else:
             return False
 
@@ -198,14 +198,14 @@ class Satellite(models.Model):
         return Observation.objects.filter(satellite=self).count()
 
     @property
-    def verified_count(self):
+    def good_count(self):
         data = Observation.objects.filter(satellite=self)
-        return data.filter(vetted_status='verified').count()
+        return data.filter(vetted_status='good').count()
 
     @property
-    def empty_count(self):
+    def bad_count(self):
         data = Observation.objects.filter(satellite=self)
-        return data.filter(vetted_status='no_data').count()
+        return data.filter(vetted_status='bad').count()
 
     @property
     def unknown_count(self):
@@ -215,14 +215,14 @@ class Satellite(models.Model):
     @property
     def success_rate(self):
         try:
-            return int(100 * (float(self.verified_count) / float(self.data_count)))
+            return int(100 * (float(self.good_count) / float(self.data_count)))
         except (ZeroDivisionError, TypeError):
             return 0
 
     @property
-    def empty_rate(self):
+    def bad_rate(self):
         try:
-            return int(100 * (float(self.empty_count) / float(self.data_count)))
+            return int(100 * (float(self.bad_count) / float(self.data_count)))
         except (ZeroDivisionError, TypeError):
             return 0
 
@@ -308,20 +308,25 @@ class Observation(models.Model):
     def is_future(self):
         return self.end > now()
 
-    # this payload has been vetted good/bad by someone
+    # this payload has been vetted good/bad/failed by someone
     @property
     def is_vetted(self):
         return not self.vetted_status == 'unknown'
 
     # this payload has been vetted as good by someone
     @property
-    def is_verified(self):
-        return self.vetted_status == 'verified'
+    def is_good(self):
+        return self.vetted_status == 'good'
 
     # this payload has been vetted as bad by someone
     @property
-    def is_no_data(self):
-        return self.vetted_status == 'no_data'
+    def is_bad(self):
+        return self.vetted_status == 'bad'
+
+    # this payload has been vetted as failed by someone
+    @property
+    def is_failed(self):
+        return self.vetted_status == 'failed'
 
     @property
     def has_audio(self):
