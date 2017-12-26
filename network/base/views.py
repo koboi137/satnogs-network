@@ -224,6 +224,10 @@ def observation_new(request):
             messages.error(request, 'Please use the datetime dialogs to submit valid timeframe.')
             return redirect(reverse('base:observation_new'))
 
+        if (start_time < datetime.now()):
+            messages.error(request, 'Please schedule an observation that begins in the future')
+            return redirect(reverse('base:observation_new'))
+
         start = make_aware(start_time, utc)
         end = make_aware(end_time, utc)
         sat = Satellite.objects.get(norad_cat_id=sat_id)
