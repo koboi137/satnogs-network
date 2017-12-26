@@ -95,7 +95,7 @@ $(document).ready(function() {
     // Pass predictions loading
     $('#loading-image').show();
     $.ajax({
-        url: '/pass_predictions/' + $('#station-info').attr('data-id'),
+        url: '/pass_predictions/' + $('#station-info').attr('data-id') + '/',
         cache: false,
         success: function(data){
             var len = data.nextpasses.length - 1;
