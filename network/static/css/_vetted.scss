@@ -27,7 +27,7 @@
 }
 
 .label-failed {
-    background-color: black;
+    background-color: #444;
     color: white;
 }
 
@@ -35,7 +35,7 @@
     @extend .label-failed;
 
     &:hover {
-        background-color: #333;
+        background-color: #666;
         color: white;
     }
 }

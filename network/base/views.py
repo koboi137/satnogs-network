@@ -118,11 +118,12 @@ class ObservationListView(ListView):
     def get_queryset(self):
         """
         Optionally filter based on norad get argument
-        Optionally filter based on good/bad/unvetted
+        Optionally filter based on future/good/bad/unvetted/failed
         """
         norad_cat_id = self.request.GET.get('norad', '')
         observer = self.request.GET.get('observer', '')
         station = self.request.GET.get('station', '')
+        self.filtered = False
 
         bad = self.request.GET.get('bad', '1')
         if bad == '0':
@@ -144,22 +145,35 @@ class ObservationListView(ListView):
             future = False
         else:
             future = True
+        failed = self.request.GET.get('failed', '1')
+        if failed == '0':
+            failed = False
+        else:
+            failed = True
+
+        if False in (bad, good, unvetted, future, failed):
+            self.filtered = True
 
         observations = Observation.objects.all()
         if not norad_cat_id == '':
             observations = observations.filter(
                 satellite__norad_cat_id=norad_cat_id)
+            self.filtered = True
         if not observer == '':
             observations = observations.filter(
                 author=observer)
+            self.filtered = True
         if not station == '':
             observations = observations.filter(
                 ground_station_id=station)
+            self.filtered = True
 
         if not bad:
             observations = observations.exclude(vetted_status='no_data')
         if not good:
             observations = observations.exclude(vetted_status='good')
+        if not failed:
+            observations = observations.exclude(vetted_status='failed')
         if not unvetted:
             observations = observations.exclude(vetted_status='unknown',
                                                 id__in=(o.id for
@@ -184,6 +198,8 @@ class ObservationListView(ListView):
         context['bad'] = self.request.GET.get('bad', '1')
         context['good'] = self.request.GET.get('good', '1')
         context['unvetted'] = self.request.GET.get('unvetted', '1')
+        context['failed'] = self.request.GET.get('failed', '1')
+        context['filtered'] = self.filtered
         if norad_cat_id is not None and norad_cat_id != '':
             context['norad'] = int(norad_cat_id)
         if observer is not None and observer != '':

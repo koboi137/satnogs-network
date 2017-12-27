@@ -347,14 +347,17 @@ span.datetime-time {
     display: block;
 }
 
+.form-group.status-filter {
+    display: inline-block;
+}
+
 #collapseFilters h4,
 #collapseFilters h3 {
     display: inline-block;
 }
 
-#collapseFilters button,
-#collapseFilters span {
-    margin-right: 5px;
+#collapseFilters label.btn-unknown {
+    font-weight: 900;
 }
 
 #collapseFilters button.active {

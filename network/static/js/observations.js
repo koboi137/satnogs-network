@@ -17,11 +17,11 @@ $(document).ready(function() {
         });
     });
 
+    // Filters submits
     $('.filter-section input[type=checkbox]').change(function() {
         $('#observation-filter').submit();
     });
 
-    // Satellite Filters
     $('#satellite-selection').bind('keyup change', function() {
         $('#observation-filter').submit();
     });
@@ -31,14 +31,15 @@ $(document).ready(function() {
     $('#station-selection').bind('keyup change', function() {
         $('#observation-filter').submit();
     });
+
+    // Check if filters should be displayed
     if (window.location.hash == '#collapseFilters') {
         $('#collapseFilters').hide();
-    } else if ($('#satellite-selection').val() ||
-               $('#observer-selection').val() ||
-               $('#station-selection').val()) {
+    } else if ($('#collapseFilters').data('filtered') == 'True') {
         $('#collapseFilters').show();
     }
 
+    // Open all observations in new tabs
     $('#open-all').click(function() {
         $('a.obs-link').each(function() {
             window.open($(this).attr('href'));
