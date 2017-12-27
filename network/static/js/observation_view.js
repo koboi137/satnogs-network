@@ -118,6 +118,9 @@ $(document).ready(function() {
         } else if (event.which == 66) {
             var link_bad = $('#bad-data');
             link_bad[0].click();
+        } else if (event.which == 70) {
+            var link_failed = $('#failed-data');
+            link_failed[0].click();
         }
     });
 });

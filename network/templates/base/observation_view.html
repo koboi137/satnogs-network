@@ -96,17 +96,17 @@
                 </a>
                 <a href="{% url 'base:observation_vet' id=observation.id status='good' %}">
                   <button id="good-data" type="button" class="btn btn-xs btn-success" title="good" data-toggle="tooltip">
-                    <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span>
+                    <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
                   </button>
                 </a>
                 <a href="{% url 'base:observation_vet' id=observation.id status='bad' %}">
                   <button id="bad-data" type="button" class="btn btn-xs btn-danger" title="bad" data-toggle="tooltip">
-                    <span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span>
+                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
                   </button>
                 </a>
                 <a href="{% url 'base:observation_vet' id=observation.id status='failed' %}">
-                  <button id="bad-failed" type="button" class="btn btn-xs btn-failed" title="failed" data-toggle="tooltip">
-                    <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
+                  <button id="failed-data" type="button" class="btn btn-xs btn-failed" title="failed" data-toggle="tooltip">
+                    <span class="glyphicon glyphicon-alert" aria-hidden="true"></span>
                   </button>
                 </a>
               </div>
