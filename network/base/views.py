@@ -169,7 +169,7 @@ class ObservationListView(ListView):
             self.filtered = True
 
         if not bad:
-            observations = observations.exclude(vetted_status='no_data')
+            observations = observations.exclude(vetted_status='bad')
         if not good:
             observations = observations.exclude(vetted_status='good')
         if not failed:
