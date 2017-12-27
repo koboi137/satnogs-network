@@ -5,39 +5,95 @@
 {% block title %} - Observations{% endblock %}
 
 {% block content %}
-  <h1>
-    Observations
-    <div class="pull-right">
-      <a class="btn btn-default" role="button" data-toggle="collapse"
-              href="#collapseFilters" aria-expanded="false" aria-controls="collapseFilters">
-        <span class="glyphicon glyphicon-th-list" aria-hidden="true"></span> Filters
-      </a>
-      <a class="btn btn-default" role="button" href="#legend" data-toggle="modal" data-target="#LegendModal">
-          <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> Legend
-      </a>
-      {% if can_schedule %}
-        <a class="btn btn-primary" href="{% url 'base:observation_new' %}">New Observation</a>
-      {% endif %}
+  <div class="row">
+    <div class="col-md-3 visible-md visible-lg">
+      <h1>
+        Observations
+      </h1>
     </div>
-  </h1>
+    <div class="col-xs-3 hidden-md hidden-lg">
+      <h2>
+        Observations
+      </h2>
+    </div>
+    <div class="col-md-4 pull-right visible-md visible-lg">
+      <h1 class="pull-right">
+        <a href="#legend" class="btn" data-toggle="modal" data-target="#LegendModal">
+            <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+        </a>
+        <a class="btn btn-default" role="button" data-toggle="collapse"
+                href="#collapseFilters" aria-expanded="false" aria-controls="collapseFilters">
+          <span class="glyphicon glyphicon-filter" aria-hidden="true"></span> Filters
+        </a>
+        {% if can_schedule %}
+          <a class="btn btn-primary" href="{% url 'base:observation_new' %}">New Observation</a>
+        {% endif %}
+      </h1>
+    </div>
+    <div class="col-md-4 pull-right hidden-md hidden-lg">
+      <h2 class="pull-right">
+        <a class="btn btn-default" role="button" data-toggle="collapse"
+                href="#collapseFilters" aria-expanded="false" aria-controls="collapseFilters">
+          <span class="glyphicon glyphicon-filter" aria-hidden="true"></span>
+        </a>
+        {% if can_schedule %}
+          <a class="btn btn-primary" href="{% url 'base:observation_new' %}">
+            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+          </a>
+        {% endif %}
+      </h2>
+    </div>
+  </div>
 
-  <div class="collapse{% if norad %} in{% endif %}" id="collapseFilters">
+  <div class="collapse{% if norad %} in{% endif %}" id="collapseFilters" data-filtered="{{ filtered }}">
     <div class="filter-section row">
       <form id="observation-filter" class="form" methon="get" action="{% url 'base:observations_list' %}">
-        <div class="form-group col-md-3">
-          <label for="data-selector">Data</label>
+        <div class="form-group status-filter col-md-3">
+          <label for="data-selector">Status</label>
           <div id="data-selector" class="btn-group" data-toggle="buttons">
-            <label class="btn btn-future btn-sm {% if future == '1' %}active{% endif %}"  aria-expanded="true" aria-controls="future">
-              <input type="checkbox" name="future" {% if future == '1' %}checked{% endif %} autocomplete="off">Future
+            <label class="btn btn-future btn-sm {% if future == '1' %}active{% endif %}"
+                   aria-expanded="true"
+                   aria-controls="future"
+                   data-toggle="tooltip"
+                   data-placement="bottom"
+                   title="Future">
+              <input type="checkbox" name="future" {% if future == '1' %}checked{% endif %} autocomplete="off">
+              <span class="glyphicon glyphicon-time" aria-hidden="true"></span>
             </label>
-            <label class="btn btn-good btn-sm {% if good == '1' %}active{% endif %}"  aria-expanded="true" aria-controls="good">
-              <input type="checkbox" name="good" {% if good == '1' %}checked{% endif %} autocomplete="off">Good
+            <label class="btn btn-good btn-sm {% if good == '1' %}active{% endif %}"
+                   aria-expanded="true"
+                   aria-controls="good"
+                   data-toggle="tooltip"
+                   data-placement="bottom"
+                   title="Good">
+              <input type="checkbox" name="good" {% if good == '1' %}checked{% endif %} autocomplete="off">
+              <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
             </label>
-            <label class="btn btn-bad btn-sm {% if bad == '1' %}active{% endif %}"  aria-expanded="true" aria-controls="bad">
-              <input type="checkbox" name="bad" {% if bad == '1' %}checked{% endif %} autocomplete="off">Bad
+            <label class="btn btn-bad btn-sm {% if bad == '1' %}active{% endif %}"
+                   aria-expanded="true"
+                   aria-controls="bad"
+                   data-toggle="tooltip"
+                   data-placement="bottom"
+                   title="Bad">
+              <input type="checkbox" name="bad" {% if bad == '1' %}checked{% endif %} autocomplete="off">
+              <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
             </label>
-            <label class="btn btn-unknown btn-sm {% if unvetted == '1' %}active{% endif %}"  aria-expanded="true" aria-controls="unvetted">
-              <input type="checkbox" name="unvetted" {% if unvetted == '1' %}checked{% endif %} autocomplete="off">Unvetted
+            <label class="btn btn-unknown btn-sm {% if unvetted == '1' %}active{% endif %}"
+                   aria-expanded="true"
+                   aria-controls="unvetted"
+                   data-toggle="tooltip"
+                   data-placement="bottom"
+                   title="Unvetted">
+              <input type="checkbox" name="unvetted" {% if unvetted == '1' %}checked{% endif %} autocomplete="off">?
+            </label>
+            <label class="btn btn-failed btn-sm {% if failed == '1' %}active{% endif %}"
+                   aria-expanded="true"
+                   aria-controls="failed"
+                   data-toggle="tooltip"
+                   data-placement="bottom"
+                   title="Failed">
+              <input type="checkbox" name="failed" {% if failed == '1' %}checked{% endif %} autocomplete="off">
+              <span class="glyphicon glyphicon-alert" aria-hidden="true"></span>
             </label>
           </div>
         </div>
