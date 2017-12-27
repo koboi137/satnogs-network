@@ -8,6 +8,7 @@ from django.conf import settings
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.dispatch import receiver
 from django.db import models
+from django.db.models.signals import post_save
 from django.urls import reverse
 from django.utils.html import format_html
 from django.utils.timezone import now
@@ -38,6 +39,15 @@ OBSERVATION_STATUSES = (
     ('failed', 'Failed'),
 )
 SATELLITE_STATUS = ['alive', 'dead', 're-entered']
+
+
+def _observation_auto_vet(sender, instance, created, **kwargs):
+    post_save.disconnect(_observation_auto_vet, sender=Observation)
+    if instance.has_demoddata:
+        instance.vetted_status = 'good'
+        instance.vetted_datetime = now()
+        instance.save()
+    post_save.connect(_observation_auto_vet, sender=Observation)
 
 
 class Rig(models.Model):
@@ -342,6 +352,13 @@ class Observation(models.Model):
         return True
 
     @property
+    def has_demoddata(self):
+        """Check if the observation has Demod Data."""
+        if self.demoddata.count():
+            return True
+        return False
+
+    @property
     def audio_url(self):
         if self.has_audio:
             if self.archive_url:
@@ -371,6 +388,9 @@ def observation_remove_files(sender, instance, **kwargs):
     if instance.waterfall:
         if os.path.isfile(instance.waterfall.path):
             os.remove(instance.waterfall.path)
+
+
+post_save.connect(_observation_auto_vet, sender=Observation)
 
 
 class DemodData(models.Model):
