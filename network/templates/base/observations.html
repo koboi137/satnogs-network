@@ -153,7 +153,8 @@
         <tbody>
           {% for observation in observations %}
             <tr data-norad="{{ observation.satellite.norad_cat_id }}"
-                  {% if observation.id in scheduled %}class="bg-info"{% endif %}>
+                  class="clickable-row{% if observation.id in scheduled %} bg-info{% endif %}"
+                  data-href="{% url 'base:observation_view' id=observation.id %}">
                 <td>
                   <a href="{% url 'base:observation_view' id=observation.id %}" class="obs-link">
                     {% if observation.is_vetted %}
