@@ -77,7 +77,10 @@
           {% if observation.is_vetted %}
             <span class="label label-xs label-{{ observation.vetted_status }}" aria-hidden="true"
                   data-toggle="tooltip" data-placement="right"
-                  title="Vetted {{ observation.vetted_status }} on {{ observation.vetted_datetime|date:"Y-m-d H:i:s" }} by {{ observation.vetted_user.displayname }}">{{ observation.get_vetted_status_display }}</span>
+                  title="Vetted {{ observation.vetted_status }} on {{ observation.vetted_datetime|date:"Y-m-d H:i:s" }}
+                         {% if observation.vetted_user %} by {{ observation.vetted_user.displayname }}
+                         {% else %} automatically
+                         {% endif %}">{{ observation.get_vetted_status_display }}</span>
           {% elif observation.is_future %}
             <span class="label label-xs label-info" aria-hidden="true"
                   data-toggle="tooltip" data-placement="right"
