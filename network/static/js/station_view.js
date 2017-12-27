@@ -121,16 +121,16 @@ $(document).ready(function() {
                       </a>
                       <div class="progress satellite-success">
                         <div class="progress-bar progress-bar-success" style="width: ${data.nextpasses[i].success_rate}%"
-                             data-toggle="tooltip" data-placement="bottom" title="${data.nextpasses[i].success_rate}% (${data.nextpasses[i].verified_count}) Verified">
-                          <span class="sr-only">${data.nextpasses[i].success_rate}% Verified</span>
+                             data-toggle="tooltip" data-placement="bottom" title="${data.nextpasses[i].success_rate}% (${data.nextpasses[i].good_count}) Good">
+                          <span class="sr-only">${data.nextpasses[i].success_rate}% Good</span>
                         </div>
                         <div class="progress-bar progress-bar-warning" style="width: ${data.nextpasses[i].unknown_rate}%"
                              data-toggle="tooltip" data-placement="bottom" title="${data.nextpasses[i].unknown_rate}% (${data.nextpasses[i].unknown_count}) Unknown">
                           <span class="sr-only">${data.nextpasses[i].unknown_rate}% Unknown</span>
                         </div>
-                        <div class="progress-bar progress-bar-danger" style="width: ${data.nextpasses[i].empty_rate}%"
-                             data-toggle="tooltip" data-placement="bottom" title="${data.nextpasses[i].empty_rate}% (${data.nextpasses[i].empty_count}) Empty">
-                          <span class="sr-only">${data.nextpasses[i].empty_rate}% Empty</span>
+                        <div class="progress-bar progress-bar-danger" style="width: ${data.nextpasses[i].bad_rate}%"
+                             data-toggle="tooltip" data-placement="bottom" title="${data.nextpasses[i].bad_rate}% (${data.nextpasses[i].bad_count}) Bad">
+                          <span class="sr-only">${data.nextpasses[i].bad_rate}% Bad</span>
                         </div>
                       </div>
                     </td>
