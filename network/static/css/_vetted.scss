@@ -1,0 +1,69 @@
+.label-good {
+    background-color: #5cb85c;
+    color: white;
+}
+
+.btn-good {
+    @extend .label-good;
+
+    &:hover {
+        background-color: #449d44;
+        color: white;
+    }
+}
+
+.label-bad {
+    background-color: #d9534f;
+    color: white;
+}
+
+.btn-bad {
+    @extend .label-bad;
+
+    &:hover {
+        background-color: #c9302c;
+        color: white;
+    }
+}
+
+.label-failed {
+    background-color: #444;
+    color: white;
+}
+
+.btn-failed {
+    @extend .label-failed;
+
+    &:hover {
+        background-color: #666;
+        color: white;
+    }
+}
+
+.label-unknown {
+    background-color: darkorange;
+    color: white;
+}
+
+.btn-unknown {
+    @extend .label-unknown;
+
+    &:hover {
+        background-color: orange;
+        color: white;
+    }
+}
+
+.label-future {
+    background-color: #5bc0de;
+    color: white;
+}
+
+.btn-future {
+    @extend .label-future;
+
+    &:hover {
+        background-color: #4ba0be;
+        color: white;
+    }
+}

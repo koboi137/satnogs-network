@@ -1,4 +1,6 @@
-$(document).ready(function() {
+/* exported polarplot */
+
+function polarplot() {
     'use strict';
 
     function drawPolarPlot(canvas, data) {
@@ -89,4 +91,4 @@ $(document).ready(function() {
         var $this = $(this);
         drawPolarPlot($this.get(0), $this.data().points);
     });
-});
+}

@@ -118,11 +118,12 @@ class ObservationListView(ListView):
     def get_queryset(self):
         """
         Optionally filter based on norad get argument
-        Optionally filter based on good/bad/unvetted
+        Optionally filter based on future/good/bad/unvetted/failed
         """
         norad_cat_id = self.request.GET.get('norad', '')
         observer = self.request.GET.get('observer', '')
         station = self.request.GET.get('station', '')
+        self.filtered = False
 
         bad = self.request.GET.get('bad', '1')
         if bad == '0':
@@ -144,22 +145,35 @@ class ObservationListView(ListView):
             future = False
         else:
             future = True
+        failed = self.request.GET.get('failed', '1')
+        if failed == '0':
+            failed = False
+        else:
+            failed = True
+
+        if False in (bad, good, unvetted, future, failed):
+            self.filtered = True
 
         observations = Observation.objects.all()
         if not norad_cat_id == '':
             observations = observations.filter(
                 satellite__norad_cat_id=norad_cat_id)
+            self.filtered = True
         if not observer == '':
             observations = observations.filter(
                 author=observer)
+            self.filtered = True
         if not station == '':
             observations = observations.filter(
                 ground_station_id=station)
+            self.filtered = True
 
         if not bad:
-            observations = observations.exclude(vetted_status='no_data')
+            observations = observations.exclude(vetted_status='bad')
         if not good:
-            observations = observations.exclude(vetted_status='verified')
+            observations = observations.exclude(vetted_status='good')
+        if not failed:
+            observations = observations.exclude(vetted_status='failed')
         if not unvetted:
             observations = observations.exclude(vetted_status='unknown',
                                                 id__in=(o.id for
@@ -184,6 +198,8 @@ class ObservationListView(ListView):
         context['bad'] = self.request.GET.get('bad', '1')
         context['good'] = self.request.GET.get('good', '1')
         context['unvetted'] = self.request.GET.get('unvetted', '1')
+        context['failed'] = self.request.GET.get('failed', '1')
+        context['filtered'] = self.filtered
         if norad_cat_id is not None and norad_cat_id != '':
             context['norad'] = int(norad_cat_id)
         if observer is not None and observer != '':
@@ -222,6 +238,10 @@ def observation_new(request):
 
         if (end_time - start_time) > timedelta(minutes=settings.OBSERVATION_DATE_MAX_RANGE):
             messages.error(request, 'Please use the datetime dialogs to submit valid timeframe.')
+            return redirect(reverse('base:observation_new'))
+
+        if (start_time < datetime.now()):
+            messages.error(request, 'Please schedule an observation that begins in the future')
             return redirect(reverse('base:observation_new'))
 
         start = make_aware(start_time, utc)
@@ -493,30 +513,18 @@ def observation_delete(request, id):
 
 
 @login_required
-def observation_vet_good(request, id):
+def observation_vet(request, id, status):
     observation = get_object_or_404(Observation, id=id)
     can_vet = vet_perms(request.user, observation)
-    if can_vet:
-        observation.vetted_status = 'verified'
+    if status in ['good', 'bad', 'failed', 'unknown'] and can_vet:
+        observation.vetted_status = status
         observation.vetted_user = request.user
-        observation.vetted_datetime = datetime.today()
+        observation.vetted_datetime = now()
         observation.save(update_fields=['vetted_status', 'vetted_user', 'vetted_datetime'])
-        messages.success(request, 'Observation vetted successfully.')
-    else:
-        messages.error(request, 'Permission denied.')
-    return redirect(reverse('base:observation_view', kwargs={'id': observation.id}))
-
-
-@login_required
-def observation_vet_bad(request, id):
-    observation = get_object_or_404(Observation, id=id)
-    can_vet = vet_perms(request.user, observation)
-    if can_vet:
-        observation.vetted_status = 'no_data'
-        observation.vetted_user = request.user
-        observation.vetted_datetime = datetime.today()
-        observation.save(update_fields=['vetted_status', 'vetted_user', 'vetted_datetime'])
-        messages.success(request, 'Observation vetted successfully.')
+        if not status == 'unknown':
+            messages.success(request, 'Observation vetted successfully. [<a href="{0}">Undo</a>]'
+                             .format(reverse('base:observation_vet',
+                                             kwargs={'id': observation.id, 'status': 'unknown'})))
     else:
         messages.error(request, 'Permission denied.')
     return redirect(reverse('base:observation_view', kwargs={'id': observation.id}))
@@ -538,6 +546,22 @@ def station_view(request, id):
     form = StationForm(instance=station)
     antennas = Antenna.objects.all()
     rigs = Rig.objects.all()
+    unsupported_frequencies = request.GET.get('unsupported_frequencies', '0')
+
+    can_schedule = schedule_perms(request.user)
+
+    return render(request, 'base/station_view.html',
+                  {'station': station, 'form': form, 'antennas': antennas,
+                   'mapbox_id': settings.MAPBOX_MAP_ID,
+                   'mapbox_token': settings.MAPBOX_TOKEN,
+                   'rigs': rigs, 'can_schedule': can_schedule,
+                   'unsupported_frequencies': unsupported_frequencies})
+
+
+@ajax_required
+def pass_predictions(request, id):
+    """Endpoint for pass predictions"""
+    station = get_object_or_404(Station, id=id)
     unsupported_frequencies = request.GET.get('unsupported_frequencies', '0')
 
     try:
@@ -622,20 +646,19 @@ def station_view(request, id):
                                                       ts.datetime(), 10)
                     sat_pass = {'passid': passid,
                                 'mytime': str(observer.date),
-                                'debug': observer.next_pass(sat_ephem),
                                 'name': str(satellite.name),
                                 'id': str(satellite.id),
                                 'success_rate': str(satellite.success_rate),
                                 'unknown_rate': str(satellite.unknown_rate),
-                                'empty_rate': str(satellite.empty_rate),
+                                'bad_rate': str(satellite.bad_rate),
                                 'data_count': str(satellite.data_count),
-                                'verified_count': str(satellite.verified_count),
-                                'empty_count': str(satellite.empty_count),
+                                'good_count': str(satellite.good_count),
+                                'bad_count': str(satellite.bad_count),
                                 'unknown_count': str(satellite.unknown_count),
                                 'norad_cat_id': str(satellite.norad_cat_id),
                                 'tr': tr.datetime(),  # Rise time
                                 'azr': azimuth_r,     # Rise Azimuth
-                                'tt': tt,             # Max altitude time
+                                'tt': tt.datetime(),  # Max altitude time
                                 'altt': elevation,    # Max altitude
                                 'ts': ts.datetime(),  # Set time
                                 'azs': azimuth_s,     # Set azimuth
@@ -646,15 +669,12 @@ def station_view(request, id):
             else:
                 keep_digging = False
 
-    can_schedule = schedule_perms(request.user)
+    data = {
+        'id': id,
+        'nextpasses': sorted(nextpasses, key=itemgetter('tr'))
+    }
 
-    return render(request, 'base/station_view.html',
-                  {'station': station, 'form': form, 'antennas': antennas,
-                   'mapbox_id': settings.MAPBOX_MAP_ID,
-                   'mapbox_token': settings.MAPBOX_TOKEN,
-                   'nextpasses': sorted(nextpasses, key=itemgetter('tr')),
-                   'rigs': rigs, 'can_schedule': can_schedule,
-                   'unsupported_frequencies': unsupported_frequencies})
+    return JsonResponse(data, safe=False)
 
 
 @require_POST
@@ -708,8 +728,8 @@ def satellite_view(request, id):
         'names': sat.names,
         'image': sat.image,
         'success_rate': sat.success_rate,
-        'verified_count': sat.verified_count,
-        'empty_count': sat.empty_count,
+        'good_count': sat.good_count,
+        'bad_count': sat.bad_count,
         'unknown_count': sat.unknown_count,
         'data_count': sat.data_count,
     }

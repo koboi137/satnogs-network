@@ -74,40 +74,42 @@
       <div class="front-line">
         <span class="label label-default">Status</span>
         <span class="front-data">
-          {% if observation.is_verified %}
-            <span class="label label-xs label-success" aria-hidden="true"
+          {% if observation.is_vetted %}
+            <span class="label label-xs label-{{ observation.vetted_status }}" aria-hidden="true"
                   data-toggle="tooltip" data-placement="right"
-                  title="Vetted good on {{ observation.vetted_datetime|date:"Y-m-d H:i:s" }} by {{ observation.vetted_user.displayname }}">Good</span>
-          {% elif observation.is_no_data %}
-            <span class="label label-xs label-danger" aria-hidden="true"
-                  data-toggle="tooltip" data-placement="right"
-                  title="Vetted bad on {{ observation.vetted_datetime|date:"Y-m-d H:i:s" }} by {{ observation.vetted_user.displayname }}">Bad</span>
+                  title="Vetted {{ observation.vetted_status }} on {{ observation.vetted_datetime|date:"Y-m-d H:i:s" }}
+                         {% if observation.vetted_user %} by {{ observation.vetted_user.displayname }}
+                         {% else %} automatically
+                         {% endif %}">{{ observation.get_vetted_status_display }}</span>
           {% elif observation.is_future %}
             <span class="label label-xs label-info" aria-hidden="true"
                   data-toggle="tooltip" data-placement="right"
                   title="This observation is in the future">Pending</span>
           {% else %}
-            <span class="label label-xs label-warning" aria-hidden="true"
+            <span class="label label-xs label-{{ observation.vetted_status }}" aria-hidden="true"
                   data-toggle="tooltip" data-placement="right"
                   title="This observation needs vetting">Unvetted</span>
-            {% if observation.is_past %}
-              {% if not observation.is_vetted and can_vet %}
-                <div class="pull-right">
-                  <a href="https://wiki.satnogs.org/Operation#Rating_observations" target="_blank">
-                    <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
-                  </a>
-                  <a href="{% url 'base:observation_vet_good' id=observation.id %}">
-                    <button id="good-data" type="button" class="btn btn-xs btn-success">
-                      <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span>
-                    </button>
-                  </a>
-                  <a href="{% url 'base:observation_vet_bad' id=observation.id %}">
-                    <button id="bad-data" type="button" class="btn btn-xs btn-danger">
-                      <span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span>
-                    </button>
-                  </a>
-                </div>
-              {% endif %}
+            {% if can_vet %}
+              <div class="pull-right">
+                <a href="https://wiki.satnogs.org/Operation#Rating_observations" target="_blank">
+                  <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+                </a>
+                <a href="{% url 'base:observation_vet' id=observation.id status='good' %}">
+                  <button id="good-data" type="button" class="btn btn-xs btn-success" title="good" data-toggle="tooltip">
+                    <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                  </button>
+                </a>
+                <a href="{% url 'base:observation_vet' id=observation.id status='bad' %}">
+                  <button id="bad-data" type="button" class="btn btn-xs btn-danger" title="bad" data-toggle="tooltip">
+                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                  </button>
+                </a>
+                <a href="{% url 'base:observation_vet' id=observation.id status='failed' %}">
+                  <button id="failed-data" type="button" class="btn btn-xs btn-failed" title="failed" data-toggle="tooltip">
+                    <span class="glyphicon glyphicon-alert" aria-hidden="true"></span>
+                  </button>
+                </a>
+              </div>
             {% endif %}
           {% endif %}
         </span>

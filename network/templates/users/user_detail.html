@@ -123,6 +123,8 @@
                                  label-success" title="There is known good data in this observation"
                                {% elif observation.is_future %}
                                  label-info" title="This observation is in the future"
+                               {% elif observation.is_failed %}
+                                 label-default" title="This observation failed"
                                {% elif not observation.is_vetted %}
                                  label-warning" title="There is data that needs vetting in this observation"
                                {% else %}

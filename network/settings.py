@@ -148,6 +148,9 @@ COMPRESS_CSS_FILTERS = [
     'compressor.filters.css_default.CssAbsoluteFilter',
     'compressor.filters.cssmin.rCSSMinFilter'
 ]
+COMPRESS_PRECOMPILERS = (
+    ('text/scss', 'sass --scss {infile} {outfile}'),
+)
 
 # App conf
 ROOT_URLCONF = 'network.urls'

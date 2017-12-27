@@ -13,6 +13,7 @@ test:
     - pytest
     - eslint 'network/static/js/*.js'
     - stylelint 'network/static/css/*.css'
+    - stylelint 'network/static/css/*.scss'
 
 stage:
   stage: deploy
