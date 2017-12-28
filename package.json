@@ -15,6 +15,7 @@
     },
     "dependencies": {
         "bootstrap": "^3.3.7",
+        "bootstrap-slider": "^10.0.0",
         "d3": "^3.5.17",
         "d3-timeline": "jiahuang/d3-timeline",
         "dnt-helper": "schalkneethling/dnt-helper",
@@ -40,6 +41,8 @@
         "wavesurfer.js/dist/wavesurfer.min.js",
         "wavesurfer.js/dist/plugin/wavesurfer.spectrogram.min.js",
         "urijs/src/URI.min.js",
-        "dnt-helper/js/dnt-helper.js"
+        "dnt-helper/js/dnt-helper.js",
+        "bootstrap-slider/dist/bootstrap-slider.min.js",
+        "bootstrap-slider/dist/css/bootstrap-slider.min.css"
     ]
 }

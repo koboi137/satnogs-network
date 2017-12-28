@@ -1,4 +1,4 @@
-/* global mapboxgl, polarplot, moment */
+/* global mapboxgl, polarplot, moment, Slider */
 /* jshint esversion: 6 */
 
 $(document).ready(function() {
@@ -71,6 +71,47 @@ $(document).ready(function() {
         map.repaint = true;
     });
 
+    // Slider filters for pass predictions
+    var success_slider = new Slider('#success-filter', { id: 'success-filter', min: 0, max: 100, step: 5, range: true, value: [0, 100] });
+    var elevation_slider = new Slider('#elevation-filter', { id: 'elevation-filter', min: 0, max: 90, step: 1, range: true, value: [0, 90] });
+
+    function filter_passes(elmin, elmax, sumin, sumax) {
+        $('tr.pass').each(function(k, v) {
+            var passmax = $(v).find('td.max-elevation').data('max');
+            var success = $(v).find('td.success-rate').data('suc');
+            var visibility = true;
+            if ( passmax < elmin || passmax > elmax ) {
+                visibility = false;
+            }
+            if ( success < sumin || success > sumax ) {
+                visibility = false;
+            }
+            if (visibility) {
+                $(this).show();
+            } else {
+                $(this).hide();
+            }
+        });
+    }
+
+    elevation_slider.on('slideStop', function() {
+        var elmin = elevation_slider.getValue()[0];
+        var elmax = elevation_slider.getValue()[1];
+        var sumin = success_slider.getValue()[0];
+        var sumax = success_slider.getValue()[1];
+
+        filter_passes(elmin, elmax, sumin, sumax);
+    });
+
+    success_slider.on('slideStop', function() {
+        var elmin = elevation_slider.getValue()[0];
+        var elmax = elevation_slider.getValue()[1];
+        var sumin = success_slider.getValue()[0];
+        var sumax = success_slider.getValue()[1];
+
+        filter_passes(elmin, elmax, sumin, sumax);
+    });
+
     // Filters
     $('#antenna-filter').submit(function () {
         var the_form = $(this);
@@ -114,8 +155,8 @@ $(document).ready(function() {
                 var ts_display_date = moment(data.nextpasses[i].ts).format('YYYY-MM-DD');
                 var ts_display_time = moment(data.nextpasses[i].ts).format('HH:mm');
                 $('#pass_predictions').append(`
-                  <tr>
-                    <td>
+                  <tr class="pass">
+                    <td class="success-rate" data-suc="${data.nextpasses[i].success_rate}">
                       <a href="#" data-toggle="modal" data-target="#SatelliteModal" data-id="${data.nextpasses[i].norad_cat_id}">
                         ${data.nextpasses[i].norad_cat_id} - ${data.nextpasses[i].name}
                       </a>
@@ -143,7 +184,7 @@ $(document).ready(function() {
                     <td>
                       <span class="lightgreen">⤉</span>${data.nextpasses[i].azr}°
                     </td>
-                    <td>
+                    <td class="max-elevation" data-max="${data.nextpasses[i].altt}">
                       ⇴${data.nextpasses[i].altt}°
                     </td>
                     <td>
