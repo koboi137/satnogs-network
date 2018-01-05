@@ -12,6 +12,8 @@ def schedule_perms(user, station=None):
             if station.is_offline:
                 return False
             if station.is_testing:
+                if user.is_superuser:
+                    return True
                 if station not in user.ground_stations.all():
                     return False
 

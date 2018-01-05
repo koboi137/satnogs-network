@@ -374,7 +374,7 @@ def prediction_windows(request, sat_id, transmitter, start_date, end_date,
     if station_id:
         stations = stations.filter(id=station_id)
     for station in stations:
-        if not station.online:
+        if not schedule_perms(request.user, station):
             continue
 
         # Skip if this station is not capable of receiving the frequency
@@ -547,7 +547,7 @@ def station_view(request, id):
     rigs = Rig.objects.all()
     unsupported_frequencies = request.GET.get('unsupported_frequencies', '0')
 
-    can_schedule = schedule_perms(request.user)
+    can_schedule = schedule_perms(request.user, station)
 
     return render(request, 'base/station_view.html',
                   {'station': station, 'form': form, 'antennas': antennas,
