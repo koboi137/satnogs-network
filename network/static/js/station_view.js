@@ -133,6 +133,38 @@ $(document).ready(function() {
         $('#antenna-filter').submit();
     });
 
+    // Function for overlap check
+    function check_overlap(jobs, passstart, passend) {
+        var overlap = 0;
+        for (var i in jobs) {
+            var job_start = moment(jobs[i].start);
+            var job_end = moment(jobs[i].end);
+            // If scheduled ends before predicion, skip!
+            if (job_end.isBefore(passstart)) {continue;}
+
+            // If scheduled starts after prediction, skip!
+            if (job_start.isAfter(passend)) {continue;}
+
+            // If scheduled start is in prediction, calculate overlap
+            if (job_start.isBetween(passstart, passend, null, '[]')) {
+                overlap = Math.round((job_start.diff(passstart) / passend.diff(passstart)) * 100);
+                overlap = 100 - overlap;
+            }
+
+            // If scheduled end is in prediction, calculate overlap
+            if (job_end.isBetween(passstart, passend, null, '[]')) {
+                overlap = Math.round((passend.diff(job_end) / passend.diff(passstart)) * 100);
+                overlap = 100 - overlap;
+            }
+
+            // If prediction is within job, total overlap
+            if (job_start.isBefore(passstart) && job_end.isAfter(passend)) {
+                overlap = 100;
+            }
+        }
+        return overlap;
+    }
+
     // Pass predictions loading
     $('#loading-image').show();
     $.ajax({
@@ -145,6 +177,20 @@ $(document).ready(function() {
             var station_online = $('#station-info').data('online');
             var station_active = $('#station-info').data('active');
             var can_schedule =  $('#station-info').data('schedule');
+
+            var jobs = [];
+
+            $.ajax({
+                url: '/api/jobs/?ground_station=' + $('#station-info').attr('data-id'),
+                cache: false,
+                async: false,
+                success: function(data){
+                    jobs = data;
+                },
+                complete: function(){
+                }
+            });
+
             for (var i = 0; i <= len; i++) {
                 var schedulable = data.nextpasses[i].valid && station_online && station_active && can_schedule;
                 var json_polar_data = JSON.stringify(data.nextpasses[i].polar_data);
@@ -154,8 +200,15 @@ $(document).ready(function() {
                 var tr_display_time = moment(data.nextpasses[i].tr).format('HH:mm');
                 var ts_display_date = moment(data.nextpasses[i].ts).format('YYYY-MM-DD');
                 var ts_display_time = moment(data.nextpasses[i].ts).format('HH:mm');
+
+                var overlap_style = null;
+                var overlap = check_overlap(jobs, moment.utc(data.nextpasses[i].tr), moment.utc(data.nextpasses[i].ts));
+                if (overlap >= 50) {
+                    overlap_style = 'overlap';
+                }
+                //var overlap = 1;
                 $('#pass_predictions').append(`
-                  <tr class="pass">
+                  <tr class="pass ${overlap_style}" data-overlap="${overlap}">
                     <td class="success-rate" data-suc="${data.nextpasses[i].success_rate}">
                       <a href="#" data-toggle="modal" data-target="#SatelliteModal" data-id="${data.nextpasses[i].norad_cat_id}">
                         ${data.nextpasses[i].norad_cat_id} - ${data.nextpasses[i].name}
@@ -175,25 +228,41 @@ $(document).ready(function() {
                         </div>
                       </div>
                     </td>
-                    <td>
-                      <span class="datetime-date">${tr_display_date}</span>
-                      <span class="datetime-time">${tr_display_time}</span><br>
-                      <span class="datetime-date">${ts_display_date}</span>
-                      <span class="datetime-time">${ts_display_time}</span>
+                    <td class="pass-datetime">
+                      <span class="pass-time">${tr_display_time}</span>
+                      <span class="pass-date">${tr_display_date}</span>
                     </td>
-                    <td>
-                      <span class="lightgreen">⤉</span>${data.nextpasses[i].azr}°
+                    <td class="pass-datetime">
+                      <span class="pass-time">${ts_display_time}</span>
+                      <span class="pass-date">${ts_display_date}</span>
                     </td>
                     <td class="max-elevation" data-max="${data.nextpasses[i].altt}">
-                      ⇴${data.nextpasses[i].altt}°
-                    </td>
-                    <td>
-                      <span class="red">⤈</span>${data.nextpasses[i].azs}°
+                      <span class="polar-deg" aria-hidden="true"
+                            data-toggle="tooltip" data-placement="left"
+                            title="AOS degrees">
+                          <span class="lightgreen">⤉</span>${data.nextpasses[i].azr}°
+                      </span>
+                      <span class="polar-deg" aria-hidden="true"
+                            data-toggle="tooltip" data-placement="left"
+                            title="TCA degrees">
+                          ⇴${data.nextpasses[i].altt}°<br>
+                      </span>
+                      <span class="polar-deg" aria-hidden="true"
+                            data-toggle="tooltip" data-placement="left"
+                            title="LOS degrees">
+                          <span class="red">⤈</span>${data.nextpasses[i].azs}°
+                      </span>
                     </td>
                     <td>
                       <canvas class="polar-plot" width="100" height="100" data-points="${json_polar_data}"></canvas>
                     </td>
-                    <td>
+                    <td class="pass-schedule">
+                      ${overlap ? `<div class="overlap-ribbon" aria-hidden="true"
+                                        data-toggle="tooltip" data-placement="bottom"
+                                        title="A scheduled observation overlaps">
+                                        ${overlap}% overlap</div><br>
+                      ` : `
+                      `}
                       ${schedulable ? `<a href="${new_obs}?norad=${data.nextpasses[i].norad_cat_id}&ground_station=${station}&start_date=${tr}&end_date=${ts}"
                            class="btn btn-default"
                            target="_blank">

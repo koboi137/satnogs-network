@@ -221,11 +221,18 @@
       <table class="table table-hover table-responsive">
         <thead>
           <th>Name</th>
-          <th>Timeframe</th>
-          <th>⤉Rise°</th>
-          <th>⇴Max°</th>
-          <th>⤈Set°</th>
-          <th>Polar</th>
+          <th>
+            <span aria-hidden="true"
+              data-toggle="tooltip" data-placement="bottom"
+              title="Satellite raises from horizon">AOS</span>
+          </th>
+          <th>
+            <span aria-hidden="true"
+              data-toggle="tooltip" data-placement="bottom"
+              title="Satellite sets to horizon">LOS</span>
+          </th>
+          <th>⤉ ⇴ ⤈</th>
+          <th>Polar plot</th>
           <th></th>
         </thead>
         <tbody id="pass_predictions" station-online="{{ station.online }}" station-active="{{ station.active }}" can_schedule="{{ can_schedule }}">
