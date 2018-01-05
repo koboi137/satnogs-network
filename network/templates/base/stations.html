@@ -29,12 +29,7 @@
             <tr>
               <td>
                 <a href="{% url 'base:station_view' id=station.id %}">
-                  <span class="label
-                               {% if station.online %}
-                                 label-success
-                               {% else %}
-                                 label-danger
-                               {% endif %}"
+                  <span class="label label-{{ station.get_status_display|lower }}"
                         data-toggle="tooltip"
                         data-placement="bottom"
                         title="{% if station.last_seen %}

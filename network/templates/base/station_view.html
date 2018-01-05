@@ -18,8 +18,6 @@
           data-id="{{ station.id }}"
           data-lng="{{ station.lng }}"
           data-lat="{{ station.lat }}"
-          data-online="{{ station.online|yesno:"true,false" }}"
-          data-active="{{ station.active|yesno:"true,false" }}"
           data-schedule="{{ can_schedule|yesno:"true,false" }}"
           data-new-obs="{% url 'base:observation_new' %}">
         {{ station.id }} - {{ station.name }}
@@ -142,11 +140,7 @@
         </span>
       </div>
       <div class="front-line">
-        {% if station.online %}
-          <span class="label label-success">Online</span>
-        {% else %}
-          <span class="label label-danger">Offline</span>
-        {% endif %}
+        <span class="label label-{{ station.get_status_display|lower }}">{{ station.get_status_display }}</span>
         <span class="front-data"
               title="{{ station.last_seen|date:"c" }}">
           {% if station.last_seen %}
@@ -235,7 +229,7 @@
           <th>Polar plot</th>
           <th></th>
         </thead>
-        <tbody id="pass_predictions" station-online="{{ station.online }}" station-active="{{ station.active }}" can_schedule="{{ can_schedule }}">
+        <tbody id="pass_predictions" can_schedule="{{ can_schedule }}">
           <tr id="loading-image">
             <td colspan=7>
               <div class="spinner">
