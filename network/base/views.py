@@ -33,7 +33,7 @@ class StationSerializer(serializers.ModelSerializer):
 
 
 class StationAllView(viewsets.ReadOnlyModelViewSet):
-    queryset = Station.objects.filter(status=True)
+    queryset = Station.objects.exclude(status=0)
     serializer_class = StationSerializer
 
 
@@ -62,7 +62,7 @@ def index(request):
     """View to render index page."""
     observations = Observation.objects.all()
     try:
-        featured_station = Station.objects.filter(status=True).latest('featured_date')
+        featured_station = Station.objects.exclude(status=0).latest('featured_date')
     except Station.DoesNotExist:
         featured_station = None
 
