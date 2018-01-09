@@ -11,7 +11,7 @@ from django.conf import settings
 from django.contrib.sites.models import Site
 from django.utils.timezone import now
 
-from network.base.models import Satellite, Tle, Mode, Transmitter, Observation
+from network.base.models import Satellite, Tle, Mode, Transmitter, Observation, Station
 from network.celery import app
 
 
@@ -145,3 +145,16 @@ def clean_observations():
             if not obs.is_good:
                 obs.delete()
         archive_audio.delay(obs.id)
+
+
+@app.task
+def station_status_update():
+    """Task to update Station status."""
+    for station in Station.objects.all():
+        if station.is_offline:
+            station.status = 0
+        elif station.testing:
+            station.status = 1
+        else:
+            station.status = 2
+        station.save()
