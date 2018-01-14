@@ -50,6 +50,10 @@ def _name_obs_files(instance, filename):
     return 'data_obs/{0}/{1}'.format(instance.id, filename)
 
 
+def _name_obs_demoddata(instance, filename):
+    return 'data_obs/{0}/{1}'.format(instance.observation.id, filename)
+
+
 def _observation_post_save(sender, instance, created, **kwargs):
     """
     Post save Observation operations
@@ -448,7 +452,7 @@ post_save.connect(_observation_post_save, sender=Observation)
 class DemodData(models.Model):
     observation = models.ForeignKey(Observation, related_name='demoddata',
                                     on_delete=models.CASCADE, blank=True, null=True)
-    payload_demod = models.FileField(upload_to=_name_obs_files, blank=True, null=True)
+    payload_demod = models.FileField(upload_to=_name_obs_demoddata, blank=True, null=True)
 
     def is_image(self):
         with open(self.payload_demod.path) as fp:
