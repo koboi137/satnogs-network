@@ -73,6 +73,27 @@ Templates
 
 satnogs-network uses `Django's template engine <https://docs.djangoproject.com/en/dev/topics/templates/>`_ templates.
 
+Frontend development
+--------------------
+
+To be able to manage the required javascript libraries, install the development dependencies with npm::
+
+  $ npm install
+
+Development tasks like the download of assets, code linting and tests are managed with gulp::
+
+  $ gulp
+
+Frontend dependencies are stored in packages.json, handled by yarn. To add a new dependency, e.g. satellite.js, call::
+
+  $ yarn add satellite.js
+
+Manually add the new required files to the list of "assets" in packages.json, then start the download with::
+
+  $ gulp assets
+
+The assets are stored in the repository, thus don't forget to create a commit after you add/update/remove dependencies.
+
 Coding Style
 ------------
 
