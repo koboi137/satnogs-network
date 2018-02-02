@@ -351,6 +351,8 @@ class Observation(models.Model):
     end = models.DateTimeField()
     ground_station = models.ForeignKey(Station, related_name='observations',
                                        on_delete=models.SET_NULL, null=True, blank=True)
+    client_version = models.CharField(max_length=255, blank=True)
+    client_metadata = models.TextField(blank=True)
     payload = models.FileField(upload_to=_name_obs_files, blank=True, null=True)
     waterfall = models.ImageField(upload_to=_name_obs_files, blank=True, null=True)
     vetted_datetime = models.DateTimeField(null=True, blank=True)

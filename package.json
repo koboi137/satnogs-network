@@ -21,6 +21,7 @@
         "dnt-helper": "schalkneethling/dnt-helper",
         "eonasdan-bootstrap-datetimepicker": "^4.17.47",
         "jquery": "^3.2.1",
+        "jquery.json-viewer": "^1.1.0",
         "mapbox-gl": "^0.40.1",
         "moment": "^2.18.1",
         "urijs": "^1.18.12",
@@ -43,6 +44,8 @@
         "urijs/src/URI.min.js",
         "dnt-helper/js/dnt-helper.js",
         "bootstrap-slider/dist/bootstrap-slider.min.js",
-        "bootstrap-slider/dist/css/bootstrap-slider.min.css"
+        "bootstrap-slider/dist/css/bootstrap-slider.min.css",
+        "jquery.json-viewer/json-viewer/jquery.json-viewer.js",
+        "jquery.json-viewer/json-viewer/jquery.json-viewer.css"
     ]
 }

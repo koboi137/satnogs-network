@@ -5,6 +5,10 @@
 
 {% block title %} - Observation {{ observation.id }}{% endblock %}
 
+{% block css %}
+  <link rel="stylesheet" href="{% static 'lib/jquery.json-viewer/json-viewer/jquery.json-viewer.css' %}">
+{% endblock css %}
+
 {% block content %}
   <div class="row">
     <div class="col-md-6 col-sm-6">
@@ -159,6 +163,22 @@
           {{ observation.set_azimuth }}°
         </span>
       </div>
+      {% if observation.client_version %}
+        <div class="front-line">
+          <span class="label label-default">Client Version</span>
+          <span class="front-data">
+            {{ observation.client_version }}
+          </span>
+        </div>
+      {% endif %}
+      {% if observation.client_metadata %}
+        <div class="front-line">
+          <span class="label label-default">Metadata</span>
+          <span class="front-data">
+            <pre id="json-renderer" data-json="{{ observation.client_metadata }}"></pre>
+          </span>
+        </div>
+      {% endif %}
       <div class="front-line">
         {% if observation.has_audio or observation.waterfall %}
           <span class="label label-default">Downloads</span>
@@ -315,6 +335,7 @@
   <script src="{% static 'lib/wavesurfer.js/dist/plugin/wavesurfer.spectrogram.min.js' %}"></script>
   <script src="{% static 'lib/moment/min/moment.min.js' %}"></script>
   <script src="{% static 'lib/urijs/src/URI.min.js' %}"></script>
+  <script src="{% static 'lib/jquery.json-viewer/json-viewer/jquery.json-viewer.js' %}"></script>
   <script src="{% static 'js/utc.js' %}"></script>
   <script src="{% static 'js/observation_view.js' %}"></script>
   <script src="{% static 'js/satellite.js' %}"></script>
