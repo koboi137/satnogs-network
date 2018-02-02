@@ -1,6 +1,6 @@
 @import 'fonts';
 @import 'common';
-@import 'vetted';
+@import 'status';
 
 #main-navbar {
     margin-top: 2%;
@@ -267,6 +267,34 @@ span.datetime-time {
     }
 }
 
+.pass.overlap {
+    background: #eee;
+}
+
+.overlap-ribbon {
+    transform-origin: right top;
+    transform: rotate(-90deg) translate(0, -12px);
+    float: right;
+    background: #d9534f;
+    color: white;
+    font-weight: bold;
+    width: 100px;
+    text-align: center;
+    margin-top: 3px;
+    border-radius: 5px 5px 0 0;
+    border: 0 solid #800000;
+}
+
+.polar-deg {
+    display: block;
+    margin-bottom: 15px;
+}
+
+.pass-time {
+    display: block;
+    font-size: 30px;
+}
+
 /* Observations
 ==================== */
 
@@ -314,6 +342,12 @@ span.datetime-time {
 .tle {
     display: none;
     margin-top: 5px;
+}
+
+#json-renderer {
+    padding-left: 18px;
+    padding-top: 3px;
+    padding-bottom: 5px;
 }
 
 .timezone {

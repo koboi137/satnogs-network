@@ -19,9 +19,9 @@ class ObservationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Observation
-        fields = ('id', 'start', 'end', 'ground_station', 'transmitter',
-                  'norad_cat_id', 'payload', 'waterfall', 'demoddata', 'station_name',
-                  'station_lat', 'station_lng', 'vetted_status')
+        fields = ('id', 'start', 'end', 'ground_station', 'transmitter', 'norad_cat_id',
+                  'payload', 'waterfall', 'demoddata', 'station_name', 'station_lat',
+                  'station_lng', 'vetted_status', 'client_version', 'client_metadata')
         read_only_fields = ['id', 'start', 'end', 'observation', 'ground_station',
                             'transmitter', 'norad_cat_id', 'station_name',
                             'station_lat', 'station_lng']
@@ -102,6 +102,6 @@ class SettingsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Station
         fields = ('uuid', 'name', 'alt', 'lat', 'lng', 'rig',
-                  'active', 'antenna', 'id', 'apikey', 'description')
+                  'testing', 'antenna', 'id', 'apikey', 'description')
 
     apikey = serializers.CharField(read_only=True)

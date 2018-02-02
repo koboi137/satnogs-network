@@ -16,7 +16,6 @@ from django.views.decorators.http import require_POST
 from django.views.generic import ListView
 
 from rest_framework import serializers, viewsets
-
 from network.base.models import (Station, Transmitter, Observation,
                                  Satellite, Antenna, Tle, Rig)
 from network.users.models import User
@@ -34,7 +33,7 @@ class StationSerializer(serializers.ModelSerializer):
 
 
 class StationAllView(viewsets.ReadOnlyModelViewSet):
-    queryset = Station.objects.filter(active=True)
+    queryset = Station.objects.exclude(status=0)
     serializer_class = StationSerializer
 
 
@@ -63,7 +62,7 @@ def index(request):
     """View to render index page."""
     observations = Observation.objects.all()
     try:
-        featured_station = Station.objects.filter(active=True).latest('featured_date')
+        featured_station = Station.objects.exclude(status=0).latest('featured_date')
     except Station.DoesNotExist:
         featured_station = None
 
@@ -375,7 +374,7 @@ def prediction_windows(request, sat_id, transmitter, start_date, end_date,
     if station_id:
         stations = stations.filter(id=station_id)
     for station in stations:
-        if not station.online:
+        if not schedule_perms(request.user, station):
             continue
 
         # Skip if this station is not capable of receiving the frequency
@@ -548,7 +547,7 @@ def station_view(request, id):
     rigs = Rig.objects.all()
     unsupported_frequencies = request.GET.get('unsupported_frequencies', '0')
 
-    can_schedule = schedule_perms(request.user)
+    can_schedule = schedule_perms(request.user, station)
 
     return render(request, 'base/station_view.html',
                   {'station': station, 'form': form, 'antennas': antennas,
@@ -691,12 +690,7 @@ def station_edit(request):
         f.owner = request.user
         f.save()
         form.save_m2m()
-        if f.online:
-            messages.success(request, 'Successfully saved Ground Station.')
-        else:
-            messages.success(request, ('Successfully saved Ground Station. It will appear online '
-                                       'as soon as it connects with our API.'))
-
+        messages.success(request, 'Successfully saved Ground Station.')
         return redirect(reverse('base:station_view', kwargs={'id': f.id}))
     else:
         messages.error(request, 'Your Station submission had some errors.{0}'.format(form.errors))

@@ -20,13 +20,17 @@ app.autodiscover_tasks(lambda: settings.INSTALLED_APPS)
 
 @app.on_after_finalize.connect
 def setup_periodic_tasks(sender, **kwargs):
-    from network.base.tasks import update_all_tle, fetch_data, clean_observations
+    from network.base.tasks import (update_all_tle, fetch_data, clean_observations,
+                                    station_status_update)
 
     sender.add_periodic_task(RUN_HOURLY, update_all_tle.s(),
                              name='update-all-tle')
 
     sender.add_periodic_task(RUN_HOURLY, fetch_data.s(),
                              name='fetch-data')
+
+    sender.add_periodic_task(RUN_HOURLY, station_status_update.s(),
+                             name='station-status-update')
 
     sender.add_periodic_task(RUN_DAILY, clean_observations.s(),
                              name='clean-observations')
