@@ -104,6 +104,10 @@ $(document).ready(function() {
         });
     }
 
+    //JSON pretty renderer
+    var metadata = $('#json-renderer').data('json');
+    $('#json-renderer').jsonViewer(metadata, {collapsed: true});
+
     // Hotkeys bindings
     $(document).bind('keyup', function(event){
         if (event.which == 88) {
