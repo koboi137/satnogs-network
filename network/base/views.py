@@ -60,21 +60,11 @@ def satellite_position(request, sat_id):
 
 def index(request):
     """View to render index page."""
-    observations = Observation.objects.all()
-    try:
-        featured_station = Station.objects.exclude(status=0).latest('featured_date')
-    except Station.DoesNotExist:
-        featured_station = None
+    if request.user.is_authenticated():
+        return redirect(reverse('users:view_user', kwargs={"username": request.user.username}))
 
-    ctx = {
-        'latest_observations': observations.filter(end__lt=now()).order_by('-id')[:10],
-        'scheduled_observations': observations.filter(end__gte=now()),
-        'featured_station': featured_station,
-        'mapbox_id': settings.MAPBOX_MAP_ID,
-        'mapbox_token': settings.MAPBOX_TOKEN
-    }
-
-    return render(request, 'base/home.html', ctx)
+    return render(request, 'base/home.html', {'mapbox_id': settings.MAPBOX_MAP_ID,
+                                              'mapbox_token': settings.MAPBOX_TOKEN})
 
 
 def custom_404(request):
