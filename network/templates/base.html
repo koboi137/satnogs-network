@@ -20,7 +20,7 @@
 
   </head>
 
-  <body>
+  <body {% block body-class %}{% endblock %}>
     {{ stage_notice }}
     {% block prenav-content %}{% endblock %}
 
@@ -110,24 +110,26 @@
 
     {% block modal %}{% endblock modal %}
 
-    <footer>
-      <div class="container">
-        <hr>
-        <div class="row">
-          <div class="col-md-6">
-            <span class="glyphicon glyphicon-copyright-mark" aria-hidden="true"></span> 2014<span id="copy"></span>
-            <a href="https://libre.space/" target="_blank">Libre Space Foundation</a>.<br>
-            <span class="glyphicon glyphicon-cloud" aria-hidden="true"></span>
-            Observation data are freely distributed under the
-            <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank">CC BY-SA</a> license.
-          </div>
-          <div class="col-md-6 text-right footer-options">
-            <a href="https://satnogs.org/" target="_blank">SatNOGS</a> |
-            <a href="#top">Back to top</a>
+    {% block footer %}
+      <footer>
+        <div class="container">
+          <hr>
+          <div class="row">
+            <div class="col-md-6">
+              <span class="glyphicon glyphicon-copyright-mark" aria-hidden="true"></span> 2014<span id="copy"></span>
+              <a href="https://libre.space/" target="_blank">Libre Space Foundation</a>.<br>
+              <span class="glyphicon glyphicon-cloud" aria-hidden="true"></span>
+              Observation data are freely distributed under the
+              <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank">CC BY-SA</a> license.
+            </div>
+            <div class="col-md-6 text-right footer-options">
+              <a href="https://satnogs.org/" target="_blank">SatNOGS</a> |
+              <a href="#top">Back to top</a>
+            </div>
           </div>
         </div>
-      </div>
-    </footer>
+      </footer>
+    {% endblock %}
 
     {% compress js %}
       <script src="{% static 'lib/jquery/dist/jquery.min.js' %}"></script>

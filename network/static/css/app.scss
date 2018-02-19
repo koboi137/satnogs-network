@@ -15,8 +15,12 @@
 
 .call2action {
     height: 80px;
-    margin-top: 70vh;
-    margin-bottom: 15vh;
+    position: absolute;
+    bottom: 20vh;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 700px;
+    max-width: 100%;
 }
 
 .call2action h3 {
