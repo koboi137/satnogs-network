@@ -104,6 +104,10 @@ $(document).ready(function() {
                 $(this).hide();
             }
         });
+
+        // Update count of predictions visible
+        var filtered_count = $('tr.pass:visible').length;
+        $('#prediction_results_count').html(filtered_count);
     }
 
     elevation_slider.on('slideStop', function() {
@@ -267,7 +271,7 @@ $(document).ready(function() {
                       ` : `
                       `}
                       ${schedulable ? `<a href="${new_obs}?norad=${data.nextpasses[i].norad_cat_id}&ground_station=${station}&start_date=${tr}&end_date=${ts}"
-                           class="btn btn-default"
+                           class="btn btn-default schedulable"
                            target="_blank">
                            schedule
                            <span class="glyphicon glyphicon-new-window" aria-hidden="true"></span>
@@ -283,9 +287,20 @@ $(document).ready(function() {
                 `);
             }
             polarplot();
+
+            // Show predicion results count
+            $('#prediction_results').show();
+            $('#prediction_results_count').html(data.nextpasses.length);
         },
         complete: function(){
             $('#loading-image').hide();
         }
+    });
+
+    // Open all visible predictions for scheduling
+    $('#open-all').click(function() {
+        $('tr.pass:visible a.schedulable').each(function() {
+            window.open($(this).attr('href'));
+        });
     });
 });

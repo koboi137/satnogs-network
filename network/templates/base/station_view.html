@@ -249,6 +249,13 @@
     </div>
   </div>
 
+  <div class="row" id="prediction_results" hidden>
+    <div class="col-md-12 notice">
+      <span id="prediction_results_count"></span> passes found.
+      <a id="open-all" href="#">Open all for scheduling</a>.
+    </div>
+  </div>
+
   {% if request.user == station.owner %}
     <!-- Station Modal -->
     {% include 'includes/station_edit.html' %}
