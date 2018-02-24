@@ -74,16 +74,28 @@ $(document).ready(function() {
     // Slider filters for pass predictions
     var success_slider = new Slider('#success-filter', { id: 'success-filter', min: 0, max: 100, step: 5, range: true, value: [0, 100] });
     var elevation_slider = new Slider('#elevation-filter', { id: 'elevation-filter', min: 0, max: 90, step: 1, range: true, value: [0, 90] });
+    var overlap_slider = new Slider('#overlap-filter', { id: 'overlap-filter', min: 0, max: 100, step: 1, range: true, value: [0, 100] });
 
-    function filter_passes(elmin, elmax, sumin, sumax) {
+    function filter_passes() {
+        var elmin = elevation_slider.getValue()[0];
+        var elmax = elevation_slider.getValue()[1];
+        var sumin = success_slider.getValue()[0];
+        var sumax = success_slider.getValue()[1];
+        var ovmin = overlap_slider.getValue()[0];
+        var ovmax = overlap_slider.getValue()[1];
+
         $('tr.pass').each(function(k, v) {
             var passmax = $(v).find('td.max-elevation').data('max');
             var success = $(v).find('td.success-rate').data('suc');
+            var over = $(v).data('overlap');
             var visibility = true;
             if ( passmax < elmin || passmax > elmax ) {
                 visibility = false;
             }
             if ( success < sumin || success > sumax ) {
+                visibility = false;
+            }
+            if ( over < ovmin || over > ovmax ) {
                 visibility = false;
             }
             if (visibility) {
@@ -95,21 +107,15 @@ $(document).ready(function() {
     }
 
     elevation_slider.on('slideStop', function() {
-        var elmin = elevation_slider.getValue()[0];
-        var elmax = elevation_slider.getValue()[1];
-        var sumin = success_slider.getValue()[0];
-        var sumax = success_slider.getValue()[1];
-
-        filter_passes(elmin, elmax, sumin, sumax);
+        filter_passes();
     });
 
     success_slider.on('slideStop', function() {
-        var elmin = elevation_slider.getValue()[0];
-        var elmax = elevation_slider.getValue()[1];
-        var sumin = success_slider.getValue()[0];
-        var sumax = success_slider.getValue()[1];
+        filter_passes();
+    });
 
-        filter_passes(elmin, elmax, sumin, sumax);
+    overlap_slider.on('slideStop', function() {
+        filter_passes();
     });
 
     // Filters
@@ -204,7 +210,6 @@ $(document).ready(function() {
                 if (overlap >= 50) {
                     overlap_style = 'overlap';
                 }
-                //var overlap = 1;
                 $('#pass_predictions').append(`
                   <tr class="pass ${overlap_style}" data-overlap="${overlap}">
                     <td class="success-rate" data-suc="${data.nextpasses[i].success_rate}">
