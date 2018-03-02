@@ -1,7 +1,7 @@
 from datetime import timedelta
 import json
 import os
-from requests.exceptions import ReadTimeout
+from requests.exceptions import ReadTimeout, HTTPError
 import urllib2
 
 from internetarchive import upload
@@ -15,7 +15,7 @@ from network.base.models import Satellite, Tle, Mode, Transmitter, Observation, 
 from network.celery import app
 
 
-@app.task
+@app.task(ignore_result=True)
 def update_all_tle():
     """Task to update all satellite TLEs"""
     satellites = Satellite.objects.exclude(manual_tle=True)
@@ -38,7 +38,7 @@ def update_all_tle():
         Tle.objects.create(tle0=tle[0], tle1=tle[1], tle2=tle[2], satellite=obj)
 
 
-@app.task
+@app.task(ignore_result=True)
 def fetch_data():
     """Task to fetch all data from DB"""
     apiurl = settings.DB_API_ENDPOINT
@@ -101,53 +101,54 @@ def fetch_data():
             new_transmitter.save()
 
 
-@app.task
+@app.task(ignore_result=True)
 def archive_audio(obs_id):
     obs = Observation.objects.get(id=obs_id)
     suffix = '-{0}'.format(settings.ENVIRONMENT)
     if settings.ENVIRONMENT == 'production':
         suffix = ''
     identifier = 'satnogs{0}-observation-{1}'.format(suffix, obs.id)
-    if not obs.archived and obs.payload:
-        if os.path.isfile(obs.payload.path):
-            ogg = obs.payload.path
-            filename = obs.payload.name.split('/')[-1]
-            site = Site.objects.get_current()
-            description = ('<p>Audio file from SatNOGS{0} <a href="{1}/observations/{2}">'
-                           'Observation {3}</a>.</p>').format(suffix, site.domain,
-                                                              obs.id, obs.id)
-            md = dict(collection=settings.ARCHIVE_COLLECTION,
-                      title=identifier,
-                      mediatype='audio',
-                      licenseurl='http://creativecommons.org/licenses/by-sa/4.0/',
-                      description=description)
-            try:
-                res = upload(identifier, files=[ogg], metadata=md,
-                             access_key=settings.S3_ACCESS_KEY,
-                             secret_key=settings.S3_SECRET_KEY)
-            except ReadTimeout:
-                return
-            if res[0].status_code == 200:
-                obs.archived = True
-                obs.archive_url = '{0}{1}/{2}'.format(settings.ARCHIVE_URL, identifier, filename)
-                obs.archive_identifier = identifier
-                obs.save()
-                obs.payload.delete()
+
+    ogg = obs.payload.path
+    filename = obs.payload.name.split('/')[-1]
+    site = Site.objects.get_current()
+    description = ('<p>Audio file from SatNOGS{0} <a href="{1}/observations/{2}">'
+                   'Observation {3}</a>.</p>').format(suffix, site.domain,
+                                                      obs.id, obs.id)
+    md = dict(collection=settings.ARCHIVE_COLLECTION,
+              title=identifier,
+              mediatype='audio',
+              licenseurl='http://creativecommons.org/licenses/by-sa/4.0/',
+              description=description)
+    try:
+        res = upload(identifier, files=[ogg], metadata=md,
+                     access_key=settings.S3_ACCESS_KEY,
+                     secret_key=settings.S3_SECRET_KEY)
+    except (ReadTimeout, HTTPError):
+        return
+    if res[0].status_code == 200:
+        obs.archived = True
+        obs.archive_url = '{0}{1}/{2}'.format(settings.ARCHIVE_URL, identifier, filename)
+        obs.archive_identifier = identifier
+        obs.save()
+        obs.payload.delete()
 
 
 @app.task
 def clean_observations():
     """Task to clean up old observations that lack actual data."""
     threshold = now() - timedelta(days=int(settings.OBSERVATION_OLD_RANGE))
-    observations = Observation.objects.filter(end__lt=threshold)
+    observations = Observation.objects.filter(end__lt=threshold).filter(archived=False)
     for obs in observations:
         if settings.ENVIRONMENT == 'stage':
             if not obs.is_good:
                 obs.delete()
-        archive_audio.delay(obs.id)
+        if obs.payload:
+            if os.path.isfile(obs.payload.path):
+                archive_audio.delay(obs.id)
 
 
-@app.task
+@app.task(ignore_result=True)
 def station_status_update():
     """Task to update Station status."""
     for station in Station.objects.all():
