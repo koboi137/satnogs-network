@@ -180,6 +180,56 @@
         </div>
       {% endif %}
       <div class="front-line">
+        <span class="label label-default">Polar Plot</span>
+        <span class="front-data">
+          <div id="polar_plot">
+            <svg
+                xmlns="http://www.w3.org/2000/svg" version="1.1"
+                id="polar"
+                data-tle1="{{ observation.tle.tle1 }}"
+                data-tle2="{{ observation.tle.tle2 }}"
+                data-timeframe-start="{{ observation.start|date:"c" }}"
+                data-timeframe-end="{{ observation.end|date:"c" }}"
+                data-groundstation-lat="{{ observation.ground_station.lat }}"
+                data-groundstation-lon="{{ observation.ground_station.lng }}"
+                data-groundstation-alt="{{ observation.ground_station.alt }}"
+                width="120px" height="120px"
+                viewBox="-110 -110 220 220"
+                overflow="hidden">
+                <path
+                    fill="none" stroke="black" stroke-width="1"
+                    d="M 0 -95 v 190 M -95 0 h 190"
+                    />
+                <circle
+                    fill="none" stroke="black"
+                    cx="0" cy="0" r="30"
+                    />
+                <circle
+                    fill="none" stroke="black"
+                    cx="0" cy="0" r="60"
+                    />
+                <circle
+                    fill="none" stroke="black"
+                    cx="0" cy="0" r="90"
+                    />
+                <text x="-4" y="-96">
+                    N
+                </text>
+                <text x="-4" y="105">
+                    S
+                </text>
+                <text x="96" y="4">
+                    E
+                </text>
+                <text x="-106" y="4">
+                    W
+                </text>
+            </svg>
+          </div>
+        </span>
+      </div>
+
+      <div class="front-line">
         {% if observation.has_audio or observation.waterfall %}
           <span class="label label-default">Downloads</span>
           <span class="front-data">
@@ -336,6 +386,7 @@
   <script src="{% static 'lib/moment/min/moment.min.js' %}"></script>
   <script src="{% static 'lib/urijs/src/URI.min.js' %}"></script>
   <script src="{% static 'lib/jquery.json-viewer/json-viewer/jquery.json-viewer.js' %}"></script>
+  <script src="{% static 'lib/satellite.js/dist/satellite.min.js' %}"></script>
   <script src="{% static 'js/utc.js' %}"></script>
   <script src="{% static 'js/observation_view.js' %}"></script>
   <script src="{% static 'js/satellite.js' %}"></script>
