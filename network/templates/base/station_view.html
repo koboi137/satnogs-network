@@ -196,6 +196,10 @@
       <label for="elevation-filter">Max Elevation</label>
       <input id="elevation-filter" type="text"/>
     </div>
+    <div class="col-md-3">
+      <label for="overlap-filter">Overlap</label>
+      <input id="overlap-filter" type="text"/>
+    </div>
     <div class="col-md-3 pull-right">
       <form id="antenna-filter" class="form-inline pull-right" method="get" action="{% url 'base:station_view' id=station.id %}#satellites">
         <div class="form-group">
@@ -242,6 +246,13 @@
           </tr>
         </tbody>
       </table>
+    </div>
+  </div>
+
+  <div class="row" id="prediction_results" hidden>
+    <div class="col-md-12 notice">
+      <span id="prediction_results_count"></span> passes found.
+      <a id="open-all" href="#">Open all for scheduling</a>.
     </div>
   </div>
 
