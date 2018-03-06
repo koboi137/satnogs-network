@@ -4,6 +4,7 @@ import math
 from operator import itemgetter
 from datetime import datetime, timedelta
 
+from django.db.models import Count
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -521,7 +522,7 @@ def observation_vet(request, id, status):
 
 def stations_list(request):
     """View to render Stations page."""
-    stations = Station.objects.all()
+    stations = Station.objects.annotate(total_obs=Count('observations'))
     form = StationForm()
     antennas = Antenna.objects.all()
 
