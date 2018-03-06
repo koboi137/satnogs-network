@@ -24,6 +24,7 @@
         "jquery.json-viewer": "^1.1.0",
         "mapbox-gl": "^0.40.1",
         "moment": "^2.18.1",
+        "satellite.js": "^2.0.0",
         "urijs": "^1.18.12",
         "wavesurfer.js": "^1.4.0"
     },
@@ -46,6 +47,7 @@
         "bootstrap-slider/dist/bootstrap-slider.min.js",
         "bootstrap-slider/dist/css/bootstrap-slider.min.css",
         "jquery.json-viewer/json-viewer/jquery.json-viewer.js",
-        "jquery.json-viewer/json-viewer/jquery.json-viewer.css"
+        "jquery.json-viewer/json-viewer/jquery.json-viewer.css",
+        "satellite.js/dist/satellite.min.js"
     ]
 }
