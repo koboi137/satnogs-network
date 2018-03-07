@@ -5,6 +5,7 @@ import requests
 from shortuuidfield import ShortUUIDField
 
 from django.conf import settings
+from django.core.cache import cache
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.dispatch import receiver
 from django.db import models
@@ -184,12 +185,17 @@ class Station(models.Model):
 
     @property
     def success_rate(self):
-        observations = self.observations.exclude(testing=True)
-        success = observations.filter(id__in=(o.id for o in observations if o.has_audio)).count()
-        if observations:
-            return int(100 * (float(success) / float(observations.count())))
-        else:
-            return False
+        rate = cache.get('sat-{0}-rate'.format(self.id))
+        if not rate:
+            observations = self.observations.exclude(testing=True)
+            has_audio = observations.filter(id__in=(o.id for o in observations if o.has_audio))
+            success = has_audio.count()
+            if observations:
+                rate = int(100 * (float(success) / float(observations.count())))
+                cache.set('sat-{0}-rate'.format(self.id), rate)
+                return rate
+            else:
+                return False
 
     @property
     def observations_count(self):
