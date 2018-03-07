@@ -138,15 +138,15 @@ def archive_audio(obs_id):
 def clean_observations():
     """Task to clean up old observations that lack actual data."""
     threshold = now() - timedelta(days=int(settings.OBSERVATION_OLD_RANGE))
-    observations = Observation.objects.filter(end__lt=threshold).filter(archived=False)
+    observations = Observation.objects.filter(end__lt=threshold, archived=False) \
+                                      .exclude(payload='')
     for obs in observations:
         if settings.ENVIRONMENT == 'stage':
             if not obs.is_good:
                 obs.delete()
                 return
-        if obs.payload:
-            if os.path.isfile(obs.payload.path):
-                archive_audio.delay(obs.id)
+        if os.path.isfile(obs.payload.path):
+            archive_audio.delay(obs.id)
 
 
 @app.task(ignore_result=True)
