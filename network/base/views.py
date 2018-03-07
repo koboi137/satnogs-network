@@ -540,6 +540,13 @@ def station_view(request, id):
 
     can_schedule = schedule_perms(request.user, station)
 
+    if station.is_offline:
+        messages.error(request, ('Your Station is offline. You should make '
+                                 'sure it can successfully connect to the Network API.'))
+    if station.is_testing:
+        messages.warning(request, ('Your Station is in Testing mode. Once you are '
+                                   'sure it returns good observations you can put it online.'))
+
     return render(request, 'base/station_view.html',
                   {'station': station, 'form': form, 'antennas': antennas,
                    'mapbox_id': settings.MAPBOX_MAP_ID,
@@ -675,9 +682,12 @@ def station_edit(request):
         station = get_object_or_404(Station, id=pk, owner=request.user)
         form = StationForm(request.POST, request.FILES, instance=station)
     else:
+        pk = False
         form = StationForm(request.POST, request.FILES)
     if form.is_valid():
         f = form.save(commit=False)
+        if not pk:
+            f.testing = True
         f.owner = request.user
         f.save()
         form.save_m2m()
