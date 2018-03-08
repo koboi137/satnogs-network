@@ -32,7 +32,7 @@ def setup_periodic_tasks(sender, **kwargs):
     sender.add_periodic_task(RUN_HOURLY, station_status_update.s(),
                              name='station-status-update')
 
-    sender.add_periodic_task(RUN_DAILY, clean_observations.s(),
+    sender.add_periodic_task(RUN_HOURLY, clean_observations.s(),
                              name='clean-observations')
 
     sender.add_periodic_task(RUN_HOURLY, stations_cache_rates.s(),
