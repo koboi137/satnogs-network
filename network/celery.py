@@ -21,7 +21,7 @@ app.autodiscover_tasks(lambda: settings.INSTALLED_APPS)
 @app.on_after_finalize.connect
 def setup_periodic_tasks(sender, **kwargs):
     from network.base.tasks import (update_all_tle, fetch_data, clean_observations,
-                                    station_status_update)
+                                    station_status_update, stations_cache_rates)
 
     sender.add_periodic_task(RUN_HOURLY, update_all_tle.s(),
                              name='update-all-tle')
@@ -32,8 +32,11 @@ def setup_periodic_tasks(sender, **kwargs):
     sender.add_periodic_task(RUN_HOURLY, station_status_update.s(),
                              name='station-status-update')
 
-    sender.add_periodic_task(RUN_DAILY, clean_observations.s(),
+    sender.add_periodic_task(RUN_HOURLY, clean_observations.s(),
                              name='clean-observations')
+
+    sender.add_periodic_task(RUN_HOURLY, stations_cache_rates.s(),
+                             name='stations-cache-rates')
 
 
 if settings.ENVIRONMENT == 'production' or settings.ENVIRONMENT == 'stage':

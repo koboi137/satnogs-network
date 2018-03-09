@@ -9,6 +9,7 @@ from orbit import satellite
 
 from django.conf import settings
 from django.contrib.sites.models import Site
+from django.core.cache import cache
 from django.utils.timezone import now
 
 from network.base.models import Satellite, Tle, Mode, Transmitter, Observation, Station
@@ -134,19 +135,19 @@ def archive_audio(obs_id):
         obs.payload.delete()
 
 
-@app.task
+@app.task(ignore_result=True)
 def clean_observations():
     """Task to clean up old observations that lack actual data."""
     threshold = now() - timedelta(days=int(settings.OBSERVATION_OLD_RANGE))
-    observations = Observation.objects.filter(end__lt=threshold).filter(archived=False)
+    observations = Observation.objects.filter(end__lt=threshold, archived=False) \
+                                      .exclude(payload='')
     for obs in observations:
         if settings.ENVIRONMENT == 'stage':
             if not obs.is_good:
                 obs.delete()
                 return
-        if obs.payload:
-            if os.path.isfile(obs.payload.path):
-                archive_audio.delay(obs.id)
+        if os.path.isfile(obs.payload.path):
+            archive_audio.delay(obs.id)
 
 
 @app.task(ignore_result=True)
@@ -160,3 +161,15 @@ def station_status_update():
         else:
             station.status = 2
         station.save()
+
+
+@app.task(ignore_result=True)
+def stations_cache_rates():
+    stations = Station.objects.all()
+    for station in stations:
+        observations = station.observations.exclude(testing=True)
+        has_audio = observations.filter(id__in=(o.id for o in observations if o.has_audio))
+        success = has_audio.count()
+        if observations:
+            rate = int(100 * (float(success) / float(observations.count())))
+            cache.set('sat-{0}-rate'.format(station.id), rate, 60 * 60 * 2)

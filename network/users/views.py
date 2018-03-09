@@ -1,5 +1,5 @@
 from django.core.urlresolvers import reverse
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
 from django.views.generic import RedirectView
 from django.views.generic import UpdateView
 
@@ -37,7 +37,7 @@ class UserUpdateView(LoginRequiredMixin, UpdateView):
 
 def view_user(request, username):
     """View for user page."""
-    user = User.objects.get(username=username)
+    user = get_object_or_404(User, username=username)
     observations = Observation.objects.filter(author=user)[0:10]
     stations = Station.objects.filter(owner=user)
     try:
