@@ -193,9 +193,9 @@ class Station(models.Model):
             if observations:
                 rate = int(100 * (float(success) / float(observations.count())))
                 cache.set('sat-{0}-rate'.format(self.id), rate)
-                return rate
             else:
-                return False
+                rate = False
+        return rate
 
     @property
     def observations_count(self):
