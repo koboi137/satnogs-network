@@ -323,6 +323,7 @@ OBSERVATION_OLD_RANGE = config('OBSERVATION_OLD_RANGE', default=30, cast=int)
 STATION_HEARTBEAT_TIME = config('STATION_HEARTBEAT_TIME', default=60, cast=int)
 # Maximum window for upcoming passes in hours
 STATION_UPCOMING_END = config('STATION_UPCOMING_END', default=12, cast=int)
+WIKI_STATION_URL = config('WIKI_STATION_URL', default='https://wiki.satnogs.org/')
 
 # DB API
 DB_API_ENDPOINT = config('DB_API_ENDPOINT', default='https://db.satnogs.org/api/')

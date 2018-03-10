@@ -540,12 +540,19 @@ def station_view(request, id):
 
     can_schedule = schedule_perms(request.user, station)
 
-    if station.is_offline:
-        messages.error(request, ('Your Station is offline. You should make '
-                                 'sure it can successfully connect to the Network API.'))
-    if station.is_testing:
-        messages.warning(request, ('Your Station is in Testing mode. Once you are '
-                                   'sure it returns good observations you can put it online.'))
+    if request.user.is_authenticated():
+        if request.user == station.owner:
+            wiki_help = ('<a href="{0}" target="_blank" class="wiki-help"><span class="glyphicon '
+                         'glyphicon-question-sign" aria-hidden="true"></span>'
+                         '</a>'.format(settings.WIKI_STATION_URL))
+            if station.is_offline:
+                messages.error(request, ('Your Station is offline. You should make '
+                                         'sure it can successfully connect to the Network API. '
+                                         '{0}'.format(wiki_help)))
+            if station.is_testing:
+                messages.warning(request, ('Your Station is in Testing mode. Once you are sure '
+                                           'it returns good observations you can put it online. '
+                                           '{0}'.format(wiki_help)))
 
     return render(request, 'base/station_view.html',
                   {'station': station, 'form': form, 'antennas': antennas,
