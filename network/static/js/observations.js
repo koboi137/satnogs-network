@@ -38,11 +38,4 @@ $(document).ready(function() {
     } else if ($('#collapseFilters').data('filtered') == 'True') {
         $('#collapseFilters').show();
     }
-
-    // Open all observations in new tabs
-    $('#open-all').click(function() {
-        $('a.obs-link').each(function() {
-            window.open($(this).attr('href'));
-        });
-    });
 });

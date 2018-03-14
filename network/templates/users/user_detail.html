@@ -41,7 +41,7 @@
           </thead>
           <tbody>
             {% for station in stations.all %}
-              <tr>
+              <tr class="clickable-row" data-href="{% url 'base:station_view' id=station.id %}">
                 <td>
                   <a href="{% url 'base:station_view' id=station.id %}">
                     <span class="label label-{{ station.get_status_display|lower }}"
@@ -64,9 +64,7 @@
                   </a>
                 </td>
                 <td>
-                  <a href="{% url 'base:station_view' id=station.id %}">
-                    {{ station.name }}
-                  </a>
+                  {{ station.name }}
                 </td>
                 {% if station.location %}
                   <td title="{{ station.lat|floatformat:-3 }}°, {{ station.lng|floatformat:-3 }}°, {{ station.qthlocator }}">
@@ -151,7 +149,7 @@
           </thead>
           <tbody>
             {% for observation in observations.all %}
-              <tr>
+              <tr class="clickable-row" data-href="{% url 'base:observation_view' id=observation.id %}">
                 <td>
                   <a href="{% url 'base:observation_view' id=observation.id %}">
                     {% if observation.is_vetted %}
