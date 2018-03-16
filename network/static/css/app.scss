@@ -109,23 +109,6 @@
     word-break: break-all;
 }
 
-.stage-notice {
-    background-color: #d74545;
-    color: white;
-    padding: 5px;
-    text-align: center;
-    font-size: 0.9em;
-    z-index: 20;
-    width: 100%;
-    position: fixed;
-    top: 0;
-    left: 0;
-}
-
-.stage-notice a {
-    color: #ffff00;
-}
-
 .mapbox-improve-map,
 .mapboxgl-ctrl-bottom-left {
     display: none;
