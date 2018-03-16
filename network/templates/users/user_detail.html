@@ -3,7 +3,9 @@
 {% load static %}
 {% load tags %}
 
-{% block title %} - User: {{ user.username }}{% endblock %}
+{% block title %}
+  {% if user == request.user %} - Dashboard{% else %} - User: {{ user.username }}{% endif %}
+{% endblock %}
 
 {% block content %}
   <div class="row">
@@ -122,9 +124,9 @@
   {% if user == request.user %}
     <div class="row">
       <div class="col-md-12">
-        <button class="btn btn-default" data-toggle="modal" data-target="#StationModal">Add Ground Station</button>
-        <!-- Station Modal -->
-        {% include 'includes/station_edit.html' %}
+        <a class="btn btn-default" href="{% url 'base:station_edit' %}">
+          <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add Ground Station
+        </a>
       </div>
     </div>
   {% endif %}
@@ -195,10 +197,13 @@
     </div>
   {% endif %}
 
-  {% if user == request.user %}
+  {% if can_schedule %}
     <div class="row">
       <div class="col-md-12">
-        <a class="btn btn-default" href="{% url 'base:observation_new' %}">New Observation</a>
+        <a class="btn btn-default" href="{% url 'base:observation_new' %}">
+          <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+          New Observation
+        </a>
       </div>
     </div>
   {% endif %}
@@ -228,6 +233,5 @@
 {% endblock content %}
 
 {% block javascript %}
-  <script src="{% static 'js/gridsquare.js' %}"></script>
   <script src="{% static 'js/satellite.js' %}"></script>
 {% endblock javascript %}

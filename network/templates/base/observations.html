@@ -26,7 +26,9 @@
           <span class="glyphicon glyphicon-filter" aria-hidden="true"></span> Filters
         </a>
         {% if can_schedule %}
-          <a class="btn btn-primary" href="{% url 'base:observation_new' %}">New Observation</a>
+          <a class="btn btn-primary" href="{% url 'base:observation_new' %}">
+            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> New Observation
+          </a>
         {% endif %}
       </h1>
     </div>

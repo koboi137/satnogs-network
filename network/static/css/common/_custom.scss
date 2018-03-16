@@ -55,21 +55,35 @@ a:hover {
     margin-bottom: 0;
 }
 
-footer {
-    margin-bottom: 10px;
-}
-
-.footer-options {
-    padding: 10px;
-}
-
-.navbar-default {
-
-    .home & {
-        background-color: white;
-    }
-}
-
 .clickable-row {
     cursor: pointer;
+}
+
+.notice {
+    margin: 40px;
+    text-align: center;
+    color: #888;
+}
+
+code.log {
+    display: none;
+    background-color: transparent;
+}
+
+code.log p {
+    background-color: black;
+    color: white;
+    padding: 5px;
+}
+
+span.datetime-time {
+    margin-left: 10px;
+}
+
+.datetime-data {
+    margin-bottom: 12px;
+}
+
+#legend-toggle {
+    float: right;
 }
