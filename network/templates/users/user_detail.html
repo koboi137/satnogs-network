@@ -3,7 +3,9 @@
 {% load static %}
 {% load tags %}
 
-{% block title %} - User: {{ user.username }}{% endblock %}
+{% block title %}
+  {% if user == request.user %} - Dashboard{% else %} - User: {{ user.username }}{% endif %}
+{% endblock %}
 
 {% block content %}
   <div class="row">
@@ -195,10 +197,13 @@
     </div>
   {% endif %}
 
-  {% if user == request.user %}
+  {% if can_schedule %}
     <div class="row">
       <div class="col-md-12">
-        <a class="btn btn-default" href="{% url 'base:observation_new' %}">New Observation</a>
+        <a class="btn btn-default" href="{% url 'base:observation_new' %}">
+          <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+          New Observation
+        </a>
       </div>
     </div>
   {% endif %}

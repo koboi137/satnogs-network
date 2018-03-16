@@ -11,6 +11,7 @@ from network.users.forms import UserForm
 from network.users.models import User
 from network.base.forms import StationForm
 from network.base.models import Station, Observation, Antenna, Rig
+from network.base.perms import schedule_perms
 
 
 class UserRedirectView(LoginRequiredMixin, RedirectView):
@@ -40,6 +41,11 @@ def view_user(request, username):
     user = get_object_or_404(User, username=username)
     observations = Observation.objects.filter(author=user)[0:10]
     stations = Station.objects.filter(owner=user)
+
+    can_schedule = False
+    if request.user.is_authenticated():
+        can_schedule = schedule_perms(request.user)
+
     try:
         token = Token.objects.get(user=user)
     except Token.DoesNotExist:
@@ -49,10 +55,6 @@ def view_user(request, username):
     rigs = Rig.objects.all()
 
     return render(request, 'users/user_detail.html',
-                  {'user': user,
-                   'observations': observations,
-                   'stations': stations,
-                   'token': token,
-                   'form': form,
-                   'antennas': antennas,
-                   'rigs': rigs})
+                  {'user': user, 'observations': observations, 'stations': stations,
+                   'token': token, 'form': form, 'antennas': antennas,
+                   'rigs': rigs, 'can_schedule': can_schedule})
