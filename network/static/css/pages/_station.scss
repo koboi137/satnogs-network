@@ -1,0 +1,75 @@
+#loading-image {
+    text-align: center;
+    color: #666;
+}
+
+.spinner {
+    margin: 50px auto 0;
+    width: 70px;
+    text-align: center;
+
+    > div {
+        width: 18px;
+        height: 18px;
+        background-color: #666;
+        border-radius: 100%;
+        display: inline-block;
+        animation: sk-bouncedelay 1.4s infinite ease-in-out both;
+    }
+
+    .bounce1 {
+        animation-delay: -0.32s;
+    }
+
+    .bounce2 {
+        animation-delay: -0.16s;
+    }
+
+    @keyframes sk-bouncedelay {
+
+        0%, 80%, 100% {
+            transform: scale(0);
+        }
+
+        40% {
+            transform: scale(1);
+        }
+    }
+}
+
+#success-filter,
+#elevation-filter,
+#overlap-filter {
+
+    .slider-selection {
+        background: #5bc0de;
+    }
+}
+
+.pass.overlap {
+    background: #eee;
+}
+
+.overlap-ribbon {
+    transform-origin: right top;
+    transform: rotate(-90deg) translate(0, -12px);
+    float: right;
+    background: #d9534f;
+    color: white;
+    font-weight: bold;
+    width: 100px;
+    text-align: center;
+    margin-top: 3px;
+    border-radius: 5px 5px 0 0;
+    border: 0 solid #800000;
+}
+
+.polar-deg {
+    display: block;
+    margin-bottom: 15px;
+}
+
+.pass-time {
+    display: block;
+    font-size: 30px;
+}
