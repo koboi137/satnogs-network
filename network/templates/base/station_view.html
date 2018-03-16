@@ -155,10 +155,9 @@
       <div id="map-station" data-mapboxid="{{ mapbox_id }}" data-mapboxtoken="{{ mapbox_token }}"></div>
     </div>
     <div class="col-md-4">
-      <img src="{{ station.get_image }}"
-           class="station-view-image"
-           alt="{{ station.name }}"
-           title="{{ station.name }}">
+      <img src="{{ station.get_image }}" class="station-view-image" alt="{{ station.name }}">
+       <span class="glyphicon glyphicon-fullscreen img-expand"
+             aria-hidden="true" data-src="{{ station.get_image }}"></span>
     </div>
   </div>
 
@@ -254,6 +253,14 @@
       <span id="prediction_results_count"></span> passes found.
       <a id="open-all" href="#">Open all for scheduling</a>.
     </div>
+  </div>
+
+  <div id="modal-lightbox" class="modal-lightbox">
+    <button type="button" class="close" data-dismiss="modal">
+      <span aria-hidden="true">&times;</span>
+      <span class="sr-only">Close</span>
+    </button>
+    <img src="{{ station.get_image }}" class="station-full-image" alt="{{ station.name }}">
   </div>
 
   {% include 'includes/satellite.html' %}

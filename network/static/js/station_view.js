@@ -303,4 +303,12 @@ $(document).ready(function() {
             window.open($(this).attr('href'));
         });
     });
+
+    // Expand Station image
+    $('.img-expand').click(function() {
+        $('#modal-lightbox').show('slow');
+    });
+    $('#modal-lightbox .close').click(function() {
+        $('#modal-lightbox').hide('slow');
+    });
 });

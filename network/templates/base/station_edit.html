@@ -83,7 +83,7 @@
         {% endif %}
         <div class="form-group">
           <label for="description" class="control-label">Description</label>
-          <textarea class="form-control" value="{{ form.description.value|default_if_none:"" }}"
+          <textarea class="form-control" value="{{ form.description.value|default_if_none:"" }}" name="description"
                     id="description" rows="3" maxlength="500" placeholder="{{ form.description.help_text }}"></textarea>
         </div>
         <div class="form-group">
@@ -101,3 +101,7 @@
     </div>
   </div>
 {% endblock %}
+
+{% block javascript %}
+  <script src="{% static 'js/gridsquare.js' %}"></script>
+{% endblock javascript %}

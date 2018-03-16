@@ -73,3 +73,39 @@
     display: block;
     font-size: 30px;
 }
+
+.img-expand {
+    color: black;
+    position: absolute;
+    right: 25px;
+    display: block;
+    margin-top: 10px;
+    text-shadow: -1px -1px 0 lightgray, 1px -1px 0 lightgray, -1px 1px 0 lightgray, 1px 1px 0 lightgray;
+    cursor: pointer;
+}
+
+.modal-lightbox {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 999;
+    background: rgba(0, 0, 0, 0.8);
+    padding: 50px;
+    height: 100%;
+    width: 100%;
+
+    .station-full-image {
+        max-width: 100%;
+        max-height: 100%;
+        margin: auto;
+        display: block;
+    }
+
+    .close {
+        color: white;
+        text-shadow: none;
+        opacity: 1;
+        font-size: 2em;
+    }
+}
