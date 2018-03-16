@@ -524,9 +524,12 @@ def stations_list(request):
     stations = Station.objects.annotate(total_obs=Count('observations'))
     form = StationForm()
     antennas = Antenna.objects.all()
+    online = stations.filter(status=2).count()
+    testing = stations.filter(status=1).count()
 
     return render(request, 'base/stations.html',
-                  {'stations': stations, 'form': form, 'antennas': antennas})
+                  {'stations': stations, 'form': form, 'antennas': antennas,
+                   'online': online, 'testing': testing})
 
 
 def station_view(request, id):

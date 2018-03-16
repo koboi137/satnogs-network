@@ -1,4 +1,6 @@
+@import 'variables';
 @import 'fonts';
+@import 'mixins';
 @import 'common';
 @import 'status';
 
@@ -220,6 +222,19 @@ span.datetime-time {
 
 .total-pill {
     background-color: #072;
+}
+
+.stations-totals {
+    font-size: 1.4rem;
+    margin-top: 10px;
+
+    @include medium-and-up {
+        float: right;
+    }
+
+    span:last-child {
+        margin-left: 10px;
+    }
 }
 
 /* Station
