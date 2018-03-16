@@ -13,7 +13,6 @@ from django.http import JsonResponse, HttpResponseNotFound, HttpResponseServerEr
 from django.shortcuts import get_object_or_404, render, redirect
 from django.utils.timezone import now, make_aware, utc
 from django.utils.text import slugify
-from django.views.decorators.http import require_POST
 from django.views.generic import ListView
 
 from rest_framework import serializers, viewsets
@@ -681,28 +680,40 @@ def pass_predictions(request, id):
     return JsonResponse(data, safe=False)
 
 
-@require_POST
-def station_edit(request):
+def station_edit(request, id=None):
     """Edit or add a single station."""
-    if request.POST['id']:
-        pk = request.POST.get('id')
-        station = get_object_or_404(Station, id=pk, owner=request.user)
-        form = StationForm(request.POST, request.FILES, instance=station)
+    station = None
+    antennas = Antenna.objects.all()
+    rigs = Rig.objects.all()
+    if id:
+        station = get_object_or_404(Station, id=id, owner=request.user)
+
+    if request.method == 'POST':
+        if station:
+            form = StationForm(request.POST, request.FILES, instance=station)
+        else:
+            form = StationForm(request.POST, request.FILES)
+        if form.is_valid():
+            f = form.save(commit=False)
+            if not station:
+                f.testing = True
+            f.owner = request.user
+            f.save()
+            form.save_m2m()
+            messages.success(request, 'Ground Station saved successfully.')
+            return redirect(reverse('base:station_view', kwargs={'id': f.id}))
+        else:
+            messages.error(request, ('Your Ground Station submission has some '
+                                     'errors. {0}').format(form.errors))
+            return render(request, 'base/station_edit.html',
+                          {'form': form, 'station': station, 'antennas': antennas, 'rigs': rigs})
     else:
-        pk = False
-        form = StationForm(request.POST, request.FILES)
-    if form.is_valid():
-        f = form.save(commit=False)
-        if not pk:
-            f.testing = True
-        f.owner = request.user
-        f.save()
-        form.save_m2m()
-        messages.success(request, 'Successfully saved Ground Station.')
-        return redirect(reverse('base:station_view', kwargs={'id': f.id}))
-    else:
-        messages.error(request, 'Your Station submission had some errors.{0}'.format(form.errors))
-        return redirect(reverse('users:view_user', kwargs={'username': request.user.username}))
+        if station:
+            form = StationForm(instance=station)
+        else:
+            form = StationForm()
+        return render(request, 'base/station_edit.html',
+                      {'form': form, 'station': station, 'antennas': antennas, 'rigs': rigs})
 
 
 @login_required

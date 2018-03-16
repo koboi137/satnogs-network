@@ -32,6 +32,7 @@ base_urlpatterns = ([
     url(r'^stations/(?P<id>[0-9]+)/$', views.station_view, name='station_view'),
     url(r'^stations/(?P<id>[0-9]+)/delete/$', views.station_delete, name='station_delete'),
     url(r'^stations/edit/$', views.station_edit, name='station_edit'),
+    url(r'^stations/edit/(?P<id>[0-9]+)/$', views.station_edit, name='station_edit'),
     url(r'^stations_all/$', views.StationAllView.as_view({'get': 'list'}), name='stations_all'),
 
     # Satellites
