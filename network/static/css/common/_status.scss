@@ -43,7 +43,8 @@
 }
 
 .label-unknown,
-.label-testing {
+.label-testing,
+.badge-unvetted {
     background-color: darkorange;
     color: white;
 }
@@ -57,7 +58,8 @@
     }
 }
 
-.label-future {
+.label-future,
+.badge-info {
     background-color: #5bc0de;
     color: white;
 }

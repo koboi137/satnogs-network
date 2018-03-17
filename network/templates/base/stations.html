@@ -5,12 +5,13 @@
 {% block title %} - Ground Stations{% endblock %}
 
 {% block content %}
-  <h1>
+  <h2>
     Ground Stations
-    {% if user.is_authenticated %}
-      <button class="btn btn-primary pull-right" data-toggle="modal" data-target="#StationModal">New Ground Station</button>
-    {% endif %}
-  </h1>
+    <div class="stations-totals">
+      <span class="label label-online">{{ online }}</span> online
+      <span class="label label-testing">{{ testing }}</span> testing
+    </div>
+  </h2>
 
   <div class="row">
     <div class="col-md-12">
@@ -26,7 +27,7 @@
         </thead>
         <tbody>
           {% for station in stations.all %}
-            <tr>
+            <tr class="clickable-row" data-href="{% url 'base:station_view' id=station.id %}">
               <td>
                 <a href="{% url 'base:station_view' id=station.id %}">
                   <span class="label label-{{ station.get_status_display|lower }}"
@@ -42,9 +43,7 @@
                 </a>
               </td>
               <td>
-                <a href="{% url 'base:station_view' id=station.id %}">
-                  {{ station.name }}
-                </a>
+                {{ station.name }}
               </td>
               {% if station.location %}
                 <td title="{{ station.lat|floatformat:-3 }}°, {{ station.lng|floatformat:-3 }}°, {{ station.qthlocator }}">
@@ -96,11 +95,4 @@
       </table>
     </div>
   </div>
-
-  <!-- Station Modal -->
-  {% include 'includes/station_edit.html' %}
 {% endblock content %}
-
-{% block javascript %}
-  <script src="{% static 'js/gridsquare.js' %}"></script>
-{% endblock javascript %}

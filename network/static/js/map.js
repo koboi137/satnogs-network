@@ -19,15 +19,13 @@ $(document).ready(function() {
         style: 'mapbox://styles/pierros/cj8kftshl4zll2slbelhkndwo',
         zoom: 2,
         minZoom: 2,
-        scrollZoom: false,
         center: [10,29]
     });
 
-    map.addControl(new mapboxgl.NavigationControl());
     map.touchZoomRotate.disableRotation();
     map.dragRotate.disable();
-    if ('ontouchstart' in window) {
-        map.dragPan.disable();
+    if (!('ontouchstart' in window)) {
+        map.addControl(new mapboxgl.NavigationControl());
     }
 
     map.on('load', function () {

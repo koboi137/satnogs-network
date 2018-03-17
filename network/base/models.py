@@ -127,10 +127,10 @@ class Station(models.Model):
     name = models.CharField(max_length=45)
     image = models.ImageField(upload_to='ground_stations', blank=True)
     alt = models.PositiveIntegerField(help_text='In meters above ground')
-    lat = models.FloatField(validators=[MaxValueValidator(90),
-                                        MinValueValidator(-90)])
-    lng = models.FloatField(validators=[MaxValueValidator(180),
-                                        MinValueValidator(-180)])
+    lat = models.FloatField(validators=[MaxValueValidator(90), MinValueValidator(-90)],
+                            help_text='eg. 38.01697')
+    lng = models.FloatField(validators=[MaxValueValidator(180), MinValueValidator(-180)],
+                            help_text='eg. 23.7314')
     qthlocator = models.CharField(max_length=255, blank=True)
     location = models.CharField(max_length=255, blank=True)
     antenna = models.ManyToManyField(Antenna, blank=True,
@@ -146,7 +146,7 @@ class Station(models.Model):
     uuid = models.CharField(db_index=True, max_length=100, blank=True)
     rig = models.ForeignKey(Rig, related_name='ground_stations',
                             on_delete=models.SET_NULL, null=True, blank=True)
-    description = models.TextField(max_length=500, blank=True)
+    description = models.TextField(max_length=500, blank=True, help_text='Max 500 characters')
 
     class Meta:
         ordering = ['-status']

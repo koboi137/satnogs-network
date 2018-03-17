@@ -26,7 +26,9 @@
           <span class="glyphicon glyphicon-filter" aria-hidden="true"></span> Filters
         </a>
         {% if can_schedule %}
-          <a class="btn btn-primary" href="{% url 'base:observation_new' %}">New Observation</a>
+          <a class="btn btn-primary" href="{% url 'base:observation_new' %}">
+            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> New Observation
+          </a>
         {% endif %}
       </h1>
     </div>
@@ -153,7 +155,8 @@
         <tbody>
           {% for observation in observations %}
             <tr data-norad="{{ observation.satellite.norad_cat_id }}"
-                  {% if observation.id in scheduled %}class="bg-info"{% endif %}>
+                  class="clickable-row{% if observation.id in scheduled %} bg-info{% endif %}"
+                  data-href="{% url 'base:observation_view' id=observation.id %}">
                 <td>
                   <a href="{% url 'base:observation_view' id=observation.id %}" class="obs-link">
                     {% if observation.is_vetted %}

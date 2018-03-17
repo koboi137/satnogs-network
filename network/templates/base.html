@@ -25,7 +25,7 @@
     {% block prenav-content %}{% endblock %}
 
     <div class="container">
-      <nav class="navbar navbar-default" role="navigation" id="main-navbar">
+      <nav class="navbar navbar-default navbar-main" role="navigation">
         <div class="container-fluid">
         <!-- Brand and toggle get grouped for better mobile display -->
           <div class="navbar-header">
@@ -36,7 +36,7 @@
               <span class="icon-bar"></span>
             </button>
             <a class="navbar-brand" href="{% url 'base:home' %}">
-              <img id="navbar-logo" src="{% static 'img/satnogs_net.png' %}" alt="SatNOGS net">
+              <img class="navbar-logo" src="{% static 'img/satnogs_net.png' %}" alt="SatNOGS net">
             </a>
           </div>
 
@@ -51,16 +51,16 @@
             </ul>
             <ul class="nav navbar-nav navbar-right">
               {% if request.user.is_authenticated %}
-              {% if owner_vetting_count %}
-                <li data-toggle="tooltip"
-                    data-placement="bottom"
-                    title="{{ owner_vetting_count }} observations need vetting">
-                  <a href="{% url 'base:observations_list' %}?observer={{ request.user.id }}&future=0&good=0&bad=0&unvetted=1&failed=0">
-                    <span class="glyphicon glyphicon-check" aria-hidden="true"></span>
-                    <span class="badge badge-unvetted">{{ owner_vetting_count }}</span>
-                  </a>
-                </li>
-              {% endif %}
+                {% if owner_vetting_count %}
+                  <li data-toggle="tooltip"
+                      data-placement="bottom"
+                      title="{{ owner_vetting_count }} observations need vetting">
+                    <a href="{% url 'base:observations_list' %}?observer={{ request.user.id }}&future=0&good=0&bad=0&unvetted=1&failed=0">
+                      <span class="glyphicon glyphicon-check" aria-hidden="true"></span>
+                      <span class="badge badge-unvetted">{{ owner_vetting_count }}</span>
+                    </a>
+                  </li>
+                {% endif %}
               <li class="dropdown">
                 <a href="#"
                    class="dropdown-toggle"
@@ -69,7 +69,7 @@
                   <span class="caret"></span>
                 </a>
                 <ul class="dropdown-menu" role="menu">
-                    <li><a href="{% url 'users:view_user' username=request.user.username %}">My Profile</a></li>
+                    <li><a href="{% url 'users:view_user' username=request.user.username %}">Dashboard</a></li>
                     <li role="separator" class="divider"></li>
                     {% if request.user.is_superuser %}
                       <li><a href="{% url 'base:settings_site' %}">Site Settings</a></li>
