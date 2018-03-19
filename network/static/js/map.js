@@ -91,4 +91,9 @@ $(document).ready(function() {
             .setHTML(e.features[0].properties.description)
             .addTo(map);
     });
+
+    // Resize map for Stations modal
+    $('#MapModal').on('shown.bs.modal', function () {
+        map.resize();
+    });
 });
