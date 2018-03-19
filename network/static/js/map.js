@@ -70,7 +70,7 @@ $(document).ready(function() {
             });
 
             map.addLayer(map_points);
-            map.repaint = true;
+            map.repaint = false;
 
         });
     });
