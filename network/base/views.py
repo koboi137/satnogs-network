@@ -529,7 +529,8 @@ def stations_list(request):
 
     return render(request, 'base/stations.html',
                   {'stations': stations, 'form': form, 'antennas': antennas,
-                   'online': online, 'testing': testing})
+                   'online': online, 'testing': testing,
+                   'mapbox_id': settings.MAPBOX_MAP_ID, 'mapbox_token': settings.MAPBOX_TOKEN})
 
 
 def station_view(request, id):

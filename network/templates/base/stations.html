@@ -4,9 +4,16 @@
 
 {% block title %} - Ground Stations{% endblock %}
 
+{% block css %}
+  <link rel="stylesheet" href="{% static 'lib/mapbox-gl/dist/mapbox-gl.css' %}">
+{% endblock css %}
+
 {% block content %}
   <h2>
     Ground Stations
+    <button type="button" class="btn btn-sm btn-default map-modal-reveal" data-toggle="modal" data-target="#MapModal">
+      <span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span>
+    </button>
     <div class="stations-totals">
       <span class="label label-online">{{ online }}</span> online
       <span class="label label-testing">{{ testing }}</span> testing
@@ -95,4 +102,28 @@
       </table>
     </div>
   </div>
+
+  <!-- Modal -->
+  <div class="modal fade map-modal" id="MapModal" tabindex="-1" role="dialog" aria-labelledby="MapModal">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="myModalLabel">Stations Map</h4>
+        </div>
+        <div class="modal-body">
+          <div id="map" data-mapboxid="{{ mapbox_id }}" data-mapboxtoken="{{ mapbox_token }}" data-stations="{% url 'base:stations_all' %}"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
 {% endblock content %}
+
+
+{% block javascript %}
+  <script src="{% static 'lib/mapbox-gl/dist/mapbox-gl.js' %}"></script>
+  <script src="{% static 'js/map.js' %}"></script>
+{% endblock %}

@@ -70,7 +70,7 @@ $(document).ready(function() {
             });
 
             map.addLayer(map_points);
-            map.repaint = true;
+            map.repaint = false;
 
         });
     });
@@ -90,5 +90,10 @@ $(document).ready(function() {
         popup.setLngLat(e.features[0].geometry.coordinates)
             .setHTML(e.features[0].properties.description)
             .addTo(map);
+    });
+
+    // Resize map for Stations modal
+    $('#MapModal').on('shown.bs.modal', function () {
+        map.resize();
     });
 });
