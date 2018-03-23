@@ -26,6 +26,8 @@ services:
       - redis
     environment:
       - DATABASE_URL=mysql://network:network@db/network
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
     command:
       ./bin/run-celery.sh
 

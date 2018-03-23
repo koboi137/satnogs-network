@@ -17,7 +17,7 @@ from django.views.generic import ListView
 
 from rest_framework import serializers, viewsets
 from network.base.models import (Station, Transmitter, Observation,
-                                 Satellite, Antenna, Tle, Rig)
+                                 Satellite, Antenna, Tle, Rig, StationStatusLog)
 from network.users.models import User
 from network.base.forms import StationForm, SatelliteFilterForm
 from network.base.decorators import admin_required, ajax_required
@@ -543,6 +543,13 @@ def station_view(request, id):
 
     can_schedule = schedule_perms(request.user, station)
 
+    log = StationStatusLog.objects.filter(station=station).order_by('-changed')[:2]
+    latest = log[:1].get()
+    uptime = '-'
+    if latest.status == 2:
+        previous = log[1:2].get()
+        uptime = latest.changed - previous.changed
+
     if request.user.is_authenticated():
         if request.user == station.owner:
             wiki_help = ('<a href="{0}" target="_blank" class="wiki-help"><span class="glyphicon '
@@ -562,7 +569,17 @@ def station_view(request, id):
                    'mapbox_id': settings.MAPBOX_MAP_ID,
                    'mapbox_token': settings.MAPBOX_TOKEN,
                    'rigs': rigs, 'can_schedule': can_schedule,
-                   'unsupported_frequencies': unsupported_frequencies})
+                   'unsupported_frequencies': unsupported_frequencies,
+                   'uptime': uptime})
+
+
+def station_log(request, id):
+    """View for single station status log."""
+    station = get_object_or_404(Station, id=id)
+    station_log = StationStatusLog.objects.filter(station=station)
+
+    return render(request, 'base/station_log.html',
+                  {'station': station, 'station_log': station_log})
 
 
 @ajax_required

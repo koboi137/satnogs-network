@@ -30,6 +30,7 @@ base_urlpatterns = ([
     # Stations
     url(r'^stations/$', views.stations_list, name='stations_list'),
     url(r'^stations/(?P<id>[0-9]+)/$', views.station_view, name='station_view'),
+    url(r'^stations/(?P<id>[0-9]+)/log/$', views.station_log, name='station_log'),
     url(r'^stations/(?P<id>[0-9]+)/delete/$', views.station_delete, name='station_delete'),
     url(r'^stations/edit/$', views.station_edit, name='station_edit'),
     url(r'^stations/edit/(?P<id>[0-9]+)/$', views.station_edit, name='station_edit'),
