@@ -141,13 +141,26 @@
       </div>
       <div class="front-line">
         <span class="label label-{{ station.get_status_display|lower }}">{{ station.get_status_display }}</span>
-        <span class="front-data"
+        <span class="front-data" data-toggle="tooltip"
               title="{{ station.last_seen|date:"c" }}">
           {% if station.last_seen %}
             Last seen {{ station.last_seen|timesince }} ago
           {% else %}
             Never seen
           {% endif %}
+        </span>
+      </div>
+      <div class="front-line">
+        <span class="label label-default">Uptime</span>
+        <span class="front-data">
+          {{ uptime }}
+          <div class="pull-right">
+            <a href="{% url 'base:station_log' id=station.id %}">
+              <button type="button" class="btn btn-xs btn-info">
+                Log
+              </button>
+            </a>
+          </div>
         </span>
       </div>
     </div>
