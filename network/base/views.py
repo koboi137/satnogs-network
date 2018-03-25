@@ -547,8 +547,11 @@ def station_view(request, id):
     latest = log[:1].get()
     uptime = '-'
     if latest.status == 2:
-        previous = log[1:2].get()
-        uptime = latest.changed - previous.changed
+        try:
+            previous = log[1:2].get()
+            uptime = latest.changed - previous.changed
+        except StationStatusLog.DoesNotExist:
+            pass
 
     if request.user.is_authenticated():
         if request.user == station.owner:
