@@ -491,7 +491,11 @@ class DemodData(models.Model):
 
     def display_payload(self):
         with open(self.payload_demod.path) as fp:
-            return unicode(fp.read(), errors='replace')
+            try:
+                return unicode(fp.read())
+            except UnicodeDecodeError:
+                data = fp.read().encode('hex').upper()
+                return ' '.join(data[i:i + 2] for i in xrange(0, len(data), 2))
 
 
 @receiver(models.signals.post_delete, sender=DemodData)
