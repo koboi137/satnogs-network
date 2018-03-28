@@ -543,15 +543,20 @@ def station_view(request, id):
 
     can_schedule = schedule_perms(request.user, station)
 
-    log = StationStatusLog.objects.filter(station=station).order_by('-changed')[:2]
-    latest = log[:1].get()
+    # Calculate uptime
     uptime = '-'
-    if latest.status == 2:
-        try:
-            previous = log[1:2].get()
-            uptime = latest.changed - previous.changed
-        except StationStatusLog.DoesNotExist:
-            pass
+    try:
+        latest = StationStatusLog.objects.filter(station=station)[0]
+    except IndexError:
+        latest = None
+    if latest:
+        if latest.status:
+            try:
+                offline = StationStatusLog.objects.filter(station=station, status=0)[0]
+                uptime = latest.changed - offline.changed
+            except IndexError:
+                uptime = now() - latest.changed
+            uptime = str(uptime).split('.')[0]
 
     if request.user.is_authenticated():
         if request.user == station.owner:

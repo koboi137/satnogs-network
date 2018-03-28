@@ -230,7 +230,7 @@ class StationStatusLog(models.Model):
     changed = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        ordering = ['-status']
+        ordering = ['-changed']
 
     def __unicode__(self):
         return '{0} - {1}'.format(self.station, self.status)
