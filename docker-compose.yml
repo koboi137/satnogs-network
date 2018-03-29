@@ -43,7 +43,6 @@ services:
     links:
       - db
       - redis
-      - celery
     environment:
       - DATABASE_URL=mysql://network:network@db/network
     command:
