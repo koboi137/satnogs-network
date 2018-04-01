@@ -13,6 +13,7 @@ pip-log.txt
 .coverage
 .tox
 nosetests.xml
+.pytest_cache
 
 # Sqlite
 *.db

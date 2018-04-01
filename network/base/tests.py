@@ -64,6 +64,7 @@ class ModeFactory(factory.django.DjangoModelFactory):
 class AntennaFactory(factory.django.DjangoModelFactory):
     """Antenna model factory."""
     frequency = fuzzy.FuzzyFloat(200, 500)
+    frequency_max = fuzzy.FuzzyFloat(500, 800)
     band = fuzzy.FuzzyChoice(choices=ANTENNA_BAND_IDS)
     antenna_type = fuzzy.FuzzyChoice(choices=ANTENNA_TYPE_IDS)
 

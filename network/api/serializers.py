@@ -59,6 +59,46 @@ class ObservationSerializer(serializers.ModelSerializer):
             return None
 
 
+class StationSerializer(serializers.ModelSerializer):
+    antenna = serializers.SerializerMethodField()
+    altitude = serializers.SerializerMethodField()
+    min_horizon = serializers.SerializerMethodField()
+    observations = serializers.SerializerMethodField()
+    status = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Station
+        fields = ('id', 'name', 'altitude', 'min_horizon', 'lat', 'lng',
+                  'qthlocator', 'location', 'antenna', 'created', 'last_seen',
+                  'status', 'observations', 'description')
+
+    def get_altitude(self, obj):
+        return obj.alt
+
+    def get_min_horizon(self, obj):
+        return obj.horizon
+
+    def get_antenna(self, obj):
+        def antenna_name(antenna):
+            return (antenna.band + " " + antenna.get_antenna_type_display())
+        try:
+            return [antenna_name(ant) for ant in obj.antenna.all()]
+        except AttributeError:
+            return None
+
+    def get_observations(self, obj):
+        try:
+            return obj.observations_count
+        except AttributeError:
+            return None
+
+    def get_status(self, obj):
+        try:
+            return obj.get_status_display()
+        except AttributeError:
+            return None
+
+
 class JobSerializer(serializers.ModelSerializer):
     frequency = serializers.SerializerMethodField()
     tle0 = serializers.SerializerMethodField()
