@@ -491,10 +491,11 @@ class DemodData(models.Model):
 
     def display_payload(self):
         with open(self.payload_demod.path) as fp:
+            payload = fp.read()
             try:
-                return unicode(fp.read())
+                return unicode(payload)
             except UnicodeDecodeError:
-                data = fp.read().encode('hex').upper()
+                data = payload.encode('hex').upper()
                 return ' '.join(data[i:i + 2] for i in xrange(0, len(data), 2))
 
 
