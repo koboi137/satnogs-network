@@ -17,7 +17,7 @@ from django.views.generic import ListView
 
 from rest_framework import serializers, viewsets
 from network.base.models import (Station, Transmitter, Observation,
-                                 Satellite, Antenna, Tle, Rig)
+                                 Satellite, Antenna, Tle, Rig, StationStatusLog)
 from network.users.models import User
 from network.base.forms import StationForm, SatelliteFilterForm
 from network.base.decorators import admin_required, ajax_required
@@ -529,7 +529,8 @@ def stations_list(request):
 
     return render(request, 'base/stations.html',
                   {'stations': stations, 'form': form, 'antennas': antennas,
-                   'online': online, 'testing': testing})
+                   'online': online, 'testing': testing,
+                   'mapbox_id': settings.MAPBOX_MAP_ID, 'mapbox_token': settings.MAPBOX_TOKEN})
 
 
 def station_view(request, id):
@@ -541,6 +542,21 @@ def station_view(request, id):
     unsupported_frequencies = request.GET.get('unsupported_frequencies', '0')
 
     can_schedule = schedule_perms(request.user, station)
+
+    # Calculate uptime
+    uptime = '-'
+    try:
+        latest = StationStatusLog.objects.filter(station=station)[0]
+    except IndexError:
+        latest = None
+    if latest:
+        if latest.status:
+            try:
+                offline = StationStatusLog.objects.filter(station=station, status=0)[0]
+                uptime = latest.changed - offline.changed
+            except IndexError:
+                uptime = now() - latest.changed
+            uptime = str(uptime).split('.')[0]
 
     if request.user.is_authenticated():
         if request.user == station.owner:
@@ -561,7 +577,17 @@ def station_view(request, id):
                    'mapbox_id': settings.MAPBOX_MAP_ID,
                    'mapbox_token': settings.MAPBOX_TOKEN,
                    'rigs': rigs, 'can_schedule': can_schedule,
-                   'unsupported_frequencies': unsupported_frequencies})
+                   'unsupported_frequencies': unsupported_frequencies,
+                   'uptime': uptime})
+
+
+def station_log(request, id):
+    """View for single station status log."""
+    station = get_object_or_404(Station, id=id)
+    station_log = StationStatusLog.objects.filter(station=station)
+
+    return render(request, 'base/station_log.html',
+                  {'station': station, 'station_log': station_log})
 
 
 @ajax_required

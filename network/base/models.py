@@ -79,6 +79,7 @@ def _station_post_save(sender, instance, created, **kwargs):
     """
     post_save.disconnect(_station_post_save, sender=Station)
     if not created:
+        current_status = instance.status
         if instance.is_offline:
             instance.status = 0
         elif instance.testing:
@@ -86,6 +87,10 @@ def _station_post_save(sender, instance, created, **kwargs):
         else:
             instance.status = 2
         instance.save()
+        if instance.status != current_status:
+            StationStatusLog.objects.create(station=instance, status=instance.status)
+    else:
+        StationStatusLog.objects.create(station=instance, status=instance.status)
     post_save.connect(_station_post_save, sender=Station)
 
 
@@ -216,6 +221,19 @@ class Station(models.Model):
 
 
 post_save.connect(_station_post_save, sender=Station)
+
+
+class StationStatusLog(models.Model):
+    station = models.ForeignKey(Station, related_name='station_logs',
+                                on_delete=models.CASCADE, null=True, blank=True)
+    status = models.IntegerField(choices=STATION_STATUSES, default=0)
+    changed = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-changed']
+
+    def __unicode__(self):
+        return '{0} - {1}'.format(self.station, self.status)
 
 
 class Satellite(models.Model):
@@ -473,7 +491,12 @@ class DemodData(models.Model):
 
     def display_payload(self):
         with open(self.payload_demod.path) as fp:
-            return unicode(fp.read(), errors='replace')
+            payload = fp.read()
+            try:
+                return unicode(payload)
+            except UnicodeDecodeError:
+                data = payload.encode('hex').upper()
+                return ' '.join(data[i:i + 2] for i in xrange(0, len(data), 2))
 
 
 @receiver(models.signals.post_delete, sender=DemodData)
