@@ -53,7 +53,7 @@
         <div class="form-group status-filter col-md-3">
           <label for="data-selector">Status</label>
           <div id="data-selector" class="btn-group" data-toggle="buttons">
-            <label class="btn btn-future btn-sm {% if future == '1' %}active{% endif %}"
+            <label class="btn btn-future btn-sm {% if future == '1' %}active{% else %}btn-inactive{% endif %}"
                    aria-expanded="true"
                    aria-controls="future"
                    data-toggle="tooltip"
@@ -62,7 +62,7 @@
               <input type="checkbox" name="future" {% if future == '1' %}checked{% endif %} autocomplete="off">
               <span class="glyphicon glyphicon-time" aria-hidden="true"></span>
             </label>
-            <label class="btn btn-good btn-sm {% if good == '1' %}active{% endif %}"
+            <label class="btn btn-good btn-sm {% if good == '1' %}active{% else %}btn-inactive{% endif %}"
                    aria-expanded="true"
                    aria-controls="good"
                    data-toggle="tooltip"
@@ -71,7 +71,7 @@
               <input type="checkbox" name="good" {% if good == '1' %}checked{% endif %} autocomplete="off">
               <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
             </label>
-            <label class="btn btn-bad btn-sm {% if bad == '1' %}active{% endif %}"
+            <label class="btn btn-bad btn-sm {% if bad == '1' %}active{% else %}btn-inactive{% endif %}"
                    aria-expanded="true"
                    aria-controls="bad"
                    data-toggle="tooltip"
@@ -80,7 +80,7 @@
               <input type="checkbox" name="bad" {% if bad == '1' %}checked{% endif %} autocomplete="off">
               <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
             </label>
-            <label class="btn btn-unknown btn-sm {% if unvetted == '1' %}active{% endif %}"
+            <label class="btn btn-unknown btn-sm {% if unvetted == '1' %}active{% else %}btn-inactive{% endif %}"
                    aria-expanded="true"
                    aria-controls="unvetted"
                    data-toggle="tooltip"
@@ -88,7 +88,7 @@
                    title="Unvetted">
               <input type="checkbox" name="unvetted" {% if unvetted == '1' %}checked{% endif %} autocomplete="off">?
             </label>
-            <label class="btn btn-failed btn-sm {% if failed == '1' %}active{% endif %}"
+            <label class="btn btn-failed btn-sm {% if failed == '1' %}active{% else %}btn-inactive{% endif %}"
                    aria-expanded="true"
                    aria-controls="failed"
                    data-toggle="tooltip"
