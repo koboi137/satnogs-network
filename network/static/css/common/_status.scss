@@ -72,3 +72,7 @@
         color: white;
     }
 }
+
+.btn-inactive {
+    filter: opacity(45%) saturate(75%);
+}
