@@ -10,12 +10,14 @@ $(document).ready(function() {
 
     // Make table rows clickable
     $('.clickable-row').click(function(e) {
-        var href = $(this).find('a').attr('href');
-        e.preventDefault();
-        if (e.ctrlKey) {
-            window.open(href, '_blank');
-        } else {
-            window.location = href;
+        if (e.target.nodeName != 'A') {
+            var href = $(this).find('a').attr('href');
+            e.preventDefault();
+            if (e.ctrlKey) {
+                window.open(href, '_blank');
+            } else {
+                window.location = href;
+            }
         }
     });
 });
